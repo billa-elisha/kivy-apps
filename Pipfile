@@ -5,7 +5,7 @@ name = "pypi"
 
 [packages]
 kivy = {extras = ["full"], version = "*"}
-python = "==3.13.0"
+mysql-connector-python = "*"
 
 [dev-packages]
 

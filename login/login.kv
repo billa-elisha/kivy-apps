@@ -1,0 +1,116 @@
+
+
+
+
+# the main window
+<LogInWindow>:
+    # variables
+    userName: userName
+    password:password
+    notAdminErrorMessage:notAdminErrorMessage
+    userNameErrorMessage:userNameErrorMessage
+    userPasswordErrorMessage:userPasswordErrorMessage
+
+
+
+
+    orientation: 'vertical'
+    # changing then background of the whole page to white
+    canvas.before:
+        Color:
+            rgba:(1,1,1,1)
+        Rectangle:
+            pos:self.pos
+            size: self.size
+
+    # The sign in layout
+    BoxLayout:
+        size_hint_y:None
+        hieght:"4dp"    
+        # The login title
+        Label:
+            text: 'SIGN IN'
+            color: (254/255, 153/255, 0,1)
+            bold:True
+            font_size:'30dp'
+
+    # the input fields layout
+    FloatLayout:
+        # Error to be displayed if the user is not an admin but tries to get access
+        Label:
+            id:notAdminErrorMessage
+            text:''
+            color:(1,0,0,1)
+            pos:('90dp','490dp')
+            size_hint:(0.7,0.06)
+
+        # Username textinput box
+        CustomTextInputBox: 
+            id:userName
+            hint_text:"Username"
+            pos:('100dp','440dp')
+        # wrong username error text
+        CustomErrorMessageLable:
+            id:userNameErrorMessage
+            text:''
+            pos:('100dp','417dp')
+
+        # password textinput box
+        CustomTextInputBox: 
+            id:password
+            hint_text:"password"
+            pos:('100dp','370dp')
+            password:True
+        # wrong username error text
+        CustomErrorMessageLable:
+            id:userPasswordErrorMessage
+            text:''
+            pos:('100dp','347dp')
+        
+        # admin checkbox and lable
+        CheckBox:
+            id:admin
+            color:0, 0, 0,1
+            size_hint:(0.45,0.08)
+            pos:('10dp','318dp')
+        Label:
+            text:'Admin'
+            color:0,0,0,1
+            size_hint:(0.6,0.08)
+            pos:('10dp','318dp')
+
+        # submission button
+        Button:
+            text: 'Login'
+	        background_normal: ''  
+            background_color: (254/255, 153/255, 0,1)
+            color: (0.2, 0.2, 0.2, 1)
+            size_hint:(0.6,0.08)
+            pos:('100dp','270dp')
+            on_press: root.validateLogin(admin.active)
+
+
+
+# =======================================CUSTOM WIDGETS============================================
+<CustomTextInputBox@TextInput>:
+#  changing the border color of the textinput field
+    canvas.after:
+        Color:
+            rgba: (254/255, 153/255, 0,1)
+        Line:
+            width: 1
+            rectangle: self.x, self.y, self.width, self.height
+    background_normal:''
+    background_active:''
+    foreground_color: (0.2, 0.2, 0.2, 1)
+    size_hint:(0.6,0.08)
+    multilinez:False
+    font_family: 'Roboto'
+    font_size: '20sp'
+    cursor_color:(0.2, 0.2, 0.2, 1)
+    cursor_width:"2sp"
+
+<CustomErrorMessageLable@Label>:
+    color:(1,0,0,1)
+    text_size:self.size
+    size_hint:(0.7,0.06)
