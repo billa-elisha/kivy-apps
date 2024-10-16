@@ -4,15 +4,18 @@
 
 <OperationWindow>:
     # color variables with their default values set
+    
     # =>#:set name value
-    #:set mainColor (254/255, 153/255, 0,1)
-    #:set lineColor (254/255, 153/255, 0,1)
+    #:set mainColor (.06,.45,.45,1)#(254/255, 153/255, 0,1)
+    #:set lineColor (.06,.45,.45,1)#(254/255, 153/255, 0,1)
     #:set buttonsBackgroundColor [1,1,1,1]
     #:set operationWindowBackgroundColor (1,1,1,1)
-    #:set textTitleColor (0,0,0,1)
-    #:set searchButtonTextColor (1,1,1,1)
-    #:set productsTitleLablesColor (254/255, 153/255, 0,1)
+    #:set productsTitleLablesColor (.06,.45,.45,1)#(254/255, 153/255, 0,1)
     #:set productListTextColor (0.1, 0.1, 0.1, 1)
+    #:set customTextInputBoxBorderColor (.06,.45,.45,1)
+    #:set productSelectedBackgroundColor (.06,.45,.45,.5)
+    #:set textTitleColor [1,1,1,1]
+    #:set searchButtonTextColor (0.2,.2,.2,1)
 
     orientation:'vertical'
     canvas.before:
@@ -64,9 +67,126 @@
         orientation:'horizontal'
         OperatorScreenManager:
             id:OperatorScreenManagerId
-            # screens
-            HomeScreen: 
+            # # screens
+            # HomeScreen: 
+            #     id:homeScreenId
+
+            HomeScreen:
                 id:homeScreenId
+                name:'homeScreen'
+                # Main boxlayout
+                BoxLayout:
+                    orientation:'horizontal'
+                    # left boxlayout (PRODUCTS SECTION)
+                    BoxLayout:
+                        orientation:'vertical'
+                        canvas.after:
+                            Color:
+                                rgba: lineColor
+                            Line:
+                                width: 1
+                                rectangle: self.x, self.y, self.width, self.height
+                        # title
+                        CustomTitleLable:
+                            text:"Products"
+                            
+                        # the product search box and button boxlayout
+                        BoxLayout:
+                            size_hint_y:None
+                            height:"30dp"
+                            # box for layout perpose
+                            BoxLayout:
+                                size_hint_x:0.2
+                            # search text field
+                            CustomTextInputBox:
+                                id:searchTextId
+                                size_hint_x:0.6
+
+                            # box for layout perpose
+                            BoxLayout:
+                                size_hint_x:None
+                                width:"20dp"
+
+                            # search button
+                            Button:
+                                size_hint_x:None
+                                width:"70dp"
+                                text:"search"
+                                color:searchButtonTextColor
+                                on_press:root.searchProductsButtonFunction()
+                            # box for layout perpose
+                            BoxLayout:
+                                size_hint_x:0.2
+
+
+                        # boxlayout for the product to be displayed when we search them
+                        BoxLayout:
+                            orientation:"vertical"
+                            # prodducts lables
+                            # box for layout to creat space between the searchbox,button and the product lables
+                            BoxLayout:
+                                size_hint_y:None
+                                height:"25dp"
+                            BoxLayout:
+                                size_hint_y:None
+                                height:"30dp"
+                                # box for layout perpose
+                                BoxLayout:
+                                    size_hint_x:0.3
+                                # the name of the product lable
+                                Label:
+                                    text:" Id and Name"
+                                    color:productsTitleLablesColor
+                                    bold:True
+                                    
+                                # the quantity of the product in stock lable
+                                # Label:
+                                #     text:"Qt"
+                                #     color:productsTitleLablesColor
+                                # box for layout perpose
+                                BoxLayout:
+                                    size_hint_x:0.3
+                            
+                            # this is the boxlayout where the products details are inserted
+                            BoxLayout:
+                                canvas.before:
+                                    Color:
+                                        rgba:operationWindowBackgroundColor
+                                    Rectangle:
+                                        pos:self.pos
+                                        size: self.size
+                                # box for layout perpose
+                                BoxLayout:
+                                    size_hint_x:0.3
+
+                                ProductsRecycleView:
+                                    id:recycle_view_id
+
+                                # box for layout perpose
+                                BoxLayout:
+                                    size_hint_x:0.3
+                                    
+
+                    # middle boxlayout
+                    BoxLayout:
+                        canvas.after:
+                            Color:
+                                rgba: lineColor
+                            Line:
+                                width: 1
+                                rectangle: self.x, self.y, self.width, self.height
+                    # right boxlayout
+                    BoxLayout:
+                        canvas.before:
+                            Color:
+                                rgba: lineColor
+                            Line:
+                                width: 1
+                                rectangle: self.x, self.y, self.width, self.height
+
+
+
+
             DailyReportScreen:
                 id:DailyReportScreenId
 
@@ -81,114 +201,115 @@
     size_hint_x:None
 # ======================================SCREENS SECTION==========================
 # operator screens
-<HomeScreen>:
-    name:'homeScreen'
-    # Main boxlayout
-    BoxLayout:
-        orientation:'horizontal'
-        # left boxlayout (PRODUCTS SECTION)
-        BoxLayout:
-            orientation:'vertical'
-            canvas.after:
-                Color:
-                    rgba: lineColor
-                Line:
-                    width: 1
-                    rectangle: self.x, self.y, self.width, self.height
-            # title
-            CustomTitleLable:
-                text:"Products"
+# <HomeScreen>:
+#     name:'homeScreen'
+#     # Main boxlayout
+#     BoxLayout:
+#         orientation:'horizontal'
+#         # left boxlayout (PRODUCTS SECTION)
+#         BoxLayout:
+#             orientation:'vertical'
+#             canvas.after:
+#                 Color:
+#                     rgba: lineColor
+#                 Line:
+#                     width: 1
+#                     rectangle: self.x, self.y, self.width, self.height
+#             # title
+#             CustomTitleLable:
+#                 text:"Products"
                 
-            # the product search box and button boxlayout
-            BoxLayout:
-                size_hint_y:None
-                height:"30dp"
-                # box for layout perpose
-                BoxLayout:
-                    size_hint_x:0.2
-                # search text field
-                CustomTextInputBox:
-                    id:searchTextId
-                    size_hint_x:0.6
+#             # the product search box and button boxlayout
+#             BoxLayout:
+#                 size_hint_y:None
+#                 height:"30dp"
+#                 # box for layout perpose
+#                 BoxLayout:
+#                     size_hint_x:0.2
+#                 # search text field
+#                 CustomTextInputBox:
+#                     id:searchTextId
+#                     size_hint_x:0.6
 
-                # box for layout perpose
-                BoxLayout:
-                    size_hint_x:None
-                    width:"20dp"
+#                 # box for layout perpose
+#                 BoxLayout:
+#                     size_hint_x:None
+#                     width:"20dp"
 
-                # search button
-                Button:
-                    size_hint_x:None
-                    width:"70dp"
-                    text:"search"
-                    color:searchButtonTextColor
-                # box for layout perpose
-                BoxLayout:
-                    size_hint_x:0.2
+#                 # search button
+#                 Button:
+#                     size_hint_x:None
+#                     width:"70dp"
+#                     text:"search"
+#                     color:searchButtonTextColor
+#                 # box for layout perpose
+#                 BoxLayout:
+#                     size_hint_x:0.2
 
 
-            # boxlayout for the product to be displayed when we search them
-            BoxLayout:
-                orientation:"vertical"
-                # prodducts lables
-                # box for layout to creat space between the searchbox,button and the product lables
-                BoxLayout:
-                    size_hint_y:None
-                    height:"25dp"
-                BoxLayout:
-                    size_hint_y:None
-                    height:"30dp"
-                    # box for layout perpose
-                    BoxLayout:
-                        size_hint_x:0.3
-                    # the name of the product lable
-                    Label:
-                        text:" Id and Name"
-                        color:productsTitleLablesColor
+#             # boxlayout for the product to be displayed when we search them
+#             BoxLayout:
+#                 orientation:"vertical"
+#                 # prodducts lables
+#                 # box for layout to creat space between the searchbox,button and the product lables
+#                 BoxLayout:
+#                     size_hint_y:None
+#                     height:"25dp"
+#                 BoxLayout:
+#                     size_hint_y:None
+#                     height:"30dp"
+#                     # box for layout perpose
+#                     BoxLayout:
+#                         size_hint_x:0.3
+#                     # the name of the product lable
+#                     Label:
+#                         text:" Id and Name"
+#                         color:productsTitleLablesColor
                         
-                    # the quantity of the product in stock lable
-                    # Label:
-                    #     text:"Qt"
-                    #     color:productsTitleLablesColor
-                    # box for layout perpose
-                    BoxLayout:
-                        size_hint_x:0.3
+#                     # the quantity of the product in stock lable
+#                     # Label:
+#                     #     text:"Qt"
+#                     #     color:productsTitleLablesColor
+#                     # box for layout perpose
+#                     BoxLayout:
+#                         size_hint_x:0.3
                 
-                # this is the boxlayout where the products details are inserted
-                BoxLayout:
-                    canvas.before:
-                        Color:
-                            rgba:operationWindowBackgroundColor
-                        Rectangle:
-                            pos:self.pos
-                            size: self.size
-                    # box for layout perpose
-                    BoxLayout:
-                        size_hint_x:0.3
+#                 # this is the boxlayout where the products details are inserted
+#                 BoxLayout:
+#                     canvas.before:
+#                         Color:
+#                             rgba:operationWindowBackgroundColor
+#                         Rectangle:
+#                             pos:self.pos
+#                             size: self.size
+#                     # box for layout perpose
+#                     BoxLayout:
+#                         size_hint_x:0.3
 
-                    ProductsRecycleView:
+#                     ProductsRecycleView:
+#                         id:recycle_view_id
 
-                    # box for layout perpose
-                    BoxLayout:
-                        size_hint_x:0.3
+#                     # box for layout perpose
+#                     BoxLayout:
+#                         size_hint_x:0.3
                         
 
-        # middle boxlayout
-        BoxLayout:
-            canvas.after:
-                Color:
-                    rgba: lineColor
-                Line:
-                    width: 1
-                    rectangle: self.x, self.y, self.width, self.height
-        # right boxlayout
-        BoxLayout:
-            canvas.before:
-                Color:
-                    rgba: lineColor
-                Line:
-                    width: 1
-                    rectangle: self.x, self.y, self.width, self.height
+#         # middle boxlayout
+#         BoxLayout:
+#             canvas.after:
+#                 Color:
+#                     rgba: lineColor
+#                 Line:
+#                     width: 1
+#                     rectangle: self.x, self.y, self.width, self.height
+#         # right boxlayout
+#         BoxLayout:
+#             canvas.before:
+#                 Color:
+#                     rgba: lineColor
+#                 Line:
+#                     width: 1
+#                     rectangle: self.x, self.y, self.width, self.height
 
 
 
@@ -211,7 +332,7 @@
 #  changing the border color of the textinput field
     canvas.after:
         Color:
-            rgba: (254/255, 153/255, 0,1)
+            rgba: customTextInputBoxBorderColor#(254/255, 153/255, 0,1)
         Line:
             width: 1
             rectangle: self.x, self.y, self.width, self.height
@@ -226,7 +347,7 @@
     height:"30dp"
 
 # the data recyleview
-<ProductsRecycleView>:
+<ProductsRecycleView@RecycleView>:
     viewclass:'SelectableLabel'
     bar_width:dp(10)
     bar_color:[.5,.5,.5,1]
@@ -244,7 +365,7 @@
 <SelectableLabel>:
     canvas.before:
         Color:
-            rgba: (254/255, 153/255, 0,0.4) if self.selected else operationWindowBackgroundColor
+            rgba: productSelectedBackgroundColor if self.selected else operationWindowBackgroundColor
         Rectangle:
             pos: self.pos
             size: self.size

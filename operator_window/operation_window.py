@@ -41,7 +41,7 @@ class SelectableLabel(RecycleDataViewBehavior,Label):
     """
     THIS CLASS is use to create a selectable label for the recycleview class.
     IT ADDS selection behavior and focus behavior to the view"""
-
+    buttontext=ObjectProperty()
     index = None
     selected = BooleanProperty(False)
     selectable= BooleanProperty(True)
@@ -64,6 +64,8 @@ class SelectableLabel(RecycleDataViewBehavior,Label):
             print('selection change to {0}'.format(rv.data[index]))
             getIdOfSelectedProduct = int(str(rv.data[index]['text'])[0])
             print(getIdOfSelectedProduct)
+            print(self.ids.recycle_view_id)
+            # print(OperationWindow.populateThePurchaseFields(self))
         else:
             # print('selection remove for {0}'.format(rv.data[index]))
             pass
@@ -71,65 +73,108 @@ class SelectableLabel(RecycleDataViewBehavior,Label):
     
     
 
+# class RecycleViewDataSuply:
+#     user ='root'
+#     dbpassword = '@#mysql@#'
+#     host ='localhost'
+#     database = "BE_RETAIL_MANAGEMENT_DATABASE"
+#     def __init__(self,productName):
+#         self.productName=productName
+    
+#     def fetchAllProducts(self):
+#         '''this function is used to fetch all the products from the database and 
+#         insert them into the product window,
+#         which either based on search or all the products
+#         '''
+#         try:
+#             mydb = DbConnector.connect(user=self.user, password=self.dbpassword,
+#                                         host=self.host,
+#                                         database=self.database
+#                                         )
+#             # print(self.ids.searchTextId.text,'text from inputxt')
+            
+#             if self.productName=='':
+#                 selectAllProducts = "SELECT * from products"
+#                 cursor = mydb.cursor()
+#                 cursor.execute(selectAllProducts)
+#                 listOfAllProducts = cursor.fetchall()
+#                 print("this products is coming because the search box is empty")
+#                 return listOfAllProducts
+#             else:
+#                 productToSearchName=str(self.productName+'%')
+#                 selectAllProducts = f" SELECT * FROM products WHERE product_name LIKE '{productToSearchName}';"
+#                 cursor = mydb.cursor()
+#                 print(selectAllProducts)
+#                 cursor.execute(selectAllProducts)
+#                 listOfAllProducts = cursor.fetchall()
+#                 print("this products is coming because the search box is  not empty")
+#                 print(listOfAllProducts)
+#                 return listOfAllProducts
+#         except Exception as e:
+#             print("This exception is coming from the fetchallproducts function",e)#==
 
-
-class ProductsRecycleView(RecycleView):
-    '''the recycle view class to contain the products data'''
-    # class variables
-    user ='root'
-    dbpassword = '@#mysql@#'
-    host ='localhost'
-    database = "BE_RETAIL_MANAGEMENT_DATABASE"
-    def __init__(self,**kwargs):
-        super(ProductsRecycleView,self).__init__(**kwargs)
-
+# class CustomTextInputBox(TextInput):
+#     def __init__(self, **kwargs):
+#         super().__init__(**kwargs)
         
-        listOfproducts =self.fetchAllProducts()
-        self.data =[{'text':str(f"{x[0] }      {x[2] } ")} for x in listOfproducts]
-        self.fetchAllProducts()
+#     def keyboard_on_key_up(self, window, keycode):
+#         if self.text=='':
+#             '''
+#             The listOfProducts will contain all the products in the system
+
+#             '''
+#             listOfproducts =CustomTextInputBox().keyboard_on_key_up(window=None, keycode=None)
+#             self.data =[{'text':str(f"{x[0] }      {x[2] } ")} for x in listOfproducts]
+            
+
+            # listOfproducts =RecycleViewDataSuply(productName='').fetchAllProducts()
+            
+#         else:
+#             '''
+#             The listOfProducts will contain all the products your search for in the system
+#             '''
+#             listOfproducts=RecycleViewDataSuply(productName=self.text).fetchAllProducts()
+            
+#         return listOfproducts
+    
+# class ProductsRecycleView(RecycleView):
+#     '''the recycle view class to contain the products data'''
+#     def __init__(self,**kwargs):
+#         super(ProductsRecycleView,self).__init__(**kwargs)
+
+#     def dataToPopulateInRecycleView(self,):
+#         listOfproducts =CustomTextInputBox().keyboard_on_key_up(window=None, keycode=None)
+#         self.data =[{'text':str(f"{x[0] }      {x[2] } ")} for x in listOfproducts]
+#         return self.data
+    
+    
      
 
-    def refresh_from_data(self, *largs, **kwargs):
-        self.data =[{'text':'billaaa' }]
-        return super().refresh_from_data(*largs, **kwargs)
-
-       
-        
-    def fetchAllProducts(self):
-        '''this function is used to fetch all the products from the database and 
-        insert them into the product window'''
-        try:
-            mydb = DbConnector.connect(user=self.user, password=self.dbpassword,
-                                        host=self.host,
-                                        database=self.database
-                                        )
-            selectAllProducts = "SELECT * FROM products;"
-            cursor = mydb.cursor()
-            cursor.execute(selectAllProducts)
-            listOfAllProducts = cursor.fetchall()
-            # print(listOfAllProducts)
-            return listOfAllProducts
-        except Exception as e:
-            print(e)#=================================>
-
     
-class CustomTextInputBox(TextInput):
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
         
-        
-    def keyboard_on_key_up(self, window, keycode):
-        d = ProductsRecycleView()
-        d.data=[{'text':' '}]
-        print(self.text)
 
 
 class OperationWindow(BoxLayout):
     '''THIS IS THE MAIN PAGE OF THE APP'''
+    
+
     def __init__(self, **kwargs):
         super(OperationWindow,self).__init__(**kwargs)
-     
+
+        # self.ids.searchTextId.keyboard_on_key_up(self,keycode)
+
+   
+        self.searchProductsButtonFunction()
+    def searchProductsButtonFunction(self,*args, **kwargs):
+        productName= (self.ids.searchTextId.text).strip()
+        listOfproducts=self.fetchAllProducts(productName=productName)
+        self.ids.recycle_view_id.data =[{'text':str(f"{x[0] }      {x[2] } ")} for x in listOfproducts]
+        self.ids.recycle_view_id.refresh_from_data()
+        
+
+    
+
     def changeToHomePage(self):
         '''
         change to the home window page function
@@ -157,6 +202,54 @@ class OperationWindow(BoxLayout):
         '''
         self.ids.DailyReportScreenId.manager.transition.direction='left'
 
+        
+    def populateThePurchaseFields(self):
+        t=self.ids.p.text
+        return  t
+    
+    def fetchAllProducts(self,productName):
+        user ='root'
+        dbpassword = '@#mysql@#'
+        host ='localhost'
+        database = "BE_RETAIL_MANAGEMENT_DATABASE"
+    
+        self.productName=productName
+        '''this function is used to fetch all the products from the database and 
+        insert them into the product window,
+        which either based on search or all the products
+        '''
+        try:
+            mydb = DbConnector.connect(user=user, password=dbpassword,
+                                        host=host,
+                                        database=database
+                                        )
+            # print(self.ids.searchTextId.text,'text from inputxt')
+            
+            if self.productName=='':
+                selectAllProducts = "SELECT * from products"
+                cursor = mydb.cursor()
+                cursor.execute(selectAllProducts)
+                listOfAllProducts = cursor.fetchall()
+                print("this products is coming because the search box is empty")
+                return listOfAllProducts
+            else:
+                productToSearchName=str(self.productName+'%')
+                selectAllProducts = f" SELECT * FROM products WHERE product_name LIKE '{productToSearchName}';"
+                cursor = mydb.cursor()
+                print(selectAllProducts)
+                cursor.execute(selectAllProducts)
+                listOfAllProducts = cursor.fetchall()
+                print("this products is coming because the search box is  not empty")
+                print(listOfAllProducts)
+                return listOfAllProducts
+        except Exception as e:
+            print("This exception is coming from the fetchallproducts function",e)#==
+
+        
+
+    
+
+            
     
    
     
@@ -170,3 +263,75 @@ class OperatorApp(App):
     
 if __name__ =="__main__":
     OperatorApp().run()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# class CustomTextInputBox(TextInput):
+    #     def __init__(self, **kwargs):
+    #         super().__init__(**kwargs)
+    #         print(OperationWindow.d)
+    #     def keyboard_on_key_up(self,window,keycode):
+    #         productName=self.text
+            
+    #         print(productName)
+    #         if productName=='':
+    #             allProducts=self.fetchAllProducts()
+    #             # self.ids.recycle_view_id.data =[{'text':str(f"{x[0] }      {x[2] } ")} for x in allProducts]
+    #             # self.ids.recycle_view_id.refresh_from_data()
+
+    #     def fetchAllProducts(self):
+            
+    #         '''this function is used to fetch all the products from the database and 
+    #         insert them into the product window,
+    #         which either based on search or all the products
+    #         '''
+    #         user ='root'
+    #         dbpassword = '@#mysql@#'
+    #         host ='localhost'
+    #         database = "BE_RETAIL_MANAGEMENT_DATABASE"
+    #         try:
+    #             mydb = DbConnector.connect(user=user, password=dbpassword,
+    #                                         host=host,
+    #                                         database=database
+    #                                         )
+    #             # print(self.ids.searchTextId.text,'text from inputxt')
+                
+                
+    #             selectAllProducts = "SELECT * from products"
+    #             cursor = mydb.cursor()
+    #             cursor.execute(selectAllProducts)
+    #             listOfAllProducts = cursor.fetchall()
+    #             print("this products is coming because the search box is empty")
+    #             return listOfAllProducts
+    #             # print('empty textbox')
+    #             # .searchProductsButtonFunction(self)
+    #         except Exception as e:
+    #             print(e)
