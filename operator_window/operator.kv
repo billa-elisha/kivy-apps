@@ -14,7 +14,7 @@
     #:set productListTextColor (0.1, 0.1, 0.1, 1)
     #:set customTextInputBoxBorderColor (.06,.45,.45,1)
     #:set productSelectedBackgroundColor (.06,.45,.45,.5)
-    #:set textTitleColor [1,1,1,1]
+    #:set textTitleColor [0.1,0.1,0.1,1]
     #:set searchButtonTextColor (0.2,.2,.2,1)
 
     orientation:'vertical'
@@ -86,10 +86,18 @@
                             Line:
                                 width: 1
                                 rectangle: self.x, self.y, self.width, self.height
+
+                        # for decoration
+                        BoxLayout:
+                            size_hint_y:None
+                            height:"20dp"
                         # title
                         CustomTitleLable:
                             text:"Products"
-                            
+                        # for decoration
+                        BoxLayout:
+                            size_hint_y:None
+                            height:"20dp"
                         # the product search box and button boxlayout
                         BoxLayout:
                             size_hint_y:None
@@ -101,6 +109,7 @@
                             CustomTextInputBox:
                                 id:searchTextId
                                 size_hint_x:0.6
+                                on_text_validate:root.searchProductsButtonFunction()
 
                             # box for layout perpose
                             BoxLayout:
@@ -112,7 +121,9 @@
                                 size_hint_x:None
                                 width:"70dp"
                                 text:"search"
-                                color:searchButtonTextColor
+                                color:(1,1,1,1)
+                                background_normal:''
+                                background_color:mainColor
                                 on_press:root.searchProductsButtonFunction()
                             # box for layout perpose
                             BoxLayout:
@@ -138,7 +149,7 @@
                                     text:" Id and Name"
                                     color:productsTitleLablesColor
                                     bold:True
-                                    
+                                    font_size:'17sp'
                                 # the quantity of the product in stock lable
                                 # Label:
                                 #     text:"Qt"
@@ -169,14 +180,252 @@
 
                     # middle boxlayout
                     BoxLayout:
+                        orientation:'vertical'
                         canvas.after:
                             Color:
                                 rgba: lineColor
                             Line:
                                 width: 1
                                 rectangle: self.x, self.y, self.width, self.height
+                        
+                        # for decoration
+                        BoxLayout:
+                            size_hint_y:None
+                            height:"20dp"
+                        CustomTitleLable:
+                            text:'Purchases'
+                        BoxLayout:
+                            size_hint_y:None
+                            height:"30dp"
+                            Label:
+                                text:'Name'
+                                color:mainColor
+                                bold:True
+                                font_size:'17sp'
+                            Label:
+                                text:'Price'
+                                color:mainColor
+                                bold:True
+                                font_size:'17sp'
+                            Label:
+                                text:'Qt'
+                                color:mainColor
+                                bold:True
+                                font_size:'17sp'
+                            # for decoration
+                            BoxLayout:
+                                size_hint_x:None
+                                width:'50dp'
+                            
+                            BoxLayout:
+                                size_hint_x:None
+                                width:'30dp'
+                        # for decoration
+                        BoxLayout:
+                            size_hint_y:None
+                            height:"1dp"
+                            canvas.before:
+                                Color:
+                                    rgba:mainColor
+                                Rectangle:
+                                    pos: self.pos
+                                    size: self.size
+                        # for decoration
+                        BoxLayout:
+                            size_hint_y:None
+                            height:"15dp"
+                        # this is the place where the products will be inserted
+                        # if you select them or use a scanner
+                        CustomBoxLayout:
+                            size_hint_y:None
+                            height:"30dp"
+                            NameLabel:
+                                id:productToPurchaseName
+                                text:''
+                                color:(.1,.1,.1,1)
+                                bold:True
+                            PriceLabel:
+                                id:productToPurchasePrice
+                                text:''
+                                color:(.1,.1,.1,1)
+                                bold:True
+                            Label:
+                                
+                                text:'Qt :'
+                                color:(.1,.1,.1,1)
+                                bold:True
+                                
+                            QuantityTextInput:
+                                id:productToPurchaseQuantity
+                                size_hint_x:None
+                                width:'50dp'
+                                text:"1"
+                                multiline:False
+                            # for decoration
+                            BoxLayout:
+                                size_hint_x:None
+                                width:'30dp'
+                        # space decoration
+                        BoxLayout:
+                            size_hint_y:None
+                            height:'45dp'
+                            Label:
+                                id:productQuantityErrorMessage
+                                text:""
+                                color:(1,0,0,1)
+                        # buttons box section
+                        BoxLayout:
+                            size_hint_y:None
+                            height:'30dp'
+                            # decoration
+                            BoxLayout:
+                                size_hint_x:0.2
+                                height:'30dp'
+                            Button:
+                                text:'Clear'
+                                background_color:(1,0,0,1)
+                                background_normal:''
+                                size_hint_x:None
+                                width:'80dp'
+                                color:(1,1,1,1)
+                                on_press:root.clearButton()
+                            # decoration
+                            BoxLayout:
+                                size_hint_x:0.2
+                            Button:
+                                text:"Add to Card"
+                                background_normal:''
+                                background_color:mainColor
+                                size_hint_x:None
+                                width:'120dp'
+                                color:(1,1,1,1)
+                                on_press:root.addToCart()
+                            # decoration
+                            BoxLayout:
+                                size_hint_x:0.3
+                               
+                        # for decoration
+                        BoxLayout:
+                            size_hint_y:None
+                            height:"25dp"
+
+# ================================UNDO BUTTON SECTION=====================================================
+                        # undo buttons box section
+                        BoxLayout:
+                            size_hint_y:None
+                            height:'30dp'
+                            # FOR DECORATION====================
+                            BoxLayout:
+                                size_hint_x:0.2
+                            Button:
+                                text:"Undo"
+                                background_normal:''
+                                background_color:(0,0,1,0.9)
+                                size_hint_x:None
+                                width:'80dp'
+                                color:(1,1,1,1)
+                                on_press:root.undoButton()
+                            BoxLayout:
+                                size_hint_x:0.2
+                            BoxLayout:
+                                size_hint_x:None
+                                width:'120dp'
+                            BoxLayout:
+                                size_hint_x:0.3
+# ==================================END OF UNDO BUTTON SECTION=====================================================
+
+# ==================================PRODUCTS OUT OF STOCK TITLE SECTION=====================================================
+                        BoxLayout:
+                            size_hint_y:None
+                            height:'50dp'
+                        BoxLayout:
+                            size_hint_y:None
+                            height:'30dp'
+                            Label:
+                                text:"The Products That Are Out or Runing Out of Stock"
+                                color:(0.1,.1,.1,1)
+                                size: self.texture_size
+                                text_size:self.size
+                                halign: 'center'
+# ================================== END OF PRODUCTS OUT OF STOCK TITLE SECTION=====================================================
+
+# ================================== THE LIST OF PRODUCTS THAT ARE OUT OF STOCK SECTION=====================================================
+                        BoxLayout:
+                            orientation:'vertical'
+                            # for list of products
+                            BoxLayout:
+                                orientation:"vertical"
+                                canvas.before:
+                                    Color:
+                                        rgba:(0.96,.96,.96,1)
+                                    Rectangle:
+                                        pos: self.pos
+                                        size: self.size
+                                ProductsOutOfStockRecycleView:
+                                    id:outOfStockRecycleViewId
+                        
+                            
+                            BoxLayout:
+                                size_hint_y:None
+                                height:"20dp"
+                                # for decoration
+                                Label:
+                                    size_hint_x:None
+                                    width:"30dp"
+                                Label:
+                                    text:"Total products out of stock:"
+                                    # bold:True
+                                    color:(1,0,0,1)
+                                    halign:'left'
+                                    size:self.size
+                                    text_size:self.size
+                                Label:
+                                    id:totalProductOfStock
+                                    color:(0.1,.1,.1,1)
+                                    text:""
+                                    size:self.size
+                                    text_size:self.size
+                            # for decoration
+                            BoxLayout:
+                                size_hint_y:None
+                                height:"8dp"
+                            BoxLayout:
+                                size_hint_y:None
+                                height:"20dp"
+                                # for decoration
+                                Label:
+                                    size_hint_x:None
+                                    width:"30dp"
+                                Label:
+                                    text:"Runing out total :"
+                                    # bold:True
+                                    color:(0,0.5,0,1)
+                                    halign:'left'
+                                    size:self.size
+                                    text_size:self.size
+                                Label:
+                                    id:totalProductRuningOutOfStock
+                                    text:""
+                                    color:(0.1,.1,.1,1)
+                                    size:self.size
+                                    text_size:self.size
+                            # for decoration
+                            BoxLayout:
+                                size_hint_y:None
+                                height:"8dp"
+
+# ================================== END OF THE LIST OF PRODUCTS THAT ARE OUT OF STOCK SECTION=====================================================
+
+
+
+
+# ==================================THR BILL  SECTION=====================================================
+
+
+                        # BoxLayout:
                     # right boxlayout
                     BoxLayout:
+                        orientation:'vertical'
                         canvas.before:
                             Color:
                                 rgba: lineColor
@@ -184,13 +433,141 @@
                                 width: 1
                                 rectangle: self.x, self.y, self.width, self.height
 
+                        # for decoration
+                        BoxLayout:
+                            size_hint_y:None
+                            height:"20dp"
+                        # Bill title
+                        CustomTitleLable:
+                            text:'Billing Area'
+                        # for decoration
+                        BoxLayout:
+                            size_hint_y:None
+                            height:"19dp"
+                        BoxLayout:
+                            orientation:'vertical'
+                            padding: ('10dp', '10dp', '10dp', '10dp')
+                            # for creating gap between the left line and the reciept box
+                            BoxLayout:
+                                orientation:'vertical'
+                                canvas.before:
+                                    Color:
+                                        rgba:mainColor
+                                    Rectangle:
+                                        pos:self.pos
+                                        size: self.size
+                                padding: ('1dp', '1dp', '1dp', '1dp')
+                                size_hint_y:0.6
+                                # where the products to be billed is inserted
+                                TextInput:
+                                    id:billTextId
+                                    text:''
+                                    background_normal:''
+                                    background_color:(0.98,.98,.98,1)
+                                    background_active:''
+                                    readonly:True
+                                    cursor_width:'0dp'
+                                    # text_size:self.size
+                                    halign:'auto'
+                                    font_family:"Times New Roman"
+                                BoxLayout:
+                                    orientation:'horizontal'
+                                    size_hint_y:None
+                                    height: "30dp"
+                                    canvas.before:
+                                        Color:
+                                            rgba:(1,1,1,1)
+                                        Rectangle:
+                                            pos:self.pos
+                                            size: self.size
+                                    Label:
+                                        text:' Total Cost Ghc :'
+                                        # text_size:self.size
+                                        # size_hint_x:None
+                                        color:(0.2,.2,.2,1)
+                                        bold:True
+                                    Label:
+                                        id:productTotalPriceId
+                                        text:''
+                                        text_size:self.size
+                                        color:(0.2,.2,1,1)
+                                        valign:"middle"
+                                        bold:True
+                                        
+                                        
+                                    
+                                
+                                
 
+                            # buttons section
+                            BoxLayout:
+                                size_hint_y:0.4
+
+                                BoxLayout:
+                                    orientation:'vertical'
+                                    BoxLayout:
+                                        size_hint_y:None
+                                        height:"19dp"
+                                    # box that contaisn the actual buttons
+                                    BoxLayout:
+                                        size_hint_y:None
+                                        height:'30dp'
+
+                                            
+                                        Label:
+                                            text:'Generate bill:'
+                                            size_hint_x:None
+                                            text_size:self.size
+                                            valign:'center'
+                                            color:(0,0,0,1)
+                                        # for creating space
+                                        Label:
+                                            text:''
+                                            size_hint_x:.2
+                                        Switch:
+                                            id:switchId
+                                            size_hint_x:None
+                                            width:self.width
+
+                                        # for creating space
+                                        Label:
+                                            text:''
+                                            size_hint_x:.2
+                                            # width:'50dp'
+                                        Button:
+                                            text:'finalise'
+                                            size_hint_x:None
+                                            on_press:root.finalizeButton()
+                                            
+                                        BoxLayout:
+
+                                            
+                                    BoxLayout:
+
+
+
+                            
+
+
+# ==================================END OF THE BILL  SECTION=====================================================
 
 
             DailyReportScreen:
                 id:DailyReportScreenId
 
+# ================================== THE STATUS BAR SECTION=====================================================
 
+    # the buttom status bar
+    BoxLayout:
+        canvas.before:
+            Color:
+                rgba:mainColor
+            Rectangle:
+                pos:self.pos
+                size: self.size
+        size_hint_y:None
+        height:"30dp"
+# ================================== END OF THE STATUS BAR SECTION=====================================================
 
 
 # Navigation buttons
@@ -199,119 +576,10 @@
     background_normal: ''  
     background_color:buttonsBackgroundColor
     size_hint_x:None
+
+
+
 # ======================================SCREENS SECTION==========================
-# operator screens
-# <HomeScreen>:
-#     name:'homeScreen'
-#     # Main boxlayout
-#     BoxLayout:
-#         orientation:'horizontal'
-#         # left boxlayout (PRODUCTS SECTION)
-#         BoxLayout:
-#             orientation:'vertical'
-#             canvas.after:
-#                 Color:
-#                     rgba: lineColor
-#                 Line:
-#                     width: 1
-#                     rectangle: self.x, self.y, self.width, self.height
-#             # title
-#             CustomTitleLable:
-#                 text:"Products"
-                
-#             # the product search box and button boxlayout
-#             BoxLayout:
-#                 size_hint_y:None
-#                 height:"30dp"
-#                 # box for layout perpose
-#                 BoxLayout:
-#                     size_hint_x:0.2
-#                 # search text field
-#                 CustomTextInputBox:
-#                     id:searchTextId
-#                     size_hint_x:0.6
-
-#                 # box for layout perpose
-#                 BoxLayout:
-#                     size_hint_x:None
-#                     width:"20dp"
-
-#                 # search button
-#                 Button:
-#                     size_hint_x:None
-#                     width:"70dp"
-#                     text:"search"
-#                     color:searchButtonTextColor
-#                 # box for layout perpose
-#                 BoxLayout:
-#                     size_hint_x:0.2
-
-
-#             # boxlayout for the product to be displayed when we search them
-#             BoxLayout:
-#                 orientation:"vertical"
-#                 # prodducts lables
-#                 # box for layout to creat space between the searchbox,button and the product lables
-#                 BoxLayout:
-#                     size_hint_y:None
-#                     height:"25dp"
-#                 BoxLayout:
-#                     size_hint_y:None
-#                     height:"30dp"
-#                     # box for layout perpose
-#                     BoxLayout:
-#                         size_hint_x:0.3
-#                     # the name of the product lable
-#                     Label:
-#                         text:" Id and Name"
-#                         color:productsTitleLablesColor
-                        
-#                     # the quantity of the product in stock lable
-#                     # Label:
-#                     #     text:"Qt"
-#                     #     color:productsTitleLablesColor
-#                     # box for layout perpose
-#                     BoxLayout:
-#                         size_hint_x:0.3
-                
-#                 # this is the boxlayout where the products details are inserted
-#                 BoxLayout:
-#                     canvas.before:
-#                         Color:
-#                             rgba:operationWindowBackgroundColor
-#                         Rectangle:
-#                             pos:self.pos
-#                             size: self.size
-#                     # box for layout perpose
-#                     BoxLayout:
-#                         size_hint_x:0.3
-
-#                     ProductsRecycleView:
-#                         id:recycle_view_id
-
-#                     # box for layout perpose
-#                     BoxLayout:
-#                         size_hint_x:0.3
-                        
-
-#         # middle boxlayout
-#         BoxLayout:
-#             canvas.after:
-#                 Color:
-#                     rgba: lineColor
-#                 Line:
-#                     width: 1
-#                     rectangle: self.x, self.y, self.width, self.height
-#         # right boxlayout
-#         BoxLayout:
-#             canvas.before:
-#                 Color:
-#                     rgba: lineColor
-#                 Line:
-#                     width: 1
-#                     rectangle: self.x, self.y, self.width, self.height
-
-
 
 <DailyReportScreen>:
     name:'DailyReportScreen'
@@ -327,6 +595,10 @@
     height:"50dp"
     font_size:'20sp'
     bold:True
+<CustomBoxLayout@BoxLayout>:
+<QuantityTextInput@TextInput>:
+<NameLabel@Label>:
+<PriceLabel@Label>:
 
 <CustomTextInputBox@TextInput>:
 #  changing the border color of the textinput field
@@ -371,3 +643,20 @@
             size: self.size
     color:productListTextColor
 <SelectableRecycleBoxLayout>:
+
+#===============================PRODUCT OUT OF STOCK RECYCLEVIEW==================================
+<ProductsOutOfStockRecycleView@RecycleView>:
+    viewclass:'MarkupCustomLable'
+    bar_width:dp(10)
+    bar_color:[.5,.5,.5,1]
+    bar_inactive_color:[.7,.7,.7,1]
+    RecycleBoxLayout:
+        default_size:None,dp(40)
+        default_size_hint:1,None
+        size_hint_y:None
+        height:self.minimum_height
+        orientation:'vertical'
+        multiselect:False
+        touch_multiselect:False
+<MarkupCustomLable@Label>:
+    markup:True
