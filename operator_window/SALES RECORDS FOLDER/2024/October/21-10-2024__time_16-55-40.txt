@@ -1,0 +1,9 @@
+ 
+	GRB Enterprice
+	tell:0857684958494
+	location: navrongo
+	
+	Product		Price		Qt             
+	-----------------------------------
+	phone		705.0		1
+		 Total Cost Ghc : :1415.0

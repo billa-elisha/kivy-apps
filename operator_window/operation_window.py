@@ -10,7 +10,10 @@ from kivy.uix.label import Label
 from kivy.uix.behaviors import FocusBehavior
 from kivy.uix.recycleview.layout import LayoutSelectionBehavior
 from kivy.uix.textinput import TextInput
-from datetime import date
+from datetime import date,datetime
+import win32api,win32print
+import time
+
 import os
 
 
@@ -143,6 +146,9 @@ class OperationWindow(BoxLayout):
         # print(self.getProductRuningOutOfStock())
         self.populateProductOutOfStockView()
         self.generateBill()
+
+        # initializing the switch button to be active
+        self.ids.switchId.active=True
    
         self.searchProductsButtonFunction()
     def searchProductsButtonFunction(self,*args, **kwargs):
@@ -277,7 +283,7 @@ class OperationWindow(BoxLayout):
 \ttell:0857684958494
 \tlocation: navrongo
 \t
-\tProduct       Price        Qt             
+\tProduct\t\tPrice\t\tQt             
 \t-----------------------------------'''
             # using indexing to get each product and edit it
             for productIndex in range(7,len(pList)):
@@ -383,79 +389,99 @@ class OperationWindow(BoxLayout):
         # print(self.ids.billTextId.text)
 
     def finalizeButton(self):
+        self.ids.folderCreationError.text=''
         isGenerateBill= self.ids.switchId.active
-        if isGenerateBill==True or str(isGenerateBill)== 1:
-            # create a folder that contain todays date and save a .doc file contianing the sales of that day
-            
+        
+        # create a folder that contain todays date and save a .doc file contianing the sales of that day
+        try:
+            # making the main directory for the sales
+            os.mkdir(f"SALES RECORDS FOLDER")
+
+        except FileExistsError:
+            print("The SALES RECORD FOLDER is already present, os am trying to creat the year folder")
+            # making a sub directory for each year
             try:
-                # making the main directory for the sales
-                os.mkdir(f"SALES RECORDS FOLDER")
-
+                today= date.today()
+                year = today.strftime('%Y')
+                os.mkdir(F'SALES RECORDS FOLDER/{year}')
+                print("the year folder is creates successfully")
+                
             except FileExistsError:
-                print("The SALES RECORD FOLDER is already present, os am trying to creat the year folder")
-                # making a sub directory for each year
+                print(f"Directory {year} already exists so am creating a directory for the month")
+                # if the year directory exist the create a directory for each month
                 try:
-                    today= date.today()
-                    year = today.strftime('%Y')
-                    os.mkdir(F'SALES RECORDS FOLDER/{year}')
-                    print("the year folder is creates successfully")
-                    
+                    todaysMonth= date.today()
+                    month = todaysMonth.strftime("%B")
+                    os.mkdir(f"SALES RECORDS FOLDER/{year}/{month}")
+                    print(f'this year exist')
                 except FileExistsError:
-                    print(f"Directory {year} already exists so am creating a directory for the month")
-                    # if the year directory exist the create a directory for each month
+                    # if month folder exist then save the file in it
                     try:
-                        todaysMonth= date.today()
-                        month = todaysMonth.strftime("%B")
-                        os.mkdir(f"SALES RECORDS FOLDER/{year}/{month}")
-                        print(f'this year exist')
-                    except FileExistsError:
-                        # if month folder exist then save the file in it
-                        pathToSaveFile = f"SALES RECORDS FOLDER/{year}/{month}/"
-                        dayOfOperation= date.today()
-                        nameOfFile = dayOfOperation.strftime("%b-%d-%Y")
-                        file = open(f"{pathToSaveFile}/{nameOfFile}.doc",'w+')
-                        file.write(self.ids.billTextId.text)
-                        pass
-                    except PermissionError:
-                        print(f"Permission denied: Unable to create .")
-                    except Exception as e:
-                        print(f"An error occurred: {e}")
+                        pathToSaveFile = f"SALES RECORDS FOLDER/{year}/{month}"
+                        dayOfOperation= datetime.now()
+                        nameOfFile = dayOfOperation.strftime("%d-%m-%Y__time_%H-%M-%S")
 
+                        filepath =f"{pathToSaveFile}/{nameOfFile}.txt"
+                        file = open(filepath,'w+')
+                        file.write(f'{self.ids.billTextId.text}\n\n\t{self.ids.costLableId.text} {self.ids.productTotalPriceId.text}')
+                        file.close()
 
+                        #this is where the printing of the document is done
+                        try:
+                            if isGenerateBill==True or str(isGenerateBill)== 1:
+                                path =os.getcwd() # this is the path to the current location
+                                # getting the file
+                                filelocation= path +f'\{filepath}'
+
+                                # start printing
+                                self.ids.productTotalPriceId.text='0.00'
+                                win32api.ShellExecute(0,'print',filelocation,None,'.',0)
+                            else:
+                                self.ids.productTotalPriceId.text='0.00'
+                                
+
+                        except Exception as e:
+                            print(e)
+                            self.ids.folderCreationError.text=f"An error occurred in printing file "
+
+                    except:
+                        self.ids.folderCreationError.text=f"An error occurred in creating document file "
+
+                    
                 except PermissionError:
-                    print(f"Permission denied: Unable to create .")
+                    self.ids.folderCreationError.text=f"Your Operation System as denied you a pemission to create a '{month} folder' ."
+                    
                 except Exception as e:
-                    print(f"An error occurred: {e}")
-
-
+                    self.ids.folderCreationError.text=f"An error occurred in creating '{month} folder "
 
 
 
             except PermissionError:
-                print(f"Permission denied: Unable to create SALES RECORDS FOLDER.")
+                self.ids.folderCreationError.text=f"Your Operation System as denied you a pemission to create a 'SALES RECORDS FOLDER' ."
+
             except Exception as e:
-                print(f"An error occurred in creating SALES RECORDS FOLDER ")
-            # year = datetime.date.day.
-            # print(year)
-            # todaysFile= open(f'{month}.doc','+w')
-            # todaysFile.write(self.ids.billTextId.text)
-            # todaysFile.close()
+                self.ids.folderCreationError.text=f"An error occurred in creating SALES RECORDS FOLDER "
+
+
+        except PermissionError:
+            self.ids.folderCreationError.text=f"Your Operation System as denied you a pemission to create a SALES RECORDS FOLDER ."
             
-            print(self.ids.billTextId.text)
-                
-            billupdate = f''' 
+        except Exception as e:
+
+            self.ids.folderCreationError.text=f"An error occurred in creating SALES RECORDS FOLDER "
+        
+            
+        billupdate = f''' 
 \tGRB Enterprice
 \ttell:0857684958494
 \tlocation: navrongo
 \t
 \tProduct\t\tPrice\t\tQt             
 \t-----------------------------------'''
-            self.ids.billTextId.text=billupdate
-        else:
-            print('bill not generates')
-        print(self.ids.switchId.active)
+        self.ids.billTextId.text=billupdate
 
-   
+    
+
     
 
 # INSTANCE OF THE MAIN APP

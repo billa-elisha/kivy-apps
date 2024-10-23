@@ -481,6 +481,7 @@
                                             pos:self.pos
                                             size: self.size
                                     Label:
+                                        id: costLableId
                                         text:' Total Cost Ghc :'
                                         # text_size:self.size
                                         # size_hint_x:None
@@ -543,6 +544,12 @@
 
                                             
                                     BoxLayout:
+                                        Label:
+                                            id:folderCreationError
+                                            text:""
+                                            color:(1,0,0,1)
+                                            text_size:self.size
+                                            valign:'center'
 
 
 

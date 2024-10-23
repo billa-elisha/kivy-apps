@@ -5,5 +5,5 @@
 	
 	Product		Price		Qt             
 	-----------------------------------
-	phone		705.0		1
-	laptops		8905.0		1
+	HP LAPTOP		8.0		1
+	DELL		8.0		1

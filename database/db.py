@@ -13,6 +13,7 @@ class CreateDb:
 
     def __init__(self):
         self.productsTable()
+        self.categoriesTable()
         self.isDatabaseAreadyCreated = self.isDatabasePresent()
         if self.isDatabaseAreadyCreated == "dataBaseIsPresent":
             pass
@@ -75,7 +76,7 @@ class CreateDb:
         quary = ('''CREATE TABLE IF NOT EXISTS users(
                  user_id INT AUTO_INCREMENT PRIMARY KEY, 
                  name VARCHAR (200) NOT NULL, 
-                 email VARCHAR (200) NOT NULL, 
+                 email VARCHAR (200), 
                  password VARCHAR (200) NOT NULL,
                  designation VARCHAR (200) NOT NULL);''')
         mycursor.execute(quary)
@@ -95,7 +96,21 @@ class CreateDb:
                  product_cost_price FLOAT NOT NULL,
                  product_selling_price FLOAT NOT NULL,
                  product_quantity INT NOT NULL,
-                 product_category VARCHAR (200) NOT NULL);''')
+                 product_category VARCHAR (200));''')
+        mycursor.execute(quary)
+        mydb.close()
+
+    # creating the categories table
+    def categoriesTable(self):
+        """This function is use to create the categories table
+        and it is called in the init method
+        """
+        connection =self.dbConnection()
+        mydb =connection[0]
+        mycursor = mydb.cursor()
+        quary = ('''CREATE TABLE IF NOT EXISTS categories(
+                 cat_id INT AUTO_INCREMENT PRIMARY KEY, 
+                 category_name VARCHAR (200));''')
         mycursor.execute(quary)
         mydb.close()
 

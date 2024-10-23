@@ -1,0 +1,11 @@
+ 
+	GRB Enterprice
+	tell:0857684958494
+	location: navrongo
+	
+	Product		Price		Qt             
+	-----------------------------------
+	cocke		8.0		1
+	cocke		8.0		1
+
+	 Total Cost Ghc :8953.0

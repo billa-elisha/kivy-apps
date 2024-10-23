@@ -1,0 +1,11 @@
+ 
+	GRB Enterprice
+	tell:0857684958494
+	location: navrongo
+	
+	Product		Price		Qt             
+	-----------------------------------
+	laptops		8905.0		1
+	cocke		8.0		1
+
+	 Total Cost Ghc :8937.0

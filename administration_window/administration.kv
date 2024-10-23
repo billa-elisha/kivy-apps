@@ -1,0 +1,294 @@
+
+# =====================================CUSTOM WIDGETS FOR THE SCREENS=====================
+<CustomTitleLable@Label>:
+    color: textTitleColor
+    size_hint_y:None
+    height:"50dp"
+    font_size:'20sp'
+    bold:True
+# Navigation buttons
+<CustomNavigationButton@Button>:
+    color:lineColor
+    background_normal: ''  
+    background_color:buttonsBackgroundColor
+    size_hint_x:None
+# Screens and their manager
+<AdminScreenManager>:
+<HomeScreen>:
+<ProductsScreen>:
+<AnalysisScreen>:
+<UserScreen>:
+
+<CustomTitleLable@Label>:
+    color: textTitleColor
+    size_hint_y:None
+    height:"50dp"
+    font_size:'20sp'
+    bold:True
+
+<CategoryRecycleView>:
+    viewclass:'RecycleLable'
+    bar_width:dp(10)
+    bar_color:[.5,.5,.5,1]
+    bar_inactive_color:[.7,.7,.7,1]
+    RecycleBoxLayout:
+        default_size:None,dp(56)
+        default_size_hint:1,None
+        size_hint_y:None
+        height:self.minimum_height
+        orientation:'vertical'
+        multiselect:False
+        touch_multiselect:False
+<RecycleLable@Label>:
+    color:productListTextColor
+
+<CustomTextInputBox@TextInput>:
+#  changing the border color of the textinput field
+    canvas.after:
+        Color:
+            rgba: customTextInputBoxBorderColor#(254/255, 153/255, 0,1)
+        Line:
+            width: 1
+            rectangle: self.x, self.y, self.width, self.height
+    background_normal:''
+    background_active:''
+    foreground_color: (0.2, 0.2, 0.2, 1)
+    multiline:False
+    font_family: 'Roboto'
+    cursor_color:(0.2, 0.2, 0.2, 1)
+    cursor_width:"2sp"
+    size_hint_y:None
+    height:"30dp"
+
+
+
+
+
+# ===========================THE ROOT WINDOW=========================
+<AdministrationPage>:
+    # color variables with their default values set
+    
+    # =>#:set name value
+    #:set mainColor (.06,.45,.45,1)#(254/255, 153/255, 0,1)
+    #:set lineColor (.06,.45,.45,1)#(254/255, 153/255, 0,1)
+    #:set buttonsBackgroundColor [1,1,1,1]
+    #:set operationWindowBackgroundColor (1,1,1,1)
+    #:set productsTitleLablesColor (.06,.45,.45,1)#(254/255, 153/255, 0,1)
+    #:set productListTextColor (0.1, 0.1, 0.1, 1)
+    #:set customTextInputBoxBorderColor (.06,.45,.45,1)
+    #:set productSelectedBackgroundColor (.06,.45,.45,.5)
+    #:set textTitleColor [0.1,0.1,0.1,1]
+    #:set searchButtonTextColor (0.2,.2,.2,1)
+    # variables that are refrence from the python file
+    # categorylistId:categorylistId
+
+    orientation: 'vertical'
+    canvas.before:
+        Color:
+            rgba:operationWindowBackgroundColor
+        Rectangle:
+            pos:self.pos
+            size: self.size
+    
+    # the to title bar
+    BoxLayout:
+        canvas.before:
+            Color:
+                rgba:mainColor
+            Rectangle:
+                pos:self.pos
+                size: self.size
+        size_hint_y:None
+        height:"35dp"
+        Label:
+            text:"BE.RMS"
+    #the navigation bar
+    BoxLayout:
+        orientation:'horizontal'
+        # designing the border colors
+        canvas.after:
+            Color:
+                rgba: lineColor
+            Line:
+                width: 1
+                rectangle: self.x, self.y, self.width, self.height
+        size_hint_y:None
+        height:"35dp"
+        # home lable
+        CustomNavigationButton:
+            text: 'Home'
+            on_press: root.changeToHomePage()
+        # products button
+        CustomNavigationButton:
+            text: 'Products'
+            on_press: root.changeToProductsPage()
+        # analysis button
+        CustomNavigationButton:
+            text: 'Analysis'
+            on_press: root.changeToAnalysisPage()
+        # users button
+        CustomNavigationButton:
+            text: 'Users'
+            on_press: root.changeToUsersPage()
+
+    # ======================THE MAIN CONTENT PAGE========================
+    AdminScreenManager:
+        id:adminScreenManagerId
+
+# ===================Home screen section=========================
+        # first screen
+        HomeScreen:
+            name:'homeScreen'
+            id:homeScreenId
+            BoxLayout:
+                orientation:'horizontal'
+                # left box
+                BoxLayout:
+                    orientation:'vertical'
+                    size_hint_x:0.3
+                    canvas.after:
+                        Color:
+                            rgba: lineColor
+                        Line:
+                            width: 1
+                            rectangle: self.x, self.y, self.width, self.height
+                    CustomTitleLable:
+                        text:'Products Categories'
+                    # box for the products list
+                    BoxLayout:
+                        orientation:'vertical'
+                        canvas.before:
+                            Color:
+                                rgba:(0.96,.96,.96,1)
+                            Rectangle:
+                                pos: self.pos
+                                size: self.size
+
+                        CategoryRecycleView:
+                            id:categorylistId
+                    # for spacing
+                    BoxLayout:
+                        size_hint_y:None
+                        height:'30dp'
+                            
+                    # where the id of the category is enterered
+                    BoxLayout:
+                        size_hint_y:None
+                        height:'30dp'
+                        # for spacing
+                        BoxLayout:
+                            size_hint_x:0.1
+                        Label:
+                            text:'Enter category No_ to update or Delete'
+                            color:(0,0,0,1)
+                            text_size:self.size
+                            valign:'center'
+                        TextInput:
+                            id:productToDeletOrUpdate
+                            size_hint_x:None
+                            width:'50dp'
+                        BoxLayout:
+                            size_hint_x:0.2
+                            
+                    # adding products box section
+                    BoxLayout:
+                        orientation:'vertical'
+                        BoxLayout:
+                            size_hint_y:None
+                            height:'50dp'
+                            # for spacinging
+                            BoxLayout:
+                                size_hint_x:.3
+                            CustomTextInputBox:
+                                id:categoryTextId
+                            # for spacinging
+                            BoxLayout:
+                                size_hint_x:.3
+                        # buttons section
+                        BoxLayout:
+                            orientation:'vertical'
+                            # for spacing
+                            BoxLayout:
+                                size_hint_y:None
+                                height:'30dp'
+                            BoxLayout:
+                                size_hint_y:None
+                                height:'30dp'
+                                spacing: '20dp'
+                                BoxLayout:
+                                    size_hint_x:0.2
+                                Button:
+                                    text:'add'
+                                    background_normal:''
+                                    background_color:mainColor
+                                    color:(1,1,1,1)
+                                    on_press:root.addCategory()
+                                Button:
+                                    text:'update'
+                                    background_normal:''
+                                    background_color:(0,0,1,0.9)
+                                    color:(1,1,1,1)
+                                    on_press:root.updateCategory()
+                                Button:
+                                    text:'delete'
+                                    background_color:(1,0,0,1)
+                                    background_normal:''
+                                    color:(1,1,1,1)
+                                    on_press:root.deleteCategory()
+                                BoxLayout:
+                                    size_hint_x:0.2
+                            BoxLayout:
+                                # LABLE for error messages
+                                Label:
+                                    id:errorMessagesId
+                                    text:''
+                                    color:(1,0,0,1)
+                                    text_size:self.size
+                                    valign:'center'
+                                    halign:'center'
+
+
+                        
+                    
+
+
+                # right box
+                BoxLayout:
+                    size_hint_x:0.7
+                    canvas.after:
+                        Color:
+                            rgba: lineColor
+                        Line:
+                            width: 1
+                            rectangle: self.x, self.y, self.width, self.height
+        # SECOND SCREEN
+        ProductsScreen:
+            name:'productsScreen'
+            id:productsScreenId
+            Label:
+                text:'products' 
+                color:(0,0,0,1) 
+        # THIRD SCREEN
+        AnalysisScreen:
+            name:'analysisScreen'
+            id:analysisScreenId
+            Label:
+                text:'analysis' 
+                color:(0,0,0,1)
+        # USERS SCREEN
+        UsersScreen:
+            name:'usersScreen'
+            id:usersScreenId
+            Label:
+                text:'users' 
+                color:(0,0,0,1)               
+    # the buttom status bar
+    BoxLayout:
+        canvas.before:
+            Color:
+                rgba:mainColor
+            Rectangle:
+                pos:self.pos
+                size: self.size
+        size_hint_y:None
+        height:"30dp"

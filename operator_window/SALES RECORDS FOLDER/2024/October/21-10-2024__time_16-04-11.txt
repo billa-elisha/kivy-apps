@@ -1,0 +1,10 @@
+ 
+	GRB Enterprice
+	tell:0857684958494
+	location: navrongo
+	
+	Product		Price		Qt             
+	-----------------------------------
+	phone		705.0		1
+	laptops		8905.0		1
+	cocke		8.0		1
