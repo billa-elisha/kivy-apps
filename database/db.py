@@ -13,7 +13,8 @@ class CreateDb:
 
     def __init__(self):
         self.productsTable()
-        self.categoriesTable()
+        # self.categoriesTable()
+        self.companyDetailsTable()
         self.isDatabaseAreadyCreated = self.isDatabasePresent()
         if self.isDatabaseAreadyCreated == "dataBaseIsPresent":
             pass
@@ -91,27 +92,45 @@ class CreateDb:
         mycursor = mydb.cursor()
         quary = ('''CREATE TABLE IF NOT EXISTS products(
                  product_id INT AUTO_INCREMENT PRIMARY KEY, 
-                 product_bar_code VARCHAR (200) NOT NULL, 
+                 product_bar_code VARCHAR (200), 
                  product_name VARCHAR (200) NOT NULL, 
                  product_cost_price FLOAT NOT NULL,
                  product_selling_price FLOAT NOT NULL,
-                 product_quantity INT NOT NULL,
-                 product_category VARCHAR (200));''')
+                 product_quantity INT NOT NULL
+                );''')
         mycursor.execute(quary)
         mydb.close()
 
     # creating the categories table
-    def categoriesTable(self):
-        """This function is use to create the categories table
+    # def categoriesTable(self):
+    #     """This function is use to create the categories table
+    #     and it is called in the init method
+    #     """
+    #     connection =self.dbConnection()
+    #     mydb =connection[0]
+    #     mycursor = mydb.cursor()
+    #     quary = ('''CREATE TABLE IF NOT EXISTS categories(
+    #              cat_id INT AUTO_INCREMENT PRIMARY KEY, 
+    #              category_name VARCHAR (200));''')
+    #     mycursor.execute(quary)
+    #     mydb.close()
+
+    def companyDetailsTable(self):
+        """This function is use to create the company details table
         and it is called in the init method
         """
         connection =self.dbConnection()
         mydb =connection[0]
         mycursor = mydb.cursor()
-        quary = ('''CREATE TABLE IF NOT EXISTS categories(
-                 cat_id INT AUTO_INCREMENT PRIMARY KEY, 
-                 category_name VARCHAR (200));''')
+        quary = ('''CREATE TABLE IF NOT EXISTS company(
+                 company_id INT AUTO_INCREMENT PRIMARY KEY, 
+                 company_name VARCHAR (200),
+                 company_tell VARCHAR (200),
+                 company_location VARCHAR (200));''')
+        company = 'insert into company values(company_id,"Enter Company Name","9999999","Enter Company Location")'
         mycursor.execute(quary)
+        mycursor.execute(company)
+        mydb.commit()
         mydb.close()
 
 CreateDb()

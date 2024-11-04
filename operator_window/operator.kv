@@ -16,6 +16,7 @@
     #:set productSelectedBackgroundColor (.06,.45,.45,.5)
     #:set textTitleColor [0.1,0.1,0.1,1]
     #:set searchButtonTextColor (0.2,.2,.2,1)
+    #:set errorMessageColor (1,0,0,1)
 
     orientation:'vertical'
     canvas.before:
@@ -67,10 +68,6 @@
         orientation:'horizontal'
         OperatorScreenManager:
             id:OperatorScreenManagerId
-            # # screens
-            # HomeScreen: 
-            #     id:homeScreenId
-
             HomeScreen:
                 id:homeScreenId
                 name:'homeScreen'
@@ -272,7 +269,7 @@
                             Label:
                                 id:productQuantityErrorMessage
                                 text:""
-                                color:(1,0,0,1)
+                                color:errorMessageColor
                         # buttons box section
                         BoxLayout:
                             size_hint_y:None
@@ -547,9 +544,10 @@
                                         Label:
                                             id:folderCreationError
                                             text:""
-                                            color:(1,0,0,1)
+                                            color:errorMessageColor
                                             text_size:self.size
                                             valign:'center'
+
 
 
 
@@ -632,7 +630,7 @@
     bar_color:[.5,.5,.5,1]
     bar_inactive_color:[.7,.7,.7,1]
     SelectableRecycleBoxLayout:
-        default_size:None,dp(56)
+        default_size:None,dp(40)
         default_size_hint:1,None
         size_hint_y:None
         height:self.minimum_height
@@ -658,7 +656,7 @@
     bar_color:[.5,.5,.5,1]
     bar_inactive_color:[.7,.7,.7,1]
     RecycleBoxLayout:
-        default_size:None,dp(40)
+        default_size:None,dp(30)
         default_size_hint:1,None
         size_hint_y:None
         height:self.minimum_height

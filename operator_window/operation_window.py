@@ -21,9 +21,7 @@ import os
 
         
         
-        # TextInput.keyboard_on_key_down(self, window, keycode, text, modifiers)
-        # return super().keyboard_on_key_down(window, keycode, text, modifiers)
-
+        
 class HomeScreen(Screen):
     '''This is the home screen and we can navigate to'''
     pass
@@ -66,12 +64,8 @@ class SelectableLabel(RecycleDataViewBehavior,Label):
         ''' Respond to selection of items in the view'''
         self.selected = is_selected
         if is_selected:
-            # print('selection change to {0}'.format(rv.data[index]))
             getIdOfSelectedProduct = int(str(rv.data[index]['text'])[0])
-            # print(type(getIdOfSelectedProduct))
-            # print((getIdOfSelectedProduct))
-            # print(rv.data[index])
-            # 
+            
             # print(self.parent.parent.parent.parent.parent.parent.children[1].children[3].children[3].text)#=======================================>
             try:
                 #=====================================================================>is the boxlayout for the whole Homescreen
@@ -92,7 +86,6 @@ class SelectableLabel(RecycleDataViewBehavior,Label):
                 pass
             
         else:
-            # print('selection remove for {0}'.format(rv.data[index]))
             pass
         return super().apply_selection(rv, index, is_selected)
     
@@ -113,7 +106,7 @@ class SelectableLabel(RecycleDataViewBehavior,Label):
                                         database=database
                                         )
             
-            selectProduct = "SELECT product_name,product_cost_price from products WHERE product_id =%s"
+            selectProduct = "SELECT product_name,product_selling_price from products WHERE product_id =%s"
             cursor = mydb.cursor()
             cursor.execute(selectProduct,(id,))
             product = cursor.fetchone()
@@ -137,10 +130,17 @@ class SelectableLabel(RecycleDataViewBehavior,Label):
 
 class OperationWindow(BoxLayout):
     '''THIS IS THE MAIN PAGE OF THE APP'''
+    user ='root'
+    dbpassword = '@#mysql@#'
+    host ='localhost'
+    database = "BE_RETAIL_MANAGEMENT_DATABASE"
     
 
     def __init__(self, **kwargs):
         super(OperationWindow,self).__init__(**kwargs)
+        self.companyName=str(self.fetchCompanyDetails()[1])
+        self.companyTell=str(self.fetchCompanyDetails()[2])
+        self.companyLocation=str(self.fetchCompanyDetails()[3])
 
         
         # print(self.getProductRuningOutOfStock())
@@ -191,10 +191,10 @@ class OperationWindow(BoxLayout):
     
     
     def fetchAllProducts(self,productName):
-        user ='root'
-        dbpassword = '@#mysql@#'
-        host ='localhost'
-        database = "BE_RETAIL_MANAGEMENT_DATABASE"
+        # user ='root'
+        # dbpassword = '@#mysql@#'
+        # host ='localhost'
+        # database = "BE_RETAIL_MANAGEMENT_DATABASE"
     
         self.productName=productName
         '''this function is used to fetch all the products from the database and 
@@ -202,9 +202,9 @@ class OperationWindow(BoxLayout):
         which either based on search or all the products
         '''
         try:
-            mydb = DbConnector.connect(user=user, password=dbpassword,
-                                        host=host,
-                                        database=database
+            mydb = DbConnector.connect(user=self.user, password=self.dbpassword,
+                                        host=self.host,
+                                        database=self.database
                                         )
             # print(self.ids.searchTextId.text,'text from inputxt')
             
@@ -219,11 +219,9 @@ class OperationWindow(BoxLayout):
                 productToSearchName=str(self.productName+'%')
                 selectAllProducts = f" SELECT * FROM products WHERE product_name LIKE '{productToSearchName}';"
                 cursor = mydb.cursor()
-                # print(selectAllProducts)
                 cursor.execute(selectAllProducts)
                 listOfAllProducts = cursor.fetchall()
-                # print("this products is coming because the search box is  not empty")
-                # print(listOfAllProducts)
+                
                 listOfAllProducts[0] #this is use to throw an exception if the there is no name with the product searched
                 return listOfAllProducts
         except Exception as e:
@@ -233,9 +231,9 @@ class OperationWindow(BoxLayout):
             
 
     def addToCart(self):
-        productName=self.ids.productToPurchaseName.text
-        productPrice=self.ids.productToPurchasePrice.text
-        productQuantity=self.ids.productToPurchaseQuantity.text
+        productName=(self.ids.productToPurchaseName.text).strip()
+        productPrice=(self.ids.productToPurchasePrice.text).strip()
+        productQuantity=(self.ids.productToPurchaseQuantity.text).strip()
 
         # making sure that the product quantity is an integer value
         try:
@@ -245,7 +243,6 @@ class OperationWindow(BoxLayout):
             if productName=="No product" or productPrice=="0.00" or productName=='':
                 pass
             else:
-                # print("This id the add to product funtion")
                 self.generateBill()
                 self.clearButton()
         except Exception as e:
@@ -273,15 +270,15 @@ class OperationWindow(BoxLayout):
             pRemovePrice = float(pRemoveListObject[1])
             pRemoveQuantity = float(pRemoveListObject[2])
             pToRemoveTotalCost = float(pRemovePrice * int(pRemoveQuantity))
-            updatedTotalCost= float(self.ids.productTotalPriceId.text)-pToRemoveTotalCost
+            updatedTotalCost= float((self.ids.productTotalPriceId.text).strip())-pToRemoveTotalCost
 
             # removing the last products
             pList.remove(pList[-1])
             # converting the list back to string
             updatedBill = f''' 
-\tGRB Enterprice
-\ttell:0857684958494
-\tlocation: navrongo
+\t{self.companyName}
+\ttell:{self.companyTell}
+\tlocation: {self.companyLocation}
 \t
 \tProduct\t\tPrice\t\tQt             
 \t-----------------------------------'''
@@ -331,28 +328,27 @@ class OperationWindow(BoxLayout):
 
     
     def getProductRuningOutOfStock(self):
-        user ='root'
-        dbpassword = '@#mysql@#'
-        host ='localhost'
-        database = "BE_RETAIL_MANAGEMENT_DATABASE"
+        # user ='root'
+        # dbpassword = '@#mysql@#'
+        # host ='localhost'
+        # database = "BE_RETAIL_MANAGEMENT_DATABASE"
     
         '''this function is used to fetch all the products from the database and 
         insert them into the product window,
         which either based on search or all the products
         '''
         try:
-            mydb = DbConnector.connect(user=user, password=dbpassword,
-                                        host=host,
-                                        database=database
+            mydb = DbConnector.connect(user=self.user, password=self.dbpassword,
+                                        host=self.host,
+                                        database=self.database
                                         )
             
             selectAllProducts = "SELECT product_name,product_quantity from products WHERE product_quantity < 5"
             cursor = mydb.cursor()
             cursor.execute(selectAllProducts)
             listOfAllProducts = cursor.fetchall()
-
             listOfAllProducts[0] #this is use to throw an exception if the there is no name with the product searched
-            # print(listOfAllProducts)
+            
             return listOfAllProducts
         except Exception as e:
             # listOfAllProducts=[(404, '2345', 'No product with that name', 5.0, 6.0, 56, 'vegetables'),]
@@ -361,23 +357,23 @@ class OperationWindow(BoxLayout):
 
             
     def generateBill(self):
-        pName =self.ids.productToPurchaseName.text
-        pAmount =self.ids.productToPurchasePrice.text
-        pQuantity =self.ids.productToPurchaseQuantity.text
+        pName =(self.ids.productToPurchaseName.text).strip()
+        pAmount =(self.ids.productToPurchasePrice.text).strip()
+        pQuantity =(self.ids.productToPurchaseQuantity.text).strip()
 
         productsTotalPrice = '0.00'
         if (str(pName)=='') or (str(pName)=="No product"):
             bill = f''' 
-\tGRB Enterprice
-\ttell:0857684958494
-\tlocation: navrongo
+\t{self.companyName}
+\ttell:{self.companyTell}
+\tlocation: {self.companyLocation}
 \t
 \tProduct\t\tPrice\t\tQt             
 \t-----------------------------------'''
             self.ids.productTotalPriceId.text=productsTotalPrice
             
         else:
-            priviewsTotalCost=float(self.ids.productTotalPriceId.text)
+            priviewsTotalCost=float((self.ids.productTotalPriceId.text).strip())
             newAddedCost =int(float(pAmount))* int(pQuantity)
             productsTotalPrice =f'{priviewsTotalCost+newAddedCost}'
 
@@ -472,16 +468,37 @@ class OperationWindow(BoxLayout):
         
             
         billupdate = f''' 
-\tGRB Enterprice
-\ttell:0857684958494
-\tlocation: navrongo
+\t{self.companyName}
+\ttell:{self.companyTell}
+\tlocation: {self.companyLocation}
 \t
 \tProduct\t\tPrice\t\tQt             
 \t-----------------------------------'''
         self.ids.billTextId.text=billupdate
 
     
-
+    def fetchCompanyDetails(self):
+            # user ='root'
+            # dbpassword = '@#mysql@#'
+            # host ='localhost'
+            # database = "BE_RETAIL_MANAGEMENT_DATABASE"
+        
+            
+            '''this function is used to update a categories give its id,
+            '''
+            try:
+                mydb = DbConnector.connect(user=self.user, password=self.dbpassword,
+                                            host=self.host,
+                                            database=self.database
+                                        )
+                query = "select * from company;"
+                cursor = mydb.cursor()
+                cursor.execute(query)
+                details = cursor.fetchone()
+                mydb.close()
+                return details #(1,name,tell)
+            except Exception as e:
+                pass
     
 
 # INSTANCE OF THE MAIN APP

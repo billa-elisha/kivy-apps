@@ -4,6 +4,13 @@
 
 # the main window
 <LogInWindow>:
+    # initialized variables
+    #:set mainBackgroundColor (244/255,244/255,251/255)#(1,1,1,.95) 
+    #:set primaryColor (.06,.45,.45,1) 
+    #:set errorMessageColor (1,0,0,1) 
+    #:set buttonColor (1/255,15/255,205/255)#(0/255,10/255,131/255) 
+    #:set buttonTextColor (1,1,1)#(0/255,10/255,131/255) 
+
     # variables
     userName: userName
     password:password
@@ -11,14 +18,11 @@
     userNameErrorMessage:userNameErrorMessage
     userPasswordErrorMessage:userPasswordErrorMessage
 
-
-
-
     orientation: 'vertical'
     # changing then background of the whole page to white
     canvas.before:
         Color:
-            rgba:(1,1,1,1)
+            rgba:mainBackgroundColor
         Rectangle:
             pos:self.pos
             size: self.size
@@ -30,7 +34,7 @@
         # The login title
         Label:
             text: 'SIGN IN'
-            color: (254/255, 153/255, 0,1)
+            color: primaryColor
             bold:True
             font_size:'30dp'
 
@@ -40,7 +44,7 @@
         Label:
             id:notAdminErrorMessage
             text:''
-            color:(1,0,0,1)
+            color:errorMessageColor
             pos:('90dp','490dp')
             size_hint:(0.7,0.06)
 
@@ -83,10 +87,11 @@
         Button:
             text: 'Login'
 	        background_normal: ''  
-            background_color: (254/255, 153/255, 0,1)
-            color: (0.2, 0.2, 0.2, 1)
+            background_color: primaryColor
+            color: buttonTextColor#(0.2, 0.2, 0.2, 1)
             size_hint:(0.6,0.08)
             pos:('100dp','270dp')
+            bold:True
             on_press: root.validateLogin(admin.active)
 
 
@@ -96,7 +101,7 @@
 #  changing the border color of the textinput field
     canvas.after:
         Color:
-            rgba: (254/255, 153/255, 0,1)
+            rgba: primaryColor#(254/255, 153/255, 0,1)
         Line:
             width: 1
             rectangle: self.x, self.y, self.width, self.height
@@ -111,6 +116,6 @@
     cursor_width:"2sp"
 
 <CustomErrorMessageLable@Label>:
-    color:(1,0,0,1)
+    color:errorMessageColor
     text_size:self.size
     size_hint:(0.7,0.06)
