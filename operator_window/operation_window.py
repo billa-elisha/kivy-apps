@@ -281,7 +281,7 @@ class OperationWindow(BoxLayout):
 \tlocation: {self.companyLocation}
 \t
 \tProduct\t\tPrice\t\tQt             
-\t-----------------------------------'''
+\t-----------------------------------\t\t'''
             # using indexing to get each product and edit it
             for productIndex in range(7,len(pList)):
                 # converting each string of the products into a list to be able to get access to 
@@ -369,7 +369,7 @@ class OperationWindow(BoxLayout):
 \tlocation: {self.companyLocation}
 \t
 \tProduct\t\tPrice\t\tQt             
-\t-----------------------------------'''
+\t-----------------------------------\t\t'''
             self.ids.productTotalPriceId.text=productsTotalPrice
             
         else:
@@ -473,8 +473,41 @@ class OperationWindow(BoxLayout):
 \tlocation: {self.companyLocation}
 \t
 \tProduct\t\tPrice\t\tQt             
-\t-----------------------------------'''
+\t-----------------------------------\t\t'''
+        
+        # saving the sold product to the sales table
+        # soldProducts = (self.ids.billTextId.text).split('\t\t')
+        secondway = (self.ids.billTextId.text).split('\n')
+        print(secondway)
+        # slicing the products section
+        secondway=secondway[7:]
+        for p in secondway:
+            p.lstrip('\n\t')
+            print(p)
+
+        print(secondway)
+
+
         self.ids.billTextId.text=billupdate
+
+
+        # # saving the sold product to the sales table
+        # productName=(self.ids.productToPurchaseName.text).strip()
+        # productPrice=(self.ids.productToPurchasePrice.text).strip()
+        # productQuantity=(self.ids.productToPurchaseQuantity.text).strip()
+        # try:
+        #     mydb = DbConnector.connect(user=self.user, password=self.dbpassword,
+        #                                 host=self.host,
+        #                                 database=self.database
+        #                                 )
+            
+        #     selectAllProducts = "SELECT product_name,product_quantity from products WHERE product_quantity < 5"
+        #     cursor = mydb.cursor()
+        #     cursor.execute(selectAllProducts)
+        #     listOfAllProducts = cursor.fetchall()
+        #     listOfAllProducts[0] #
+        # except:
+        #     pass
 
     
     def fetchCompanyDetails(self):

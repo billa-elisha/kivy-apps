@@ -15,6 +15,7 @@ class CreateDb:
         self.productsTable()
         # self.categoriesTable()
         self.companyDetailsTable()
+        self.salesTable()
         self.isDatabaseAreadyCreated = self.isDatabasePresent()
         if self.isDatabaseAreadyCreated == "dataBaseIsPresent":
             pass
@@ -131,6 +132,25 @@ class CreateDb:
         mycursor.execute(quary)
         mycursor.execute(company)
         mydb.commit()
+        mydb.close()
+
+    # creating the products sales table
+    def salesTable(self):
+        """This function is use to create the sales table
+        and it is called in the init method
+        """
+        connection =self.dbConnection()
+        mydb =connection[0]
+        mycursor = mydb.cursor()
+        quary = ('''CREATE TABLE IF NOT EXISTS sales(
+                 product_id INT AUTO_INCREMENT PRIMARY KEY, 
+                 product_name VARCHAR (200) NOT NULL, 
+                 quantity_sold INT NOT NULL,
+                 profit_made FLOAT NOT NULL,
+                 date VARCHAR (200) NOT NULL,
+                 month VARCHAR (200) NOT NULL
+                );''')
+        mycursor.execute(quary)
         mydb.close()
 
 CreateDb()

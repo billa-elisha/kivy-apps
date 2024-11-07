@@ -19,33 +19,205 @@ class ProductsScreen(Screen):
     pass
 class UsersScreen(Screen):
     pass
-# class CategoryRecycleView(RecycleView):
-    # def __init__(self, **kwargs):
-    #     super().__init__(**kwargs)
-    #     self.data=[{"text":'Electronics'},{"text":'Vergetables'},{"text":'Fruites'}]
-
-    # pass
 class ProductRecycleView(RecycleView):
     pass
 class UserRecycleView(RecycleView):
     pass
+class DateLableButton(Button):
+    root_widget = ObjectProperty()
 
-# class CategoryDropDownList(DropDown):
-#     pass
+    def on_release(self, **kwargs):
+        super().on_release(**kwargs)
+        self.root_widget.btn_callback(self)
+class DateRecycleView(RecycleView):
+    def __init__(self, **kwargs): 
+        super().__init__(**kwargs)
+        data =self.getAllTheSalesDate()
+        self.data = [{'text': str(buttonText), 'root_widget': self} for buttonText in data]
 
+    def btn_callback(self, btn):
+        reportData = self.parent.parent.children[0].children[0]
+        reportTitle = self.parent.parent.children[0].children[2]
+        profit =self.parent.parent.parent.children[0].children[0]
+
+        # the title of each month or day
+        reportTitle.text=f"[u]{btn.text} Report[/u]"
+
+        # the data for that day of the month
+        buttonText=btn.text
+        dayData=self.getAllTheSalesByDate(buttonText)[0]
+        totalProfit=self.getAllTheSalesByDate(buttonText)[1]
+
+        # data for the text area
+        reportData.data=dayData
+        profit.text=str(totalProfit)
+
+    def getAllTheSalesDate(self):
+        user ='root'
+        dbpassword = '@#mysql@#'
+        host ='localhost'
+        database = "BE_RETAIL_MANAGEMENT_DATABASE"
+
+        '''this function is used to update a categories give its id,
+        '''
+        try:
+            mydb = DbConnector.connect(user=user, password=dbpassword,
+                                        host=host,
+                                        database=database
+                                     )
+            query = "SELECT DISTINCT(date) FROM sales;"
+            cursor = mydb.cursor()
+            cursor.execute(query)
+            dates=cursor.fetchall()
+            listOfDates=[]
+            for date in dates:
+                listOfDates.append(str(date[0]))
+            mydb.close()
+            return listOfDates
+        except Exception as e:
+            print(e)
+            mgs='The is an issue trying to connect to the database to perform delete operation'
+            return
+    
+    def getAllTheSalesByDate(self,date):
+        user ='root'
+        dbpassword = '@#mysql@#'
+        host ='localhost'
+        database = "BE_RETAIL_MANAGEMENT_DATABASE"
+        
+        '''this function is used to update a categories give its id,
+        '''
+        try:
+            mydb = DbConnector.connect(user=user, password=dbpassword,
+                                        host=host,
+                                        database=database
+                                     )
+                
+            query = f"SELECT DISTINCT(product_name) FROM sales WHERE date='{date}';"
+            cursor = mydb.cursor()
+            cursor.execute(query)
+            names = cursor.fetchall()
+            soldProducts=[]
+            totalProfit=0.00
+            for n in names:
+                query2 = f"SELECT SUM(quantity_sold),ROUND(SUM(profit_made),2) FROM sales WHERE date='{date}'and product_name='{n[0]}';"
+                cursor.execute(query2)
+                soldDetails=cursor.fetchall()
+                soldProducts.append({'text':str(n[0])})
+                soldProducts.append({'text':str(soldDetails[0][0])})
+                soldProducts.append({'text':str(soldDetails[0][1])})
+                totalProfit += soldDetails[0][1]
+            mydb.close()
+            return [soldProducts,totalProfit]
+        except Exception as e:
+            print(e)
+            mgs='The is an issue trying to connect to the database to perform delete operation'
+            return
+    
+class MonthLableButton(Button):
+    root_widget = ObjectProperty()
+
+    def on_release(self, **kwargs):
+        super().on_release(**kwargs)
+        self.root_widget.btn_callback(self)
+class MonthRecycleView(RecycleView):
+    def __init__(self, **kwargs): 
+        super().__init__(**kwargs)
+        data =self.getAllTheSalesMonths()
+        self.data = [{'text': str(buttonText), 'root_widget': self} for buttonText in data]
+
+    def btn_callback(self, btn):
+        # # print(btn, btn.text)
+        monthlyReportData = self.parent.parent.children[0].children[0]
+        monthlyReportTitle = self.parent.parent.children[0].children[2]
+        monthlyProfit =self.parent.parent.parent.children[0].children[0]
+
+        # the title of each month
+        monthlyReportTitle.text=f"[u]{btn.text} Report[/u]"
+
+        # the data for that month
+        buttonText=btn.text
+        monthData=self.getAllTheSalesByMonth(buttonText)[0]
+        monthTotalProfit=self.getAllTheSalesByMonth(buttonText)[1]
+        
+        # data for the text area
+        monthlyReportData.data=monthData
+        monthlyProfit.text=str(monthTotalProfit)
+
+    def getAllTheSalesMonths(self):
+        user ='root'
+        dbpassword = '@#mysql@#'
+        host ='localhost'
+        database = "BE_RETAIL_MANAGEMENT_DATABASE"
+
+        '''this function is used to update a categories give its id,
+        '''
+        try:
+            mydb = DbConnector.connect(user=user, password=dbpassword,
+                                        host=host,
+                                        database=database
+                                     )
+            query = "SELECT DISTINCT(month) FROM sales;"
+            cursor = mydb.cursor()
+            cursor.execute(query)
+            months=cursor.fetchall()
+            listOfMonths=[]
+            for date in months:
+                listOfMonths.append(str(date[0]))
+            mydb.close()
+            return listOfMonths
+        except Exception as e:
+            print(e)
+            mgs='The is an issue trying to connect to the database to perform delete operation'
+            return
+    
+    def getAllTheSalesByMonth(self,month):
+        user ='root'
+        dbpassword = '@#mysql@#'
+        host ='localhost'
+        database = "BE_RETAIL_MANAGEMENT_DATABASE"
+        
+        '''this function is used to update a categories give its id,
+        '''
+        try:
+            mydb = DbConnector.connect(user=user, password=dbpassword,
+                                        host=host,
+                                        database=database
+                                     )
+                
+            query = f"SELECT DISTINCT(product_name) FROM sales WHERE month='{month}';"
+            cursor = mydb.cursor()
+            cursor.execute(query)
+            names = cursor.fetchall()
+            monthlysoldProducts=[]
+            totalMonthlyProfit=0.00
+           
+            for n in names:
+                query3 = f"SELECT SUM(quantity_sold),ROUND(SUM(profit_made),2) FROM sales WHERE month='{month}'and product_name='{n[0]}';"
+                cursor.execute(query3)
+                soldDetails=cursor.fetchall()
+                monthlysoldProducts.append({'text':str(n[0])})
+                monthlysoldProducts.append({'text':str(soldDetails[0][0])})
+                monthlysoldProducts.append({'text':str(soldDetails[0][1])})
+                totalMonthlyProfit += soldDetails[0][1]
+                
+            mydb.close()
+            return [monthlysoldProducts,totalMonthlyProfit]
+        
+        except Exception as e:
+            print(e)
+            mgs='The is an issue trying to connect to the database to perform delete operation'
+            return
+    
 
 
 
 class AdministrationPage(BoxLayout):
     def __init__(self, **kwargs):
         super(AdministrationPage,self).__init__(**kwargs)
-        # self.ids.errorMessagesId.text=''
+        
         self.fetchAllProducts()
         self.fetchAllUsers()
-
-                
-
-
 
         # calling functions
         self.populateCategoryRecycleView()
@@ -68,7 +240,7 @@ class AdministrationPage(BoxLayout):
             self.ids.companyNameId.text=''
             self.ids.companyTellId.text=''
             
-
+    
     def changeToHomePage(self):
         '''
         change to the home window page function
@@ -120,6 +292,7 @@ class AdministrationPage(BoxLayout):
         daily report button is clicked
         '''
         self.ids.usersScreenId.manager.transition.direction='left'
+
 
     def populateCategoryRecycleView(self):
         user ='root'
@@ -475,7 +648,6 @@ class AdministrationPage(BoxLayout):
                 cursor = mydb.cursor()
                 cursor.execute(query,(productId,))
                 result= cursor.fetchone()
-                # print(result)
                 self.ids.productCodeId.text=str(result[1])
                 self.ids.productNameId.text=str(result[2])
                 self.ids.productQuantityId.text=str(result[5])
@@ -484,7 +656,6 @@ class AdministrationPage(BoxLayout):
             except:
                 self.ids.productIdEmptyErrorMessageId.text=f'No product with id ="{productId}"'
 
-            
         except:
             self.ids.productsEntryErrorsId.text='The is an issue trying to connect to the database in order to search the product'
 
@@ -1016,7 +1187,7 @@ class AdministrationPage(BoxLayout):
             self.ids.usersEntryErrorsId.text='The is an issue trying to connect to the database to perform delete operation'
             return
         
-
+    
 class AdministrationApp(App):
     def build(self):
         return AdministrationPage()

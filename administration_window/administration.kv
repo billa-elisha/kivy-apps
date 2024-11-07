@@ -105,6 +105,96 @@
     background_normal:''
 
 
+<DateRecycleView>:
+    viewclass:'DateLableButton'
+    bar_width:dp(10)
+    bar_color:[.5,.5,.5,1]
+    bar_inactive_color:[.7,.7,.7,1]
+    
+    RecycleGridLayout:
+        cols:1
+        spacing:'3dp'
+        default_size:None,dp(30)
+        default_size_hint:1,None
+        size_hint_y:None
+        height:self.minimum_height
+        orientation:'lr-tb'
+        multiselect:False
+        touch_multiselect:False
+<DateLableButton>:
+    color:(.2,.2,.2,1)
+    background_color:(0.9,0.9,0.9,1)
+    background_normal:''
+
+<ReportTitleLabel@Label>:
+    color:mainColor
+    bold:True
+    font_size:'20sp'
+
+<ReportDataView@RecycleView>:
+    viewclass:'ReportdataLable'
+    bar_width:dp(10)
+    bar_color:[.5,.5,.5,1]
+    bar_inactive_color:[.7,.7,.7,1]
+    
+    RecycleGridLayout:
+        cols:3
+        spacing:'3dp'
+        default_size:None,dp(30)
+        default_size_hint:1,None
+        size_hint_y:None
+        height:self.minimum_height
+        orientation:'lr-tb'
+        multiselect:False
+        touch_multiselect:False
+<ReportdataLable@Label>:
+    color:(0,.2,.2,1)
+    
+<MonthRecycleView>:
+    viewclass:'MonthLableButton'
+    bar_width:dp(10)
+    bar_color:[.5,.5,.5,1]
+    bar_inactive_color:[.7,.7,.7,1]
+    
+    RecycleGridLayout:
+        cols:1
+        spacing:'3dp'
+        default_size:None,dp(30)
+        default_size_hint:1,None
+        size_hint_y:None
+        height:self.minimum_height
+        orientation:'lr-tb'
+        multiselect:False
+        touch_multiselect:False
+<MonthLableButton>:
+    color:(.2,.2,.2,1)
+    background_color:(0.9,0.9,0.9,1)
+    background_normal:''
+
+<MonthlyReportRecycleView@RecycleView>:
+    viewclass:'MonthReportLable'
+    bar_width:dp(10)
+    bar_color:[.5,.5,.5,1]
+    bar_inactive_color:[.7,.7,.7,1]
+    
+    RecycleGridLayout:
+        cols:3
+        spacing:'3dp'
+        default_size:None,dp(30)
+        default_size_hint:1,None
+        size_hint_y:None
+        height:self.minimum_height
+        orientation:'lr-tb'
+        multiselect:False
+        touch_multiselect:False
+<MonthReportLable@Label>:
+    color:(.2,.2,.2,1)
+
+# ==============LABLES====================
+<TotalProfitLabel@Label>:
+<TotalMonthlyProfitLabel@Label>:
+
+
 
 
 
@@ -868,6 +958,7 @@
 
 
 
+
         # THIRD SCREEN
         AnalysisScreen:
             name:'analysisScreen'
@@ -886,8 +977,78 @@
                             rectangle: self.x, self.y, self.width, self.height 
                     CustomTitleLable:
                         text:'Products Sold'
+                    # a box that will contain the date buttons and the products sold on that day
+                    BoxLayout:
+                        # dates
+                        BoxLayout:
+                            size_hint_x:None
+                            width:'150dp'
+                            orientation:'vertical'
+                            canvas.before:
+                                Color:
+                                    rgba:(0.9,0.9,0.9,0.5)  
+                                Rectangle:
+                                    pos:self.pos
+                                    size:self.size     
+                            Label:
+                                text:'Date'
+                                color:(0,0,0,1)
+                                bold:True
+                                size_hint_y:None
+                                height:'40dp'
+                                font_size:'20sp'
+                            # BoxLayout:
+                            #     orientation:'vertical'
+                            DateRecycleView:
+                                id:dateRecycleViewId
+
+                        # summary of products on that date
+                        BoxLayout:
+                            orientation:'vertical'
+                            ReportTitleLabel:
+                                text:''
+                                size_hint_y:None
+                                height:"40dp"
+                                markup:True
+                            BoxLayout:
+                                size_hint_y:None
+                                height:"50dp"
+                                Label:
+                                    text:'Item'
+                                    color:mainColor
+                                Label:
+                                    text:'No sold'
+                                    color:mainColor
+
+                                Label:
+                                    text:'Profit'
+                                    color:mainColor
+
+                                
+                            ReportDataView:
+                    # THE TOTAL PROFIT SECTION
+                    BoxLayout:
+                        size_hint_y:None
+                        height:'40dp'
+                        Label:
+                            text:'Total Profit:   '
+                            text_size:self.size
+                            halign:'right'
+                            valign:'center'
+                            color:(0,0,0,1)
+
+                        TotalProfitLabel:
+                            id:totalProfit
+                            text:'0.00'
+                            text_size:self.size
+                            halign:'left'
+                            valign:'center'
+                            color:(0,0,0,1)
+                        
+                        
+
                 
-                #  PROFIDS sold side
+                #  PROFIDS sold by month report side
                 BoxLayout:
                     orientation:'vertical'
                     padding: ('10dp', '10dp', '10dp', '10dp')
@@ -897,6 +1058,79 @@
                         Line:
                             width: 1
                             rectangle: self.x, self.y, self.width, self.height 
+                    CustomTitleLable:
+                        text:'Monthly Report'
+                    
+                    BoxLayout:
+                        # Months
+                        BoxLayout:
+                            size_hint_x:None
+                            width:'150dp'
+                            orientation:'vertical'
+                            canvas.before:
+                                Color:
+                                    rgba:(0.9,0.9,0.9,0.5)  
+                                Rectangle:
+                                    pos:self.pos
+                                    size:self.size     
+                            Label:
+                                text:'Months'
+                                color:(0,0,0,1)
+                                bold:True
+                                size_hint_y:None
+                                height:'40dp'
+                                font_size:'20sp'
+                            MonthRecycleView:
+                                id:MonthRecycleViewId
+
+                        # summary of products on that month
+                        BoxLayout:
+                            orientation:'vertical'
+                            ReportTitleLabel:
+                                text:''
+                                size_hint_y:None
+                                height:"40dp"
+                                markup:True
+                            BoxLayout:
+                                size_hint_y:None
+                                height:"50dp"
+                                Label:
+                                    text:'Item'
+                                    color:mainColor
+                                Label:
+                                    text:'No sold'
+                                    color:mainColor
+
+                                Label:
+                                    text:'Profit'
+                                    color:mainColor
+
+                                
+                            MonthlyReportRecycleView:
+                                id:monthRecycleViewId
+
+
+
+                    # MONTHLY PROFIT TOTAL 
+                    BoxLayout:
+                        size_hint_y:None
+                        height:'40dp'
+                        Label:
+                            text:'Total Profit:   '
+                            text_size:self.size
+                            halign:'right'
+                            valign:'center'
+                            color:(0,0,0,1)
+
+                        TotalMonthlyProfitLabel:
+                            id:totalProfit
+                            text:'0.00'
+                            text_size:self.size
+                            halign:'left'
+                            valign:'center'
+                            color:(0,0,0,1)
+                        
+
                 
 
 
@@ -1443,4 +1677,10 @@
 
 
                         
-                    
+# <Background@anvas>:
+#     canvas.before:
+#         Color:
+#             rgba:(0,0,1,1)  
+#         Rectangle:
+#             pos:self.pos
+#             size:self.size     
