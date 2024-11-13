@@ -6,9 +6,17 @@ from kivy.uix.recycleview import RecycleView
 import mysql.connector as DbConnector
 from kivy.uix.dropdown import DropDown
 from kivy.uix.button import Button
+from kivy.uix.popup import Popup
+from kivy.uix.label import Label
+from datetime import datetime
+from inspect import currentframe, getframeinfo
+from kivy.lang import Builder
+import os
 
 
 
+path = os.getcwd()
+Builder.load_file(path +'/administration_window/administration1.kv')
 class AdminScreenManager(ScreenManager):
     pass
 class HomeScreen(Screen):
@@ -32,8 +40,23 @@ class DateLableButton(Button):
 class DateRecycleView(RecycleView):
     def __init__(self, **kwargs): 
         super().__init__(**kwargs)
+        # database configuration
+        self.user ='root'
+        self.dbpassword = '@#mysql@#'
+        self.host ='localhost'
+        self.database = "BE_RETAIL_MANAGEMENT_DATABASE"
         data =self.getAllTheSalesDate()
         self.data = [{'text': str(buttonText), 'root_widget': self} for buttonText in data]
+
+        
+
+    def loggingMessage(self,appname,e):
+        date = datetime.now()
+        ms = (f'''[{appname} APP]: {date} 
+{e}
+\n''')
+        f = open(f'{appname}App-loggmessages.txt','a')
+        f.write(ms)
 
     def btn_callback(self, btn):
         reportData = self.parent.parent.children[0].children[0]
@@ -53,17 +76,17 @@ class DateRecycleView(RecycleView):
         profit.text=str(totalProfit)
 
     def getAllTheSalesDate(self):
-        user ='root'
-        dbpassword = '@#mysql@#'
-        host ='localhost'
-        database = "BE_RETAIL_MANAGEMENT_DATABASE"
+        # user ='root'
+        # dbpassword = '@#mysql@#'
+        # host ='localhost'
+        # database = "BE_RETAIL_MANAGEMENT_DATABASE"
 
         '''this function is used to update a categories give its id,
         '''
         try:
-            mydb = DbConnector.connect(user=user, password=dbpassword,
-                                        host=host,
-                                        database=database
+            mydb = DbConnector.connect(user=self.user, password=self.dbpassword,
+                                        host=self.host,
+                                        database=self.database
                                      )
             query = "SELECT DISTINCT(date) FROM sales;"
             cursor = mydb.cursor()
@@ -75,22 +98,21 @@ class DateRecycleView(RecycleView):
             mydb.close()
             return listOfDates
         except Exception as e:
-            print(e)
-            mgs='The is an issue trying to connect to the database to perform delete operation'
+            self.loggingMessage('administration_window',e)
             return
     
     def getAllTheSalesByDate(self,date):
-        user ='root'
-        dbpassword = '@#mysql@#'
-        host ='localhost'
-        database = "BE_RETAIL_MANAGEMENT_DATABASE"
+        # user ='root'
+        # dbpassword = '@#mysql@#'
+        # host ='localhost'
+        # database = "BE_RETAIL_MANAGEMENT_DATABASE"
         
         '''this function is used to update a categories give its id,
         '''
         try:
-            mydb = DbConnector.connect(user=user, password=dbpassword,
-                                        host=host,
-                                        database=database
+            mydb = DbConnector.connect(user=self.user, password=self.dbpassword,
+                                        host=self.host,
+                                        database=self.database
                                      )
                 
             query = f"SELECT DISTINCT(product_name) FROM sales WHERE date='{date}';"
@@ -110,8 +132,7 @@ class DateRecycleView(RecycleView):
             mydb.close()
             return [soldProducts,totalProfit]
         except Exception as e:
-            print(e)
-            mgs='The is an issue trying to connect to the database to perform delete operation'
+            self.loggingMessage('administration_window',e)
             return
     
 class MonthLableButton(Button):
@@ -123,8 +144,23 @@ class MonthLableButton(Button):
 class MonthRecycleView(RecycleView):
     def __init__(self, **kwargs): 
         super().__init__(**kwargs)
+        # database setup
+        self.user ='root'
+        self.dbpassword = '@#mysql@#'
+        self.host ='localhost'
+        self.database = "BE_RETAIL_MANAGEMENT_DATABASE"
+
         data =self.getAllTheSalesMonths()
         self.data = [{'text': str(buttonText), 'root_widget': self} for buttonText in data]
+        
+
+    def loggingMessage(self,appname,e):
+        date = datetime.now()
+        ms = (f'''[{appname} APP]: {date} 
+{e}
+\n''')
+        f = open(f'{appname}App-loggmessages.txt','a')
+        f.write(ms)
 
     def btn_callback(self, btn):
         # # print(btn, btn.text)
@@ -145,17 +181,17 @@ class MonthRecycleView(RecycleView):
         monthlyProfit.text=str(monthTotalProfit)
 
     def getAllTheSalesMonths(self):
-        user ='root'
-        dbpassword = '@#mysql@#'
-        host ='localhost'
-        database = "BE_RETAIL_MANAGEMENT_DATABASE"
+        # user ='root'
+        # dbpassword = '@#mysql@#'
+        # host ='localhost'
+        # database = "BE_RETAIL_MANAGEMENT_DATABASE"
 
         '''this function is used to update a categories give its id,
         '''
         try:
-            mydb = DbConnector.connect(user=user, password=dbpassword,
-                                        host=host,
-                                        database=database
+            mydb = DbConnector.connect(user=self.user, password=self.dbpassword,
+                                        host=self.host,
+                                        database=self.database
                                      )
             query = "SELECT DISTINCT(month) FROM sales;"
             cursor = mydb.cursor()
@@ -167,22 +203,21 @@ class MonthRecycleView(RecycleView):
             mydb.close()
             return listOfMonths
         except Exception as e:
-            print(e)
-            mgs='The is an issue trying to connect to the database to perform delete operation'
+            self.loggingMessage('administration_window',e)
             return
     
     def getAllTheSalesByMonth(self,month):
-        user ='root'
-        dbpassword = '@#mysql@#'
-        host ='localhost'
-        database = "BE_RETAIL_MANAGEMENT_DATABASE"
+        # user ='root'
+        # dbpassword = '@#mysql@#'
+        # host ='localhost'
+        # database = "BE_RETAIL_MANAGEMENT_DATABASE"
         
         '''this function is used to update a categories give its id,
         '''
         try:
-            mydb = DbConnector.connect(user=user, password=dbpassword,
-                                        host=host,
-                                        database=database
+            mydb = DbConnector.connect(user=self.user, password=self.dbpassword,
+                                        host=self.host,
+                                        database=self.database
                                      )
                 
             query = f"SELECT DISTINCT(product_name) FROM sales WHERE month='{month}';"
@@ -205,22 +240,28 @@ class MonthRecycleView(RecycleView):
             return [monthlysoldProducts,totalMonthlyProfit]
         
         except Exception as e:
-            print(e)
-            mgs='The is an issue trying to connect to the database to perform delete operation'
+            self.loggingMessage('administration_window',e)
             return
     
 
 
 
 class AdministrationPage(BoxLayout):
+    
     def __init__(self, **kwargs):
         super(AdministrationPage,self).__init__(**kwargs)
+        # database setup
+        self.user ='root'
+        self.dbpassword = '@#mysql@#'
+        self.host ='localhost'
+        self.database = "BE_RETAIL_MANAGEMENT_DATABASE"
+        
         
         self.fetchAllProducts()
         self.fetchAllUsers()
+        self.summaryOfProducts_Employees()
 
-        # calling functions
-        self.populateCategoryRecycleView()
+        
 
         # compandetails
         self.details = self.fetchCompanyDetails()
@@ -239,8 +280,78 @@ class AdministrationPage(BoxLayout):
             self.ids.companyTell.text="Enter company tell"
             self.ids.companyNameId.text=''
             self.ids.companyTellId.text=''
-            
     
+
+    # =============popup section============
+    def popUpNotification(self,instance):
+        buttonClicked = (instance.text).lower()
+        self.mainlayout =BoxLayout(orientation='vertical')
+        self.popup= Popup(
+            title='Test popup',
+            content=self.mainlayout,
+            size_hint=(None, None), size=(300, 200),
+            auto_dismiss=False
+        )
+        self.mainlayout.add_widget(Label(text=f'Do you really you want to {buttonClicked}'))
+
+        self.buttonLayout=BoxLayout(
+            size_hint_y=None,
+            height='40dp',
+            spacing='50dp')
+        
+        okButton = Button(text='Yes')
+        self.buttonLayout.add_widget(okButton)
+        # the how page site
+        if buttonClicked =="change name":
+            okButton.bind(on_press=self.changeCompanyName)
+        if buttonClicked =="change tell":
+            okButton.bind(on_press=self.changeCompanyTell)
+        if buttonClicked =="change location":
+            okButton.bind(on_press=self.changeCompanyLocation)
+
+        # the productl page
+        if buttonClicked =="clear product":
+            okButton.bind(on_press=self.clearProductFields)
+        if buttonClicked =="add product":
+            okButton.bind(on_press=self.addProduct)
+        if buttonClicked =="delete product":
+            okButton.bind(on_press=self.deleteProduct)
+        if buttonClicked =="update product":
+            okButton.bind(on_press=self.updateProduct)
+        # the user page
+        if buttonClicked =="clear user":
+            okButton.bind(on_press=self.clearUserFields)
+        if buttonClicked =="add user":
+            okButton.bind(on_press=self.addUser)
+        if buttonClicked =="delete user":
+            okButton.bind(on_press=self.deleteUser)
+        if buttonClicked =="update user":
+            okButton.bind(on_press=self.updateUser)
+
+        # if buttonClicked =="clear":
+        #     okButton.bind(on_press=self.clearButton)
+        # if buttonClicked =="undo":
+        #     okButton.bind(on_press=self.undoButton)
+        else:
+            pass
+        
+        self.concelBtn=Button(text='No',on_press=self.popup.dismiss)
+        self.buttonLayout.add_widget(self.concelBtn)
+        self.mainlayout.add_widget(self.buttonLayout)
+        self.popup.open()
+
+# =============popup section end_============
+
+    def loggingMessage(self,appname,e):
+        # frameinfo = getframeinfo(currentframe())
+        # lineNumber =frameinfo.lineno
+        date = datetime.now()
+        ms = (f'''[{appname} APP]: {date} 
+{e}
+\n''')
+        f = open(f'{appname}App-loggmessages.txt','a')
+        f.write(ms)
+
     def changeToHomePage(self):
         '''
         change to the home window page function
@@ -294,47 +405,23 @@ class AdministrationPage(BoxLayout):
         self.ids.usersScreenId.manager.transition.direction='left'
 
 
-    def populateCategoryRecycleView(self):
-        user ='root'
-        dbpassword = '@#mysql@#'
-        host ='localhost'
-        database = "BE_RETAIL_MANAGEMENT_DATABASE"
     
-        
-        '''this function is used to fetch all the categories from the database and 
-        insert them into the categorie  window,
-        '''
-        try:
-            mydb = DbConnector.connect(user=user, password=dbpassword,
-                                        host=host,
-                                        database=database
-                                        )
-            
-            selectAllCategories = "SELECT * from categories"
-            cursor = mydb.cursor()
-            cursor.execute(selectAllCategories)
-            listOfAllCategories = cursor.fetchall()
-
-            self.ids.categorylistId.data =[{'text':str(f"{x[0] }  {x[1] } ")} for x in listOfAllCategories]
-            
-        except:
-            pass
 
        
             
     def fetchCompanyDetails(self):
-        user ='root'
-        dbpassword = '@#mysql@#'
-        host ='localhost'
-        database = "BE_RETAIL_MANAGEMENT_DATABASE"
+        # user ='root'
+        # dbpassword = '@#mysql@#'
+        # host ='localhost'
+        # database = "BE_RETAIL_MANAGEMENT_DATABASE"
     
         
         '''this function is used to update a categories give its id,
         '''
         try:
-            mydb = DbConnector.connect(user=user, password=dbpassword,
-                                        host=host,
-                                        database=database
+            mydb = DbConnector.connect(user=self.user, password=self.dbpassword,
+                                        host=self.host,
+                                        database=self.database
                                      )
             query = "select * from company;"
             cursor = mydb.cursor()
@@ -343,21 +430,23 @@ class AdministrationPage(BoxLayout):
             mydb.close()
             return details #(1,name,tell)
         except Exception as e:
+            self.loggingMessage('administration_window',e)
             pass
 
-    def changeCompanyName(self):
-        user ='root'
-        dbpassword = '@#mysql@#'
-        host ='localhost'
-        database = "BE_RETAIL_MANAGEMENT_DATABASE"
+    def changeCompanyName(self,instance):
+        self.popup.dismiss()
+        # user ='root'
+        # dbpassword = '@#mysql@#'
+        # host ='localhost'
+        # database = "BE_RETAIL_MANAGEMENT_DATABASE"
     
         
         '''this function is used to update a categories give its id,
         '''
         try:
-            mydb = DbConnector.connect(user=user, password=dbpassword,
-                                        host=host,
-                                        database=database
+            mydb = DbConnector.connect(user=self.user, password=self.dbpassword,
+                                        host=self.host,
+                                        database=self.database
                                      )
             query = f"update company SET company_name='{self.ids.companyNameId.text}' where company_id=1;"
 
@@ -385,22 +474,24 @@ class AdministrationPage(BoxLayout):
                 self.ids.companyTellId.text=''
                 self.ids.companyLocationId.text=''
 
-        except:
+        except Exception as e:
+            self.loggingMessage('administration_window',e)
             pass
 
-    def changeCompanyTell(self):
-        user ='root'
-        dbpassword = '@#mysql@#'
-        host ='localhost'
-        database = "BE_RETAIL_MANAGEMENT_DATABASE"
+    def changeCompanyTell(self,instance):
+        self.popup.dismiss()
+        # user ='root'
+        # dbpassword = '@#mysql@#'
+        # host ='localhost'
+        # database = "BE_RETAIL_MANAGEMENT_DATABASE"
     
         
         '''this function is used to update a categories give its id,
         '''
         try:
-            mydb = DbConnector.connect(user=user, password=dbpassword,
-                                        host=host,
-                                        database=database
+            mydb = DbConnector.connect(user=self.user, password=self.dbpassword,
+                                        host=self.host,
+                                        database=self.database
                                      )
             query = f"update company SET company_tell='{self.ids.companyTellId.text}' where company_id=1;"
 
@@ -433,21 +524,24 @@ class AdministrationPage(BoxLayout):
                 self.ids.companyLocationId.text=''
 
 
-        except:
+        except Exception as e:
+            self.loggingMessage('administration_window',e)
             pass
-    def changeCompanyLocation(self):
-        user ='root'
-        dbpassword = '@#mysql@#'
-        host ='localhost'
-        database = "BE_RETAIL_MANAGEMENT_DATABASE"
+
+    def changeCompanyLocation(self,instance):
+        self.popup.dismiss()
+        # user ='root'
+        # dbpassword = '@#mysql@#'
+        # host ='localhost'
+        # database = "BE_RETAIL_MANAGEMENT_DATABASE"
     
         
         '''this function is used to update a categories give its id,
         '''
         try:
-            mydb = DbConnector.connect(user=user, password=dbpassword,
-                                        host=host,
-                                        database=database
+            mydb = DbConnector.connect(user=self.user, password=self.dbpassword,
+                                        host=self.host,
+                                        database=self.database
                                      )
             query = f"update company SET company_location='{self.ids.companyLocationId.text}' where company_id=1;"
 
@@ -478,23 +572,24 @@ class AdministrationPage(BoxLayout):
                 self.ids.companyLocationId.text=''
 
 
-        except:
+        except Exception as e:
+            self.loggingMessage('administration_window',e)
             pass
     # populating the products
     def fetchAllProducts(self):
-        self.ids.productToSearchId.text=''
-        user ='root'
-        dbpassword = '@#mysql@#'
-        host ='localhost'
-        database = "BE_RETAIL_MANAGEMENT_DATABASE"
+        # self.ids.productToSearchId.text=''
+        # user ='root'
+        # dbpassword = '@#mysql@#'
+        # host ='localhost'
+        # database = "BE_RETAIL_MANAGEMENT_DATABASE"
     
         
         '''this function is used to update a categories give its id,
         '''
         try:
-            mydb = DbConnector.connect(user=user, password=dbpassword,
-                                        host=host,
-                                        database=database
+            mydb = DbConnector.connect(user=self.user, password=self.dbpassword,
+                                        host=self.host,
+                                        database=self.database
                                      )
             query = "SELECT * FROM products;"
 
@@ -514,10 +609,12 @@ class AdministrationPage(BoxLayout):
                 self.ids.productListId.refresh_from_data()
                 self.ids.productListId.data = listData
             mydb.close()
-        except:
+        except Exception as e:
+            self.loggingMessage('administration_window',e)
             pass
 
-    def addProduct(self):
+    def addProduct(self,instance):
+        self.popup.dismiss()
         # clearing all the error messages
         self.ids.productNameEmptyErrorMessageId.text=''
         self.ids.productQuantityEmptyErrorMessageId.text=''
@@ -527,18 +624,18 @@ class AdministrationPage(BoxLayout):
 
 
 
-        user ='root'
-        dbpassword = '@#mysql@#'
-        host ='localhost'
-        database = "BE_RETAIL_MANAGEMENT_DATABASE"
+        # user ='root'
+        # dbpassword = '@#mysql@#'
+        # host ='localhost'
+        # database = "BE_RETAIL_MANAGEMENT_DATABASE"
     
         
         '''this function is used to update a categories give its id,
         '''
         try:
-            mydb = DbConnector.connect(user=user, password=dbpassword,
-                                        host=host,
-                                        database=database
+            mydb = DbConnector.connect(user=self.user, password=self.dbpassword,
+                                        host=self.host,
+                                        database=self.database
                                      )
             # getting the data
             try:
@@ -564,7 +661,8 @@ class AdministrationPage(BoxLayout):
                 'Making sure the quantity field is not empty or not integer'
                 try:
                     int(pquantity)
-                except:
+                except Exception as e:
+                    self.loggingMessage('administration_window',e)
                     self.ids.productQuantityEmptyErrorMessageId.text='Product quantity should numbers'
                     return
 
@@ -572,7 +670,8 @@ class AdministrationPage(BoxLayout):
                 try:
                     pcostprice=float(pcostprice)
                     
-                except:
+                except Exception as e:
+                    self.loggingMessage('administration_window',e)
                     self.ids.productCPriceEmptyErrorMessageId.text='Enter cost price(number)'
                     return
                 
@@ -580,12 +679,14 @@ class AdministrationPage(BoxLayout):
                 try:
                     psellingprice=float(psellingprice)
                     
-                except:
+                except Exception as e:
+                    self.loggingMessage('administration_window',e)
                     self.ids.productSPriceEmptyErrorMessageId.text='Enter selling price(number)'
                     return
 
 
             except Exception as e:
+                self.loggingMessage('administration_window',e)
                 self.ids.productsEntryErrorsId.text='and error occured trying to add product'
                 
             else:
@@ -600,13 +701,28 @@ class AdministrationPage(BoxLayout):
                 mydb.close()
                 self.ids.productListId.refresh_from_data()
                 self.fetchAllProducts()
-                self.clearProductFields()
+                # self.clearProductFields()
+                # clearing fields
+                self.ids.productCodeId.text=''
+                self.ids.productNameId.text=''
+                self.ids.productQuantityId.text=''
+                self.ids.productCPriceId.text=''
+                self.ids.productSPriceId.text=''
+                #clearing all error messages
+                self.ids.productIdEmptyErrorMessageId.text=''
+                self.ids.productsEntryErrorsId.text=''
+                self.ids.productNameEmptyErrorMessageId.text=''
+                self.ids.productQuantityEmptyErrorMessageId.text=''
+                self.ids.productCPriceEmptyErrorMessageId.text=''
+                self.ids.productSPriceEmptyErrorMessageId.text=''
                 
             
-        except:
+        except Exception as e:
+            self.loggingMessage('administration_window',e)
             self.ids.productsEntryErrorsId.text='The is an issue trying to connect to the database'
             
-    def clearProductFields(self):
+    def clearProductFields(self,instance):
+        self.popup.dismiss()
         self.ids.productCodeId.text=''
         self.ids.productNameId.text=''
         self.ids.productQuantityId.text=''
@@ -623,23 +739,39 @@ class AdministrationPage(BoxLayout):
     
 
     def searchProductsByIdButton(self,*args, **kwargs):
+
         self.ids.productIdEmptyErrorMessageId.text=''
-        self.clearProductFields()
+        # self.clearProductFields()
+        # clearing products
+        self.ids.productCodeId.text=''
+        self.ids.productNameId.text=''
+        self.ids.productQuantityId.text=''
+        self.ids.productCPriceId.text=''
+        self.ids.productSPriceId.text=''
+        #clearing all error messages
+        self.ids.productIdEmptyErrorMessageId.text=''
+        self.ids.productsEntryErrorsId.text=''
+        self.ids.productNameEmptyErrorMessageId.text=''
+        self.ids.productQuantityEmptyErrorMessageId.text=''
+        self.ids.productCPriceEmptyErrorMessageId.text=''
+        self.ids.productSPriceEmptyErrorMessageId.text=''
+            
+    
 
         productId= (self.ids.productToDeleteNameId.text).strip()
 
-        user ='root'
-        dbpassword = '@#mysql@#'
-        host ='localhost'
-        database = "BE_RETAIL_MANAGEMENT_DATABASE"
+        # user ='root'
+        # dbpassword = '@#mysql@#'
+        # host ='localhost'
+        # database = "BE_RETAIL_MANAGEMENT_DATABASE"
     
         
         '''this function is used to update a categories give its id,
         '''
         try:
-            mydb = DbConnector.connect(user=user, password=dbpassword,
-                                        host=host,
-                                        database=database
+            mydb = DbConnector.connect(user=self.user, password=self.dbpassword,
+                                        host=self.host,
+                                        database=self.database
                                      )
             try:
                 productId = int(productId)
@@ -653,31 +785,34 @@ class AdministrationPage(BoxLayout):
                 self.ids.productQuantityId.text=str(result[5])
                 self.ids.productCPriceId.text=str(result[3])
                 self.ids.productSPriceId.text=str(result[4])
-            except:
+            except Exception as e:
+                self.loggingMessage('administration_window',e)
                 self.ids.productIdEmptyErrorMessageId.text=f'No product with id ="{productId}"'
 
-        except:
+        except Exception as e:
+            self.loggingMessage('administration_window',e)
             self.ids.productsEntryErrorsId.text='The is an issue trying to connect to the database in order to search the product'
 
        
-    def deleteProduct(self):
+    def deleteProduct(self,instance):
+        self.popup.dismiss()
         self.ids.productIdEmptyErrorMessageId.text=''
         self.ids.productsEntryErrorsId.text=''
 
         productToDeleteId= (self.ids.productToDeleteNameId.text).strip()
 
-        user ='root'
-        dbpassword = '@#mysql@#'
-        host ='localhost'
-        database = "BE_RETAIL_MANAGEMENT_DATABASE"
+        # user ='root'
+        # dbpassword = '@#mysql@#'
+        # host ='localhost'
+        # database = "BE_RETAIL_MANAGEMENT_DATABASE"
     
         
         '''this function is used to update a categories give its id,
         '''
         try:
-            mydb = DbConnector.connect(user=user, password=dbpassword,
-                                        host=host,
-                                        database=database
+            mydb = DbConnector.connect(user=self.user, password=self.dbpassword,
+                                        host=self.host,
+                                        database=self.database
                                      )
             try:
                 productToDeleteId= int(productToDeleteId)
@@ -690,18 +825,35 @@ class AdministrationPage(BoxLayout):
                 mydb.close()
                 self.ids.productListId.refresh_from_data()
                 self.fetchAllProducts()
-                self.clearProductFields()
+                # self.clearProductFields()
+                # clearing products fields
+                self.ids.productCodeId.text=''
+                self.ids.productNameId.text=''
+                self.ids.productQuantityId.text=''
+                self.ids.productCPriceId.text=''
+                self.ids.productSPriceId.text=''
+                #clearing all error messages
+                self.ids.productIdEmptyErrorMessageId.text=''
+                self.ids.productsEntryErrorsId.text=''
+                self.ids.productNameEmptyErrorMessageId.text=''
+                self.ids.productQuantityEmptyErrorMessageId.text=''
+                self.ids.productCPriceEmptyErrorMessageId.text=''
+                self.ids.productSPriceEmptyErrorMessageId.text=''
+
                 self.ids.productToDeleteNameId.text=''
 
                 
             except Exception as e:
+                self.loggingMessage('administration_window',e)
                 self.ids.productIdEmptyErrorMessageId.text='Please product id must be number in order to delete'
              
         except Exception as e:
+            self.loggingMessage('administration_window',e)
             self.ids.productsEntryErrorsId.text='The is an issue trying to connect to the database to perform delete operation'
         
 
-    def updateProduct(self):
+    def updateProduct(self,instance):
+        self.popup.dismiss()
         self.ids.productIdEmptyErrorMessageId.text=''
         self.ids.productsEntryErrorsId.text=''
         self.ids.productNameEmptyErrorMessageId.text=''
@@ -713,18 +865,18 @@ class AdministrationPage(BoxLayout):
 
         productToUpdateId= (self.ids.productToDeleteNameId.text).strip()
 
-        user ='root'
-        dbpassword = '@#mysql@#'
-        host ='localhost'
-        database = "BE_RETAIL_MANAGEMENT_DATABASE"
+        # user ='root'
+        # dbpassword = '@#mysql@#'
+        # host ='localhost'
+        # database = "BE_RETAIL_MANAGEMENT_DATABASE"
     
         
         '''this function is used to update a categories give its id,
         '''
         try:
-            mydb = DbConnector.connect(user=user, password=dbpassword,
-                                        host=host,
-                                        database=database
+            mydb = DbConnector.connect(user=self.user, password=self.dbpassword,
+                                        host=self.host,
+                                        database=self.database
                                      )
             try:
                 productToUpdateId= int(productToUpdateId)
@@ -747,14 +899,16 @@ class AdministrationPage(BoxLayout):
                 
                 try:
                     pId= int(pId)
-                except:
+                except Exception as e:
+                    self.loggingMessage('administration_window',e)
                     self.ids.productIdEmptyErrorMessageId.text=f'No product with id ="{pId}"'
 
 
                 'Making sure the quantity field is not empty or not integer'
                 try:
                     int(pquantity)
-                except:
+                except Exception as e:
+                    self.loggingMessage('administration_window',e)
                     self.ids.productQuantityEmptyErrorMessageId.text='Product quantity should numbers'
                     return
 
@@ -762,14 +916,15 @@ class AdministrationPage(BoxLayout):
                 try:
                     pcostprice=float(pcostprice)
                     
-                except:
+                except Exception as e:
+                    self.loggingMessage('administration_window',e)
                     self.ids.productCPriceEmptyErrorMessageId.text='Enter cost price(number)'
                     return
                 
                 'Making sure the Selling price field is not empty and is an integer or float'
                 try:
                     psellingprice=float(psellingprice)
-                except:
+                except Exception as e:
                     self.ids.productSPriceEmptyErrorMessageId.text='Enter selling price(number)'
                     return
                 
@@ -785,29 +940,45 @@ class AdministrationPage(BoxLayout):
                     mydb.close()
                     self.ids.productListId.refresh_from_data()
                     self.fetchAllProducts()
-                    self.clearProductFields()
+                    # self.clearProductFields()
+                    # clearing products fields
+                    self.ids.productCodeId.text=''
+                    self.ids.productNameId.text=''
+                    self.ids.productQuantityId.text=''
+                    self.ids.productCPriceId.text=''
+                    self.ids.productSPriceId.text=''
+                    #clearing all error messages
+                    self.ids.productIdEmptyErrorMessageId.text=''
+                    self.ids.productsEntryErrorsId.text=''
+                    self.ids.productNameEmptyErrorMessageId.text=''
+                    self.ids.productQuantityEmptyErrorMessageId.text=''
+                    self.ids.productCPriceEmptyErrorMessageId.text=''
+                    self.ids.productSPriceEmptyErrorMessageId.text=''
+
                     self.ids.productToDeleteNameId.text=''
             except Exception as e:
+                self.loggingMessage('administration_window',e)
                 self.ids.productIdEmptyErrorMessageId.text='Wrong product id'
         except Exception as e:
+            self.loggingMessage('administration_window',e)
             self.ids.productsEntryErrorsId.text='The is an issue trying to connect to the database to perform Update operation'
         
     def searchProductsByName(self,*args, **kwargs):
         self.ids.noProductMessage.text=""
 
 
-        user ='root'
-        dbpassword = '@#mysql@#'
-        host ='localhost'
-        database = "BE_RETAIL_MANAGEMENT_DATABASE"
+        # user ='root'
+        # dbpassword = '@#mysql@#'
+        # host ='localhost'
+        # database = "BE_RETAIL_MANAGEMENT_DATABASE"
     
         
         '''this function is used to update a categories give its id,
         '''
         try:
-            mydb = DbConnector.connect(user=user, password=dbpassword,
-                                        host=host,
-                                        database=database
+            mydb = DbConnector.connect(user=self.user, password=self.dbpassword,
+                                        host=self.host,
+                                        database=self.database
                                      )
             searchedproduct= (self.ids.productToSearchId.text).strip()
             
@@ -831,7 +1002,8 @@ class AdministrationPage(BoxLayout):
                 # give and a message if the id no product
                 try:
                     listData[0]
-                except:
+                except Exception as e:
+                    self.loggingMessage('administration_window',e)
                     self.ids.noProductMessage.text=f'No product with the name {searchedproduct}'
                     return
 
@@ -840,7 +1012,8 @@ class AdministrationPage(BoxLayout):
                 self.ids.productToSearchId.text=''
                 mydb.close()
 
-        except:
+        except Exception as e:
+            self.loggingMessage('administration_window',e)
             self.ids.noProductMessage.text='The is an issue trying to connect to the database to perform the product search operation'
             
 
@@ -850,18 +1023,18 @@ class AdministrationPage(BoxLayout):
     def fetchAllUsers(self):
         self.ids.userToSearchId.text=''
         self.ids.noUserMessage.text=""
-        user ='root'
-        dbpassword = '@#mysql@#'
-        host ='localhost'
-        database = "BE_RETAIL_MANAGEMENT_DATABASE"
+        # user ='root'
+        # dbpassword = '@#mysql@#'
+        # host ='localhost'
+        # database = "BE_RETAIL_MANAGEMENT_DATABASE"
     
         
         '''this function is used to update a categories give its id,
         '''
         try:
-            mydb = DbConnector.connect(user=user, password=dbpassword,
-                                        host=host,
-                                        database=database
+            mydb = DbConnector.connect(user=self.user, password=self.dbpassword,
+                                        host=self.host,
+                                        database=self.database
                                      )
             query = "SELECT * FROM users;"
 
@@ -879,23 +1052,24 @@ class AdministrationPage(BoxLayout):
                 self.ids.usersListId.refresh_from_data()
                 self.ids.usersListId.data = userslistData
             mydb.close()
-        except:
+        except Exception as e:
+            self.loggingMessage('administration_window',e)
             pass
         
     def searchUsersByName(self,*args, **kwargs):
         self.ids.noUserMessage.text=""
-        user ='root'
-        dbpassword = '@#mysql@#'
-        host ='localhost'
-        database = "BE_RETAIL_MANAGEMENT_DATABASE"
+        # user ='root'
+        # dbpassword = '@#mysql@#'
+        # host ='localhost'
+        # database = "BE_RETAIL_MANAGEMENT_DATABASE"
     
         
         '''this function is used to update a categories give its id,
         '''
         try:
-            mydb = DbConnector.connect(user=user, password=dbpassword,
-                                        host=host,
-                                        database=database
+            mydb = DbConnector.connect(user=self.user, password=self.dbpassword,
+                                        host=self.host,
+                                        database=self.database
                                      )
             searcheduser= (self.ids.userToSearchId.text).strip()
             
@@ -918,7 +1092,8 @@ class AdministrationPage(BoxLayout):
                 # give and a message if the id no product
                 try:
                     userlistData[0]
-                except:
+                except Exception as e:
+                    self.loggingMessage('administration_window',e)
                     self.ids.noUserMessage.text=f'No user with the name {searcheduser}'
                     return
 
@@ -927,10 +1102,13 @@ class AdministrationPage(BoxLayout):
                 self.ids.userToSearchId.text=''
                 mydb.close()
         except Exception as e:
+            self.loggingMessage('administration_window',e)
             self.ids.noUserMessage.text='The is an issue trying to connect to the database to perform the user search operation'
             return
 
-    def clearUserFields(self):
+    def clearUserFields(self,instance):
+        self.popup.dismiss()
+        # clear user fields
         self.ids.userNameId.text=''
         self.ids.userEmailId.text=''
         self.ids.userPasswordId.text=''
@@ -944,7 +1122,8 @@ class AdministrationPage(BoxLayout):
         self.ids.userDesignationEmptyErrorMessageId.text=''
 
 
-    def addUser(self):
+    def addUser(self,instance):
+        self.popup.dismiss()
         # clearing all the error messages
         self.ids.userIdEmptyErrorMessageId.text=''
         self.ids.userIdEmptyErrorMessageId.text=''
@@ -953,18 +1132,18 @@ class AdministrationPage(BoxLayout):
         self.ids.userPasswordEmptyErrorMessageId.text=''
         self.ids.userDesignationEmptyErrorMessageId.text=''
         
-        user ='root'
-        dbpassword = '@#mysql@#'
-        host ='localhost'
-        database = "BE_RETAIL_MANAGEMENT_DATABASE"
+        # user ='root'
+        # dbpassword = '@#mysql@#'
+        # host ='localhost'
+        # database = "BE_RETAIL_MANAGEMENT_DATABASE"
     
         
         '''this function is used to update a categories give its id,
         '''
         try:
-            mydb = DbConnector.connect(user=user, password=dbpassword,
-                                        host=host,
-                                        database=database
+            mydb = DbConnector.connect(user=self.user, password=self.dbpassword,
+                                        host=self.host,
+                                        database=self.database
                                      )
             # getting the data
             try:
@@ -1009,6 +1188,7 @@ class AdministrationPage(BoxLayout):
 
 
             except Exception as e:
+                self.loggingMessage('administration_window',e)
                 self.ids.usersEntryErrorsId.text='and error occured trying to add user'
                 return
                 
@@ -1020,12 +1200,26 @@ class AdministrationPage(BoxLayout):
                 mydb.close()
                 self.ids.usersListId.refresh_from_data()
                 self.fetchAllUsers()
-                self.clearUserFields()
+                # self.clearUserFields()
+                # clear user fields
+                self.ids.userNameId.text=''
+                self.ids.userEmailId.text=''
+                self.ids.userPasswordId.text=''
+                self.ids.userDesignationId.text=''
+                #clearing all error messages
+                self.ids.userIdEmptyErrorMessageId.text=''
+                self.ids.userIdEmptyErrorMessageId.text=''
+                self.ids.userNameEmptyErrorMessageId.text=''
+                self.ids.userEmailEmptyErrorMessageId.text=''
+                self.ids.userPasswordEmptyErrorMessageId.text=''
+                self.ids.userDesignationEmptyErrorMessageId.text=''
         except Exception as e:
+            self.loggingMessage('administration_window',e)
             self.ids.usersEntryErrorsId.text='The is an issue trying to connect to the database to add the user'
             return
             
-    def updateUser(self):
+    def updateUser(self,instance):
+        self.popup.dismiss()
         # clearing all the error messages
         self.ids.userIdEmptyErrorMessageId.text=''
         self.ids.userIdEmptyErrorMessageId.text=''
@@ -1036,18 +1230,18 @@ class AdministrationPage(BoxLayout):
 
         userToUpdateId_= (self.ids.userToDeleteOrUpdateId.text).strip()
 
-        user ='root'
-        dbpassword = '@#mysql@#'
-        host ='localhost'
-        database = "BE_RETAIL_MANAGEMENT_DATABASE"
+        # user ='root'
+        # dbpassword = '@#mysql@#'
+        # host ='localhost'
+        # database = "BE_RETAIL_MANAGEMENT_DATABASE"
     
         
         '''this function is used to update a categories give its id,
         '''
         try:
-            mydb = DbConnector.connect(user=user, password=dbpassword,
-                                        host=host,
-                                        database=database
+            mydb = DbConnector.connect(user=self.user, password=self.dbpassword,
+                                        host=self.host,
+                                        database=self.database
                                      )
             # getting the data
             try:
@@ -1064,7 +1258,8 @@ class AdministrationPage(BoxLayout):
                 
                 try:
                     userToUpdateId_= int(userToUpdateId_)
-                except:
+                except Exception as e:
+                    self.loggingMessage('administration_window',e)
                     self.ids.userIdEmptyErrorMessageId.text=f'No user with id ="{userToUpdateId_}"'
                     return
 
@@ -1094,6 +1289,7 @@ class AdministrationPage(BoxLayout):
                     else:
                         pass
             except Exception as e:
+                self.loggingMessage('administration_window',e)
                 self.ids.userIdEmptyErrorMessageId.text='Wrong user id'
                 return
             else:
@@ -1105,29 +1301,56 @@ class AdministrationPage(BoxLayout):
                 mydb.close()
                 self.ids.usersListId.refresh_from_data()
                 self.fetchAllUsers()
-                self.clearUserFields()
+                # self.clearUserFields()
+                # clear user fields
+                self.ids.userNameId.text=''
+                self.ids.userEmailId.text=''
+                self.ids.userPasswordId.text=''
+                self.ids.userDesignationId.text=''
+                #clearing all error messages
+                self.ids.userIdEmptyErrorMessageId.text=''
+                self.ids.userIdEmptyErrorMessageId.text=''
+                self.ids.userNameEmptyErrorMessageId.text=''
+                self.ids.userEmailEmptyErrorMessageId.text=''
+                self.ids.userPasswordEmptyErrorMessageId.text=''
+                self.ids.userDesignationEmptyErrorMessageId.text=''
+
                 self.ids.userToDeleteOrUpdateId.text=''
         except Exception as e:
+            self.loggingMessage('administration_window',e)
             self.ids.usersEntryErrorsId.text='The is an issue trying to connect to the database to update the user'
             return
             
     def searchUserByIdButton(self,*args, **kwargs):
         self.ids.userIdEmptyErrorMessageId.text=''
-        self.clearUserFields()
+        # self.clearUserFields()
+        # clear user fields
+        self.ids.userNameId.text=''
+        self.ids.userEmailId.text=''
+        self.ids.userPasswordId.text=''
+        self.ids.userDesignationId.text=''
+        #clearing all error messages
+        self.ids.userIdEmptyErrorMessageId.text=''
+        self.ids.userIdEmptyErrorMessageId.text=''
+        self.ids.userNameEmptyErrorMessageId.text=''
+        self.ids.userEmailEmptyErrorMessageId.text=''
+        self.ids.userPasswordEmptyErrorMessageId.text=''
+        self.ids.userDesignationEmptyErrorMessageId.text=''
+        
         UserId= (self.ids.userToDeleteOrUpdateId.text).strip()
 
-        user ='root'
-        dbpassword = '@#mysql@#'
-        host ='localhost'
-        database = "BE_RETAIL_MANAGEMENT_DATABASE"
+        # user ='root'
+        # dbpassword = '@#mysql@#'
+        # host ='localhost'
+        # database = "BE_RETAIL_MANAGEMENT_DATABASE"
     
         
         '''this function is used to update a categories give its id,
         '''
         try:
-            mydb = DbConnector.connect(user=user, password=dbpassword,
-                                        host=host,
-                                        database=database
+            mydb = DbConnector.connect(user=self.user, password=self.dbpassword,
+                                        host=self.host,
+                                        database=self.database
                                      )
             try:
                 UserId = int(UserId)
@@ -1142,30 +1365,33 @@ class AdministrationPage(BoxLayout):
                 self.ids.userDesignationId.text=str(result[4])
 
             except Exception as e:
+                self.loggingMessage('administration_window',e)
                 self.ids.userIdEmptyErrorMessageId.text=f'No user with id ="{UserId}"'
                 return
-        except:
+        except Exception as e:
+            self.loggingMessage('administration_window',e)
             self.ids.usersEntryErrorsId.text='The is an issue trying to connect to the database in order to search the user'
             return
           
-    def deleteUser(self):
+    def deleteUser(self,instance):
+        self.popup.dismiss()
         self.ids.userIdEmptyErrorMessageId.text=''
         self.ids.usersEntryErrorsId.text=''
 
         userToDeleteId= (self.ids.userToDeleteOrUpdateId.text).strip()
 
-        user ='root'
-        dbpassword = '@#mysql@#'
-        host ='localhost'
-        database = "BE_RETAIL_MANAGEMENT_DATABASE"
+        # user ='root'
+        # dbpassword = '@#mysql@#'
+        # host ='localhost'
+        # database = "BE_RETAIL_MANAGEMENT_DATABASE"
     
         
         '''this function is used to update a categories give its id,
         '''
         try:
-            mydb = DbConnector.connect(user=user, password=dbpassword,
-                                        host=host,
-                                        database=database
+            mydb = DbConnector.connect(user=self.user, password=self.dbpassword,
+                                        host=self.host,
+                                        database=self.database
                                      )
             try:
                 userToDeleteId= int(userToDeleteId)
@@ -1177,15 +1403,74 @@ class AdministrationPage(BoxLayout):
                 mydb.close()
                 self.ids.usersListId.refresh_from_data()
                 self.fetchAllUsers()
-                self.clearUserFields()
+                # self.clearUserFields()
+                # clear user fields
+                self.ids.userNameId.text=''
+                self.ids.userEmailId.text=''
+                self.ids.userPasswordId.text=''
+                self.ids.userDesignationId.text=''
+                #clearing all error messages
+                self.ids.userIdEmptyErrorMessageId.text=''
+                self.ids.userIdEmptyErrorMessageId.text=''
+                self.ids.userNameEmptyErrorMessageId.text=''
+                self.ids.userEmailEmptyErrorMessageId.text=''
+                self.ids.userPasswordEmptyErrorMessageId.text=''
+                self.ids.userDesignationEmptyErrorMessageId.text=''
+
                 self.ids.userToDeleteOrUpdateId.text=''
             except Exception as e:
+                self.loggingMessage('administration_window',e)
                 self.ids.userIdEmptyErrorMessageId.text='wrong user id '
                 return
              
         except Exception as e:
+            self.loggingMessage('administration_window',e)
             self.ids.usersEntryErrorsId.text='The is an issue trying to connect to the database to perform delete operation'
             return
+    
+    def summaryOfProducts_Employees(self):
+        try:
+            mydb = DbConnector.connect(user=self.user, password=self.dbpassword,
+                                        host=self.host,
+                                        database=self.database
+                                     )
+            totalUsers = "SELECT user_id from users;"
+            cursor = mydb.cursor()
+            cursor.execute(totalUsers)
+            employeesTotal=len(cursor.fetchall())
+            self.ids.totalEmployeesId.text=str(employeesTotal)
+            # totalporducts
+            totalProducts ='SELECT product_id from products;'
+            cursor = mydb.cursor()
+            cursor.execute(totalProducts)
+            productsTotal=len(cursor.fetchall())
+            self.ids.productsTotalId.text=str(productsTotal)
+            # MOST SOLD porducts
+            namesOfProductsSold ='SELECT DISTINCT(product_name) from sales;'
+            cursor = mydb.cursor()
+            cursor.execute(namesOfProductsSold)
+            names = cursor.fetchall()
+            productName_value_pair ={}
+            for name in names:
+                prod =f"SELECT sales_id from sales where product_name='{name[0]}'"
+                cursor = mydb.cursor()
+                cursor.execute(prod)
+                number = len(cursor.fetchall())
+                productName_value_pair[number]=name[0]
+            # getting the maximum and minimum value and using it to get the name of the product
+            prodkeys =productName_value_pair.keys() 
+            maxNumber= max(prodkeys)
+            minNumber = min(prodkeys)
+            mostSoldProduct=  productName_value_pair[maxNumber]
+            listSoldProduct =productName_value_pair[minNumber]
+            self.ids.mostSoldProductId.text=str(mostSoldProduct)
+            self.ids.listSoldProductId.text=str(listSoldProduct)
+
+            mydb.commit()
+            mydb.close()
+        except Exception as e:
+            self.loggingMessage('administration_window',e)
+
         
     
 class AdministrationApp(App):
@@ -1377,3 +1662,29 @@ if __name__=="__main__":
 #             return listOfCategories #(1,name,tell)
 #         except Exception as e:
 #             self.ids.productsEntryErrorsId.text='The is an issue trying to connect to the database'
+# def populateCategoryRecycleView(self):
+#         user ='root'
+#         dbpassword = '@#mysql@#'
+#         host ='localhost'
+#         database = "BE_RETAIL_MANAGEMENT_DATABASE"
+    
+        
+#         '''this function is used to fetch all the categories from the database and 
+#         insert them into the categorie  window,
+#         '''
+#         try:
+#             mydb = DbConnector.connect(user=user, password=dbpassword,
+#                                         host=host,
+#                                         database=database
+#                                         )
+            
+#             selectAllCategories = "SELECT * from categories"
+#             cursor = mydb.cursor()
+#             cursor.execute(selectAllCategories)
+#             listOfAllCategories = cursor.fetchall()
+
+#             self.ids.categorylistId.data =[{'text':str(f"{x[0] }  {x[1] } ")} for x in listOfAllCategories]
+            
+#         except Exception as e:
+#             self.loggingMessage('administration_window',e)
+#             pass

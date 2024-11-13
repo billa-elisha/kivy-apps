@@ -1,17 +1,21 @@
 from kivy.app import App 
+from kivy.logger import Logger
+from kivy.logger import LoggerHistory
+
 from kivy.uix.boxlayout import BoxLayout
 from kivy.properties import  ObjectProperty
 # imports for creating a fixed login window which is not resizeable
 from kivy.config import Config
 import mysql.connector as DbConnector
+from datetime import datetime
+# from kivy.core.window import Window
+from kivy.lang import Builder
+import os
 
 
 
-
-# setting the size of the page
-Config.set('graphics', 'resizable', '0') 
-Config.set('graphics', 'width', '500')
-Config.set('graphics', 'height', '600')
+path = os.getcwd()
+Builder.load_file(path +'/login/login1.kv')
 
 # The login page class
 class LogInWindow(BoxLayout):
@@ -26,6 +30,8 @@ class LogInWindow(BoxLayout):
     userNameErrorMessage = ObjectProperty(None)
     userPasswordErrorMessage = ObjectProperty(None)
 
+    
+
     # database connection variables
     user ='root'
     dbpassword = '@#mysql@#'
@@ -38,18 +44,25 @@ class LogInWindow(BoxLayout):
         it returns
         1. the user data or none is there is no user with that name
         '''
+        name =((self.userName.text).strip()).lower()
         try:
             mydb = DbConnector.connect(user=self.user, password=self.dbpassword,
                                         host=self.host,
                                         database=self.database
                                         )
-            fetchOneUserData = "SELECT name,password,designation FROM users WHERE name=%s"
+            
+            fetchOneUserData = f"SELECT name,password,designation FROM users WHERE name='{name}'"
             cursor = mydb.cursor()
-            cursor.execute(fetchOneUserData,(self.userName.text,))
+            cursor.execute(fetchOneUserData)
             userData = cursor.fetchone()
             return userData
-        except:
-            print('there is an exeption')
+        except Exception as e:
+            date = datetime.now()
+            ms = (f'''[LOGIN APP]: {date}
+{e}
+\n''')
+            f = open('loginpage-loggmessages.txt','a')
+            f.write(ms)
         
     # login validation function
     def validateLogin(self, isAdmin, *args, **kwargs):
@@ -64,22 +77,26 @@ class LogInWindow(BoxLayout):
         
 
         fetchUserData = self.fetchUserData() # This is a tuple containing (name,password,designation) or None
+        
         if fetchUserData==None:
             self.userNameErrorMessage.text ="User name is not found!"
         # validating the password and checking designation status
         else:
             # invalid password
-            if self.password.text != fetchUserData[1]:
+            if ((self.password.text).strip()).lower() != fetchUserData[1]:
                 self.userPasswordErrorMessage.text ="You entered wrong password"
+              
             # for valid password
             else:
                 # check of disignation wherther admin or operator
                 if (str(isAdmin) == "False") and (fetchUserData[2]=='operator'):
                     # LOG IN THE OPERATING WINDOW
-                    print("loging into the operator page")#======================================>
+                    self.parent.parent.parent.ids.scrn_mngr_main.current='scrn_op'
+
                     # clearing the input text after validation is done
                     self.userName.text = ''
                     self.password.text = ''
+                    
 
                 # Not an admin error message
                 elif (str(isAdmin)== "True") and (fetchUserData[2]=='operator'):
@@ -88,7 +105,8 @@ class LogInWindow(BoxLayout):
 
                 # admin but loging into the operating window
                 elif (str(isAdmin)== "False") and (fetchUserData[2]=='admin'):
-                    print("admin but looging into the operating window")#==================================>
+                    self.parent.parent.parent.ids.scrn_mngr_main.current='scrn_op'
+
                     # clearing the input text after validation is done
                     self.userName.text = ''
                     self.password.text = ''
@@ -96,12 +114,13 @@ class LogInWindow(BoxLayout):
                 # an admin loging into the admin window
                 else:
                     self.ids.admin.active=False
-                    print('loging into the admin window as an admin')
+                    self.parent.parent.parent.ids.scrn_mngr_main.current='scrn_admin'
+
                     # clearing the input text after validation is done
                     self.userName.text = ''
                     self.password.text = ''
 
-        # print(fetchUserData)
+        
     
         
         
@@ -113,6 +132,6 @@ class LogInApp(App):
 
         self.title ="BE.RMS"
         return LogInWindow()
-    
+        
 if __name__=="__main__":
     LogInApp().run()

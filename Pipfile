@@ -4,8 +4,8 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-kivy = {extras = ["full"], version = "*"}
 mysql-connector-python = "*"
+kivy = {extras = ["full"], version = "*"}
 
 [dev-packages]
 

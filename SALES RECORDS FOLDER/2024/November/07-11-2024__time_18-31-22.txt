@@ -1,0 +1,10 @@
+ 
+	timz computers
+	tell:0247403219
+	location: abavana street
+	
+	Product		Price		Qt             
+	-----------------------------------		
+	makeral(sm)		9.0		3
+
+	 Total Cost Ghc : 27.0

@@ -1,0 +1,10 @@
+ 
+	timz computers
+	tell:0247403219
+	location: abavana street
+	
+	Product		Price		Qt             
+	-----------------------------------		
+	food		150.0		1
+
+	 Total Cost Ghc : 150.0

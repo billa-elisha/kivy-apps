@@ -241,11 +241,13 @@
                                 text:''
                                 color:(.1,.1,.1,1)
                                 bold:True
+                                markup:True
                             PriceLabel:
                                 id:productToPurchasePrice
                                 text:''
                                 color:(.1,.1,.1,1)
                                 bold:True
+                                markup:True
                             Label:
                                 
                                 text:'Qt :'
@@ -285,7 +287,7 @@
                                 size_hint_x:None
                                 width:'80dp'
                                 color:(1,1,1,1)
-                                on_press:root.clearButton()
+                                on_press:root.popUpNotification(self)#root.clearButton()
                             # decoration
                             BoxLayout:
                                 size_hint_x:0.2
@@ -321,7 +323,7 @@
                                 size_hint_x:None
                                 width:'80dp'
                                 color:(1,1,1,1)
-                                on_press:root.undoButton()
+                                on_press:root.popUpNotification(self)#root.undoButton()
                             BoxLayout:
                                 size_hint_x:0.2
                             BoxLayout:

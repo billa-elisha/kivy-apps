@@ -1,0 +1,9 @@
+[operation_window APP]: 2024-11-08 16:42:28.063711
+list index out of range
+
+[operation_window APP]: 2024-11-08 16:45:33.887891
+list index out of range
+
+[operation_window APP]: 2024-11-10 07:39:19.946050
+list index out of range
+

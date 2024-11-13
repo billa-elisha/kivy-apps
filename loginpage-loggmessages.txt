@@ -1,0 +1,36 @@
+[LOGIN APP]: 2024-11-11 18:22:18.594546
+invalid literal for int() with base 10: 'dfi'
+
+[LOGIN APP]: 2024-11-13 13:03:15.128878
+invalid literal for int() with base 10: 'dfi'
+
+[LOGIN APP]: 2024-11-13 13:04:00.964568
+invalid literal for int() with base 10: 'dfi'
+
+[LOGIN APP]: 2024-11-13 13:04:02.043526
+invalid literal for int() with base 10: 'dfi'
+
+[LOGIN APP]: 2024-11-13 13:04:13.431178
+invalid literal for int() with base 10: 'dfi'
+
+[LOGIN APP]: 2024-11-13 13:18:53.252266
+invalid literal for int() with base 10: 'dfi'
+
+[LOGIN APP]: 2024-11-13 13:19:04.322947
+invalid literal for int() with base 10: 'dfi'
+
+[LOGIN APP]: 2024-11-13 13:22:42.361496
+invalid literal for int() with base 10: 'dfi'
+
+[LOGIN APP]: 2024-11-13 13:23:46.443681
+invalid literal for int() with base 10: 'dfi'
+
+[LOGIN APP]: 2024-11-13 13:24:56.174506
+invalid literal for int() with base 10: 'dfi'
+
+[LOGIN APP]: 2024-11-13 13:25:27.468159
+invalid literal for int() with base 10: 'dfi'
+
+[LOGIN APP]: 2024-11-13 13:26:55.767229
+invalid literal for int() with base 10: 'dfi'
+

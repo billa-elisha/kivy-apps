@@ -10,17 +10,21 @@ from kivy.uix.label import Label
 from kivy.uix.behaviors import FocusBehavior
 from kivy.uix.recycleview.layout import LayoutSelectionBehavior
 from kivy.uix.textinput import TextInput
+from kivy.uix.button import Button
+from kivy.uix.popup import Popup
 from datetime import date,datetime
 import win32api,win32print
 import time
 
 import os
+from kivy.lang import Builder
 
 
 
 
         
-        
+path = os.getcwd()
+Builder.load_file(path +'/operator_window/operator1.kv')
         
 class HomeScreen(Screen):
     '''This is the home screen and we can navigate to'''
@@ -64,7 +68,9 @@ class SelectableLabel(RecycleDataViewBehavior,Label):
         ''' Respond to selection of items in the view'''
         self.selected = is_selected
         if is_selected:
-            getIdOfSelectedProduct = int(str(rv.data[index]['text'])[0])
+            splitDataIntoId_Name = (rv.data[index]['text']).split()
+        
+            getIdOfSelectedProduct = int(splitDataIntoId_Name[0])
             
             # print(self.parent.parent.parent.parent.parent.parent.children[1].children[3].children[3].text)#=======================================>
             try:
@@ -83,7 +89,13 @@ class SelectableLabel(RecycleDataViewBehavior,Label):
                 priceToInsert.text=f"{productDetailsToInsert[1]}"
                 # print(quantityToInsert.text)
             except AttributeError as e:
-                pass
+                date = datetime.now()
+                ms = (f'''[operation_window APP]: {date}
+{e}
+\n''')
+                f = open('operation_windowApp-loggmessages.txt','a')
+                f.write(ms)
+                
             
         else:
             pass
@@ -106,17 +118,26 @@ class SelectableLabel(RecycleDataViewBehavior,Label):
                                         database=database
                                         )
             
-            selectProduct = "SELECT product_name,product_selling_price from products WHERE product_id =%s"
+            selectProduct = "SELECT product_name,product_selling_price,product_quantity from products WHERE product_id =%s"
             cursor = mydb.cursor()
             cursor.execute(selectProduct,(id,))
             product = cursor.fetchone()
 
             product[0] #this is use to throw an exception if the there is no name with the product searched
-            # print(product)
+            prodQuantity=product[2]
+            if int(prodQuantity)<=0:
+                product=('[color=#ff0000]Out of stock[/color]', 00.00,)
+            # print(prodQuantity)
             # print(selectProduct)
             return product
         except Exception as e:
-            product=('No product', 00.00,)
+            date = datetime.now()
+            ms = (f'''[operation_window APP]: {date}
+{e}
+\n''')
+            f = open('operation_windowApp-loggmessages.txt','a')
+            f.write(ms)
+            product=('[color=#ff0000]No product[/color]', 00.00,)
             return product
             
     
@@ -142,6 +163,28 @@ class OperationWindow(BoxLayout):
         self.companyTell=str(self.fetchCompanyDetails()[2])
         self.companyLocation=str(self.fetchCompanyDetails()[3])
 
+        # # ====popup=====
+        # self.mainlayout =BoxLayout(orientation='vertical')
+        # self.popup= Popup(
+        #     title='Test popup',
+        #     content=self.mainlayout,
+        #     size_hint=(None, None), size=(300, 200),
+        #     auto_dismiss=False
+        # )
+        # self.mainlayout.add_widget(Label(text='hello world'))
+
+        # self.buttonLayout=BoxLayout(
+        #     size_hint_y=None,
+        #     height='40dp',
+        #     spacing='50dp')
+        
+        # self.buttonLayout.add_widget(Button(text='OK',on_press=self.clearButton))
+
+        # self.concelBtn=Button(text='Concel',on_press=self.popup.dismiss)
+        # self.buttonLayout.add_widget(self.concelBtn)
+        # self.mainlayout.add_widget(self.buttonLayout)
+        # # ======end popup=======
+
         
         # print(self.getProductRuningOutOfStock())
         self.populateProductOutOfStockView()
@@ -156,9 +199,46 @@ class OperationWindow(BoxLayout):
         listOfproducts=self.fetchAllProducts(productName=productName)
         self.ids.recycle_view_id.data =[{'text':str(f"{x[0] }      {x[2] } ")} for x in listOfproducts]
         self.ids.recycle_view_id.refresh_from_data()
-        
+# =============popup section============
+    def popUpNotification(self,instance):
+        buttonClicked = (instance.text).lower()
+        self.mainlayout =BoxLayout(orientation='vertical')
+        self.popup= Popup(
+            title='Test popup',
+            content=self.mainlayout,
+            size_hint=(None, None), size=(300, 200),
+            auto_dismiss=False
+        )
+        self.mainlayout.add_widget(Label(text=f'Do you really you want to {buttonClicked}'))
 
-    
+        self.buttonLayout=BoxLayout(
+            size_hint_y=None,
+            height='40dp',
+            spacing='50dp')
+        
+        okButton = Button(text='Yes')
+        self.buttonLayout.add_widget(okButton)
+        if buttonClicked =="clear":
+            okButton.bind(on_press=self.clearButton)
+        if buttonClicked =="undo":
+            okButton.bind(on_press=self.undoButton)
+        else:
+            pass
+        
+        self.concelBtn=Button(text='No',on_press=self.popup.dismiss)
+        self.buttonLayout.add_widget(self.concelBtn)
+        self.mainlayout.add_widget(self.buttonLayout)
+        self.popup.open()
+
+# =============popup section end_============
+
+    def loggingMessage(self,appname,e):
+        date = datetime.now()
+        ms = (f'''[{appname} APP]: {date}
+{e}
+\n''')
+        f = open(f'{appname}App-loggmessages.txt','a')
+        f.write(ms)
 
     def changeToHomePage(self):
         '''
@@ -226,7 +306,7 @@ class OperationWindow(BoxLayout):
                 return listOfAllProducts
         except Exception as e:
             listOfAllProducts=[(0, '2345', 'No product with that name', 5.0, 6.0, 56, 'vegetables'),]
-            
+            self.loggingMessage('operation_window',e)
             return listOfAllProducts
             
 
@@ -240,23 +320,36 @@ class OperationWindow(BoxLayout):
             self.ids.productQuantityErrorMessage.text=''
             int(productQuantity)#this is use to catch non interger exceptions
 
-            if productName=="No product" or productPrice=="0.00" or productName=='':
+            if productName=="[color=#ff0000]No product[/color]" or productPrice=="0.00" or productName=='[color=#ff0000]Out of stock[/color]' or productName=='':
+                
+                # clearing the fills
+                self.ids.productToPurchaseName.text=''
+                self.ids.productToPurchasePrice.text=''
+                self.ids.productToPurchaseQuantity.text='1'
                 pass
             else:
                 self.generateBill()
-                self.clearButton()
+                # clearing the fills
+                self.ids.productToPurchaseName.text=''
+                self.ids.productToPurchasePrice.text=''
+                self.ids.productToPurchaseQuantity.text='1'
+                
         except Exception as e:
+            
             self.ids.productQuantityErrorMessage.text="Enter Integer value as quantity"
+            self.loggingMessage('operation_window',e)
             
 
 
 
-    def clearButton(self):
+    def clearButton(self,instance):
+        self.popup.dismiss()
         self.ids.productToPurchaseName.text=''
         self.ids.productToPurchasePrice.text=''
         self.ids.productToPurchaseQuantity.text='1'
 
-    def undoButton(self):
+    def undoButton(self,instance):
+        self.popup.dismiss()
         try:
             # Getting the text of the bill area
             billToUpdate =self.ids.billTextId.text
@@ -298,7 +391,8 @@ class OperationWindow(BoxLayout):
             self.ids.billTextId.text=updatedBill
             # updating the total cost with the new total
             self.ids.productTotalPriceId.text= str(updatedTotalCost)
-        except:
+        except Exception as e:
+            self.loggingMessage('operation_window',e)
             pass
         
         
@@ -351,6 +445,7 @@ class OperationWindow(BoxLayout):
             
             return listOfAllProducts
         except Exception as e:
+            # self.loggingMessage('operation_window',e)
             # listOfAllProducts=[(404, '2345', 'No product with that name', 5.0, 6.0, 56, 'vegetables'),]
             return listOfAllProducts
 
@@ -394,7 +489,8 @@ class OperationWindow(BoxLayout):
             os.mkdir(f"SALES RECORDS FOLDER")
 
         except FileExistsError:
-            print("The SALES RECORD FOLDER is already present, os am trying to creat the year folder")
+
+            # print("The SALES RECORD FOLDER is already present, os am trying to creat the year folder")
             # making a sub directory for each year
             try:
                 today= date.today()
@@ -403,7 +499,7 @@ class OperationWindow(BoxLayout):
                 print("the year folder is creates successfully")
                 
             except FileExistsError:
-                print(f"Directory {year} already exists so am creating a directory for the month")
+                # print(f"Directory {year} already exists so am creating a directory for the month")
                 # if the year directory exist the create a directory for each month
                 try:
                     todaysMonth= date.today()
@@ -437,33 +533,39 @@ class OperationWindow(BoxLayout):
                                 
 
                         except Exception as e:
-                            print(e)
+                            self.loggingMessage('operation_window',e)
                             self.ids.folderCreationError.text=f"An error occurred in printing file "
 
-                    except:
+                    except Exception as e:
+                        self.loggingMessage('operation_window',e)
                         self.ids.folderCreationError.text=f"An error occurred in creating document file "
 
                     
-                except PermissionError:
+                except PermissionError as e:
+                    self.loggingMessage('operation_window',e)
                     self.ids.folderCreationError.text=f"Your Operation System as denied you a pemission to create a '{month} folder' ."
                     
                 except Exception as e:
+                    self.loggingMessage('operation_window',e)
                     self.ids.folderCreationError.text=f"An error occurred in creating '{month} folder "
 
 
 
-            except PermissionError:
+            except PermissionError as e:
+                self.loggingMessage('operation_window',e)
                 self.ids.folderCreationError.text=f"Your Operation System as denied you a pemission to create a 'SALES RECORDS FOLDER' ."
 
             except Exception as e:
+                self.loggingMessage('operation_window',e)
                 self.ids.folderCreationError.text=f"An error occurred in creating SALES RECORDS FOLDER "
 
 
-        except PermissionError:
+        except PermissionError as e:
+            self.loggingMessage('operation_window',e)
             self.ids.folderCreationError.text=f"Your Operation System as denied you a pemission to create a SALES RECORDS FOLDER ."
             
         except Exception as e:
-
+            self.loggingMessage('operation_window',e)
             self.ids.folderCreationError.text=f"An error occurred in creating SALES RECORDS FOLDER "
         
             
@@ -476,19 +578,57 @@ class OperationWindow(BoxLayout):
 \t-----------------------------------\t\t'''
         
         # saving the sold product to the sales table
-        # soldProducts = (self.ids.billTextId.text).split('\t\t')
-        secondway = (self.ids.billTextId.text).split('\n')
-        print(secondway)
-        # slicing the products section
-        secondway=secondway[7:]
-        for p in secondway:
-            p.lstrip('\n\t')
-            print(p)
+        # and updating the products sold
+        soldProducts = ((self.ids.billTextId.text).split('\n'))[7:] # this is how they will look like ['\topera\t\t800.0\t\t1', '\tsoneyy\t\t7777.0\t\t1', '\tfood\t\t150.0\t\t1']
+      
+        
+        for prod in soldProducts:
+            prod = prod.lstrip('\t') # ['soneyy\t\t7777.0\t\t1']['opera\t\t800.0\t\t1']['food\t\t150.0\t\t1']
+            details = prod.split("\t\t")
+            '''this contains the name,price and quantity of the products sold'''
+            productName= details[0]
+            productPrice=details[1]
+            productQuantity=details[2]
 
-        print(secondway)
+            try:
+                mydb = DbConnector.connect(user=self.user, password=self.dbpassword,
+                                        host=self.host,
+                                        database=self.database
+                                        )
+                "getting the initial quantity of each product bought"
+                getInitialProductQuantity= f"SELECT product_quantity,product_cost_price,product_selling_price from products where product_name='{productName}';"
+                cursor = mydb.cursor()
+                cursor.execute(getInitialProductQuantity)
+                initialQuantity=cursor.fetchone()
 
 
+                'updating the quantity of the product bought'
+                updatedQuantity= int(initialQuantity[0])-int(productQuantity)
+                udpateProduct = f"update products SET product_quantity={updatedQuantity} where product_name='{productName}';"
+                cursor.execute(udpateProduct)
+                mydb.commit()
+
+                'adding to the sales table the sold products'
+                profitMade =float(initialQuantity[2])-float(initialQuantity[1])
+                soldDate =datetime.now()
+                day = soldDate.strftime('%d %b %Y')
+                month = soldDate.strftime('%b %Y')
+                
+                soldQuery = f"insert into sales values(sales_id,'{productName}',{int(productQuantity)},{profitMade},'{day}','{month}');"
+                cursor.execute(soldQuery)
+                mydb.commit()
+                mydb.close()
+                
+            except Exception as e:
+                self.loggingMessage('operation_window',e)
+                pass
+            
+        'reupdating the bill area'
         self.ids.billTextId.text=billupdate
+
+        'refreshing the out of stock data'
+        self.ids.outOfStockRecycleViewId.refresh_from_data()
+        self.populateProductOutOfStockView()
 
 
         # # saving the sold product to the sales table
@@ -531,6 +671,7 @@ class OperationWindow(BoxLayout):
                 mydb.close()
                 return details #(1,name,tell)
             except Exception as e:
+                self.loggingMessage('operation_window',e)
                 pass
     
 

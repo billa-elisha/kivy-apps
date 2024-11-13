@@ -1,13 +1,13 @@
 
 # =====================================CUSTOM WIDGETS FOR THE SCREENS=====================
-<CustomTitleLable@Label>:
+<AdminCustomTitleLable@Label>:
     color: textTitleColor
     size_hint_y:None
     height:"50dp"
     font_size:'20sp'
     bold:True
 # Navigation buttons
-<CustomNavigationButton@Button>:
+<AdminCustomNavigationButton@Button>:
     color:lineColor
     background_normal: ''  
     background_color:buttonsBackgroundColor
@@ -19,7 +19,7 @@
 <AnalysisScreen>:
 <UserScreen>:
 
-<CustomTitleLable@Label>:
+<AdminCustomTitleLable@Label>:
     color: textTitleColor
     size_hint_y:None
     height:"50dp"
@@ -42,7 +42,7 @@
 <RecycleLable@Label>:
     color:productListTextColor
 
-<CustomTextInputBox@TextInput>:
+<AdminCustomTextInputBox@TextInput>:
 #  changing the border color of the textinput field
     canvas.after:
         Color:
@@ -251,19 +251,19 @@
         size_hint_y:None
         height:"35dp"
         # home lable
-        CustomNavigationButton:
+        AdminCustomNavigationButton:
             text: 'Home'
             on_press: root.changeToHomePage()
         # products button
-        CustomNavigationButton:
+        AdminCustomNavigationButton:
             text: 'Products'
             on_press: root.changeToProductsPage()
         # analysis button
-        CustomNavigationButton:
+        AdminCustomNavigationButton:
             text: 'Analysis'
             on_press: root.changeToAnalysisPage()
         # users button
-        CustomNavigationButton:
+        AdminCustomNavigationButton:
             text: 'Users'
             on_press: root.changeToUsersPage()
 
@@ -375,7 +375,7 @@
                             # for decoration
                             BoxLayout:
                                 size_hint_x:0.2
-                            CustomTextInputBox:
+                            AdminCustomTextInputBox:
                                 id:companyNameId
                             # for decoration
                             BoxLayout:
@@ -384,7 +384,7 @@
                                 text:'change name'
                                 size_hint_x:None
                                 width:'110dp'
-                                on_press:root.changeCompanyName()
+                                on_press:root.popUpNotification(self,)#root.changeCompanyName()
                             # for decoration
                             BoxLayout:
 
@@ -398,7 +398,7 @@
                             # for deco
                             BoxLayout:
                                 size_hint_x:.2
-                            CustomTextInputBox:
+                            AdminCustomTextInputBox:
                                 id:companyTellId
                             # for deco
                             BoxLayout:
@@ -407,7 +407,7 @@
                                 text:'change tell'
                                 size_hint_x:None
                                 width:'110dp'
-                                on_press:root.changeCompanyTell()
+                                on_press:root.popUpNotification(self,)#root.changeCompanyTell()
                             # for decoration
                             BoxLayout:
 
@@ -421,7 +421,7 @@
                             # for deco
                             BoxLayout:
                                 size_hint_x:.2
-                            CustomTextInputBox:
+                            AdminCustomTextInputBox:
                                 id:companyLocationId
                             # for deco
                             BoxLayout:
@@ -430,7 +430,7 @@
                                 text:'change location'
                                 size_hint_x:None
                                 width:'110dp'
-                                on_press:root.changeCompanyLocation()
+                                on_press:root.popUpNotification(self,)#root.changeCompanyLocation()
                             # for decoration
                             BoxLayout:
 
@@ -458,7 +458,7 @@
                             width: 1
                             rectangle: self.x, self.y, self.width, self.height
                     # title
-                    CustomTitleLable:
+                    AdminCustomTitleLable:
                         text:'Employees and Products'
                     # products lable
                     BoxLayout:
@@ -471,6 +471,7 @@
                             color:(0,0,0,1)
                             size_hint_x:.8
                         Label:
+                            id:productsTotalId
                             text:"17"
                             text_size:self.size
                             valign:'center'
@@ -487,7 +488,8 @@
                             color:(0,0,0,1)
                             size_hint_x:.8
                         Label:
-                            text:"17"
+                            id:totalEmployeesId
+                            text:"0"
                             text_size:self.size
                             valign:'center'
                             color:(0,0,0,1)
@@ -497,33 +499,20 @@
                         size_hint_y:None
                         height:'40dp'
                         Label:
-                            text:"The most sold produc is:"
+                            text:"The most sold product is:"
                             text_size:self.size
                             valign:'center'
                             color:(0,0,0,1)
                             size_hint_x:.8
                         Label:
+                            id:mostSoldProductId
                             text:"cbae"
                             text_size:self.size
                             valign:'center'
                             color:(0,0,0,1)
                             size_hint_x:.2
-                    # the avaerage sod product
-                    BoxLayout:
-                        size_hint_y:None
-                        height:'40dp'
-                        Label:
-                            text:"The product is averagely sold:"
-                            text_size:self.size
-                            valign:'center'
-                            color:(0,0,0,1)
-                            size_hint_x:.8
-                        Label:
-                            text:"banana"
-                            text_size:self.size
-                            valign:'center'
-                            color:(0,0,0,1)
-                            size_hint_x:.2
+                    
+                        
                     # list product sale
                     BoxLayout:
                         size_hint_y:None
@@ -535,7 +524,8 @@
                             color:(0,0,0,1)
                             size_hint_x:.8
                         Label:
-                            text:"gary"
+                            id:listSoldProductId
+                            text:"x"
                             text_size:self.size
                             valign:'center'
                             color:(0,0,0,1)
@@ -583,7 +573,7 @@
                             size_hint_y:None
                             height:'40dp'
                             spacing:"20dp"
-                            CustomTextInputBox:
+                            AdminCustomTextInputBox:
                                 id:productToDeleteNameId
                                 hint_text:'Enter id'
 
@@ -626,7 +616,7 @@
                                 text:'product code :'
                                 text_size:self.size
                                 color:(0,0,0,1)
-                            CustomTextInputBox:
+                            AdminCustomTextInputBox:
                                 id:productCodeId
                             # for deco
                             BoxLayout:
@@ -662,7 +652,7 @@
                                 text:'product name :'
                                 text_size:self.size
                                 color:(0,0,0,1)
-                            CustomTextInputBox:
+                            AdminCustomTextInputBox:
                                 id:productNameId
                             # for deco
                             BoxLayout:
@@ -698,7 +688,7 @@
                                 text:'product Qt:'
                                 text_size:self.size
                                 color:(0,0,0,1)
-                            CustomTextInputBox:
+                            AdminCustomTextInputBox:
                                 id:productQuantityId
                             # for deco
                             BoxLayout:
@@ -734,7 +724,7 @@
                                 text:'product C-price :'
                                 text_size:self.size
                                 color:(0,0,0,1)
-                            CustomTextInputBox:
+                            AdminCustomTextInputBox:
                                 id:productCPriceId
                             # for deco
                             BoxLayout:
@@ -770,7 +760,7 @@
                                 text:'product S-price :'
                                 text_size:self.size
                                 color:(0,0,0,1)
-                            CustomTextInputBox:
+                            AdminCustomTextInputBox:
                                 id:productSPriceId
                             # for deco
                             BoxLayout:
@@ -812,8 +802,8 @@
                                 text:""
                                 size_hint_x:0.1
                             Button:
-                                text:'clear'
-                                on_press:root.clearProductFields()
+                                text:'clear product'
+                                on_press:root.popUpNotification(self,)#root.clearProductFields()
                                 background_normal:''
                                 background_color:clearbuttonColor
                             # for deco
@@ -821,8 +811,8 @@
                                 text:""
                                 size_hint_x:0.2
                             Button:
-                                text:'add'
-                                on_press:root.addProduct()
+                                text:'add product'
+                                on_press:root.popUpNotification(self,)#root.addProduct()
                                 background_color:mainColor
                                 background_normal:''
                             # for deco
@@ -842,17 +832,17 @@
                                 text:""
                                 size_hint_x:0.1
                             Button:
-                                text:'Delete'
+                                text:'Delete product'
                                 background_normal:""
                                 background_color: deleteButtonColor
-                                on_press:root.deleteProduct()
+                                on_press:root.popUpNotification(self,)#root.deleteProduct()
                             # for deco
                             Label:
                                 text:""
                                 size_hint_x:0.2
                             Button:
-                                text:'update'
-                                on_press:root.updateProduct()
+                                text:'update product'
+                                on_press:root.popUpNotification(self,)#root.updateProduct()
                             # for deco
                             Label:
                                 text:""
@@ -890,7 +880,7 @@
                             size_hint_y:None
                             height:"40dp"
                             spacing:'20dp'
-                            CustomTextInputBox:
+                            AdminCustomTextInputBox:
                                 id:productToSearchId
                                 hint_text:'search product'
                                 size_hint_x:.3
@@ -975,7 +965,7 @@
                         Line:
                             width: 1
                             rectangle: self.x, self.y, self.width, self.height 
-                    CustomTitleLable:
+                    AdminCustomTitleLable:
                         text:'Products Sold'
                     # a box that will contain the date buttons and the products sold on that day
                     BoxLayout:
@@ -1058,7 +1048,7 @@
                         Line:
                             width: 1
                             rectangle: self.x, self.y, self.width, self.height 
-                    CustomTitleLable:
+                    AdminCustomTitleLable:
                         text:'Monthly Report'
                     
                     BoxLayout:
@@ -1178,7 +1168,7 @@
                             size_hint_y:None
                             height:'40dp'
                             spacing:"20dp"
-                            CustomTextInputBox:
+                            AdminCustomTextInputBox:
                                 id:userToDeleteOrUpdateId
                                 hint_text:'Enter id'
                             # search user to update or delete butthon
@@ -1213,7 +1203,7 @@
                                 text:'User Name :'
                                 text_size:self.size
                                 color:(0,0,0,1)
-                            CustomTextInputBox:
+                            AdminCustomTextInputBox:
                                 id:userNameId
                             # for deco
                             BoxLayout:
@@ -1249,7 +1239,7 @@
                                 text:'User Email :'
                                 text_size:self.size
                                 color:(0,0,0,1)
-                            CustomTextInputBox:
+                            AdminCustomTextInputBox:
                                 id:userEmailId
                             # for deco
                             BoxLayout:
@@ -1285,7 +1275,7 @@
                                 text:'Password :'
                                 text_size:self.size
                                 color:(0,0,0,1)
-                            CustomTextInputBox:
+                            AdminCustomTextInputBox:
                                 id:userPasswordId
                             # for deco
                             BoxLayout:
@@ -1321,7 +1311,7 @@
                                 text:'Designation :'
                                 text_size:self.size
                                 color:(0,0,0,1)
-                            CustomTextInputBox:
+                            AdminCustomTextInputBox:
                                 id:userDesignationId
                             # for deco
                             BoxLayout:
@@ -1372,8 +1362,8 @@
                                 text:""
                                 size_hint_x:0.1
                             Button:
-                                text:'clear'
-                                on_press:root.clearUserFields()
+                                text:'clear user'
+                                on_press:root.popUpNotification(self,)#root.clearUserFields()
                                 background_normal:''
                                 background_color:clearbuttonColor
                             # for deco
@@ -1381,8 +1371,8 @@
                                 text:""
                                 size_hint_x:0.2
                             Button:
-                                text:'add'
-                                on_press:root.addUser()
+                                text:'add user'
+                                on_press:root.popUpNotification(self,)#root.addUser()
                                 background_color:mainColor
                                 background_normal:''
                             # for deco
@@ -1402,17 +1392,17 @@
                                 text:""
                                 size_hint_x:0.1
                             Button:
-                                text:'Delete'
+                                text:'Delete user'
                                 background_normal:""
                                 background_color: deleteButtonColor
-                                on_press:root.deleteUser()
+                                on_press:root.popUpNotification(self,)#root.deleteUser()
                             # for deco
                             Label:
                                 text:""
                                 size_hint_x:0.2
                             Button:
-                                text:'update'
-                                on_press:root.updateUser()
+                                text:'update user'
+                                on_press:root.popUpNotification(self,)#root.updateUser()
                             # for deco
                             Label:
                                 text:""
@@ -1454,7 +1444,7 @@
                             size_hint_y:None
                             height:"40dp"
                             spacing:'20dp'
-                            CustomTextInputBox:
+                            AdminCustomTextInputBox:
                                 id:userToSearchId
                                 hint_text:'Enter Name'
                                 size_hint_x:.3

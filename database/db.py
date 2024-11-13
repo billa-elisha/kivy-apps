@@ -143,7 +143,7 @@ class CreateDb:
         mydb =connection[0]
         mycursor = mydb.cursor()
         quary = ('''CREATE TABLE IF NOT EXISTS sales(
-                 product_id INT AUTO_INCREMENT PRIMARY KEY, 
+                 sales_id INT AUTO_INCREMENT PRIMARY KEY, 
                  product_name VARCHAR (200) NOT NULL, 
                  quantity_sold INT NOT NULL,
                  profit_made FLOAT NOT NULL,
