@@ -1245,7 +1245,7 @@ class AdministrationPage(BoxLayout):
             try:
                 userToDeleteId= int(userToDeleteId)
                 
-                query = f"DELETE FROM users where user_id={userToDeleteId};"
+                query = f"DELETE FROM users where user_id={int(userToDeleteId)};"
                 cursor = mydb.cursor()
                 cursor.execute(query)
                 mydb.commit()
@@ -1268,6 +1268,7 @@ class AdministrationPage(BoxLayout):
                 self.ids.userToDeleteOrUpdateId.text=''
                 self.summaryOfProducts_Employees()
             except Exception as e:
+                
                 self.loggingMessage('administration_window',e)
                 self.ids.userIdEmptyErrorMessageId.text='wrong user id '
                 return

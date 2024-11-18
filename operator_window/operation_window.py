@@ -444,66 +444,83 @@ class OperationWindow(BoxLayout):
 
         self.ids.productTotalPriceId.text=productsTotalPrice
         self.ids.billTextId.text=bill
+
+
+    # for the finnlise function
+    def makeyeardirectory(self):
+        today= date.today()
+        year = today.strftime('%Y')
+        os.mkdir(F'SALES RECORDS FOLDER/{year}')
+
+    def makemonthdirectory(self,year):
+        todaysMonth= date.today()
+        month = todaysMonth.strftime("%B")
+        os.mkdir(f"SALES RECORDS FOLDER/{year}/{month}")
+
+    def savingAndPrintingFile(self,year,month,isGenerateBill):
+        try:
+            pathToSaveFile = f"SALES RECORDS FOLDER/{year}/{month}"
+            dayOfOperation= datetime.now()
+            nameOfFile = dayOfOperation.strftime("%d-%m-%Y__time_%H-%M-%S")
+
+            filepath =f"{pathToSaveFile}/{nameOfFile}.txt"
+            file = open(filepath,'w+')
+            file.write(f'{self.ids.billTextId.text}\n\n\t{self.ids.costLableId.text} {self.ids.productTotalPriceId.text}')
+            file.close()
+
+            #this is where the printing of the document is done
+            try:
+                if isGenerateBill==True or str(isGenerateBill)== 1:
+                    path =os.getcwd() # this is the path to the current location
+                    # getting the file
+                    filelocation= path +f'\{filepath}'
+
+                    # start printing
+                    self.ids.productTotalPriceId.text='0.00'
+                    win32api.ShellExecute(0,'print',filelocation,None,'.',0)
+                else:
+                    self.ids.productTotalPriceId.text='0.00'
+                    
+
+            except Exception as e:
+                self.loggingMessage('operation_window',e)
+                self.ids.folderCreationError.text=f"An error occurred in printing file "
+
+        except Exception as e:
+            self.loggingMessage('operation_window',e)
+            self.ids.folderCreationError.text=f"An error occurred in creating document file "
+
+        
+
         
     def finalizeButton(self):
         self.ids.folderCreationError.text=''
         isGenerateBill= self.ids.switchId.active
+        today= date.today()
+        year = today.strftime('%Y')
+        todaysMonth= date.today()
+        month = todaysMonth.strftime("%B")
         # create a folder that contain todays date and save a .doc file contianing the sales of that day
         try:
             # making the main directory for the sales
             os.mkdir(f"SALES RECORDS FOLDER")
+            self.makeyeardirectory()
+            self.makemonthdirectory(year=year)
+            self.savingAndPrintingFile(year=year,month=month,isGenerateBill=isGenerateBill) 
+            
 
         except FileExistsError:
-
             # making a sub directory for each year
             try:
-                today= date.today()
-                year = today.strftime('%Y')
-                os.mkdir(F'SALES RECORDS FOLDER/{year}')
-                print("the year folder is creates successfully")
+                self.makeyeardirectory()
                 
             except FileExistsError:
                 # if the year directory exist the create a directory for each month
                 try:
-                    todaysMonth= date.today()
-                    month = todaysMonth.strftime("%B")
-                    os.mkdir(f"SALES RECORDS FOLDER/{year}/{month}")
-                    
+                    self.makemonthdirectory(year=year)
+                
                 except FileExistsError:
-                    # if month folder exist then save the file in it
-                    try:
-                        pathToSaveFile = f"SALES RECORDS FOLDER/{year}/{month}"
-                        dayOfOperation= datetime.now()
-                        nameOfFile = dayOfOperation.strftime("%d-%m-%Y__time_%H-%M-%S")
-
-                        filepath =f"{pathToSaveFile}/{nameOfFile}.txt"
-                        file = open(filepath,'w+')
-                        file.write(f'{self.ids.billTextId.text}\n\n\t{self.ids.costLableId.text} {self.ids.productTotalPriceId.text}')
-                        file.close()
-
-                        #this is where the printing of the document is done
-                        try:
-                            if isGenerateBill==True or str(isGenerateBill)== 1:
-                                path =os.getcwd() # this is the path to the current location
-                                # getting the file
-                                filelocation= path +f'\{filepath}'
-
-                                # start printing
-                                self.ids.productTotalPriceId.text='0.00'
-                                win32api.ShellExecute(0,'print',filelocation,None,'.',0)
-                            else:
-                                self.ids.productTotalPriceId.text='0.00'
-                                
-
-                        except Exception as e:
-                            self.loggingMessage('operation_window',e)
-                            self.ids.folderCreationError.text=f"An error occurred in printing file "
-
-                    except Exception as e:
-                        self.loggingMessage('operation_window',e)
-                        self.ids.folderCreationError.text=f"An error occurred in creating document file "
-
-                    
+                    self.savingAndPrintingFile(year=year,month=month,isGenerateBill=isGenerateBill) 
                 except PermissionError as e:
                     self.loggingMessage('operation_window',e)
                     self.ids.folderCreationError.text=f"Your Operation System as denied you a pemission to create a '{month} folder' ."
@@ -511,7 +528,6 @@ class OperationWindow(BoxLayout):
                 except Exception as e:
                     self.loggingMessage('operation_window',e)
                     self.ids.folderCreationError.text=f"An error occurred in creating '{month} folder "
-
 
 
             except PermissionError as e:
@@ -526,7 +542,7 @@ class OperationWindow(BoxLayout):
         except PermissionError as e:
             self.loggingMessage('operation_window',e)
             self.ids.folderCreationError.text=f"Your Operation System as denied you a pemission to create a SALES RECORDS FOLDER ."
-            
+        
         except Exception as e:
             self.loggingMessage('operation_window',e)
             self.ids.folderCreationError.text=f"An error occurred in creating SALES RECORDS FOLDER "
@@ -563,8 +579,6 @@ class OperationWindow(BoxLayout):
                 cursor.execute(getInitialProductQuantity)
                 initialQuantity=cursor.fetchone()
                     
-                  
-
                 
                 'updating the quantity of the product bought'
                 updatedQuantity= int(initialQuantity[0])-int(productQuantity)

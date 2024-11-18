@@ -8,6 +8,10 @@ from operator_window.operation_window import OperationWindow
 import os, sys
 from kivy.resources import resource_add_path, resource_find
 import database.db 
+import smtplib,ssl
+import string
+import random
+
 
 
 class MainWindow(BoxLayout):
@@ -19,7 +23,45 @@ class MainWindow(BoxLayout):
         self.ids.scrn_si.add_widget(self.signin_widget)
         self.ids.scrn_admin.add_widget(self.admin_widget)
         self.ids.scrn_op.add_widget(self.operator_widget)
-    
+        self.databaseName='BERMS.db'
+        self.generateOneTimeDefaultPassWord()
+
+    def generateOneTimeDefaultPassWord(self):
+        mydb=sqlite3.connect(self.databaseName)
+        cursor = mydb.cursor()
+        username =''.join(random.choices(string.ascii_letters,k=7))
+        userpassword =''.join(random.choices(string.ascii_letters,k=7))
+        desig='admin'
+        email ="default@gmail.com"
+        # generating the user details if the user table is empty
+        cursor.execute("select user_id from users;")
+        isUsertableEmpty=len(cursor.fetchall())
+        mydb.close()
+        if isUsertableEmpty==0:
+            mydb=sqlite3.connect(self.databaseName)
+            cursor = mydb.cursor()
+            cursor.execute(f'insert into users (name,email,password,designation) values("{username}","{email}","{userpassword}","{desig}");')
+            mydb.commit()
+            mydb.close()
+
+
+            # sending email for your login
+            try:
+                port=465
+                app_password='gwfm qpxq zgtu wpuh'
+                context = ssl.create_default_context()
+                with smtplib.SMTP_SSL('smtp.gmail.com',port,context=context) as server:
+                    server.login('billaelisha@gmail.com',app_password)
+                    server.sendmail('billaelisha@gmail.com',"billatengbil@gmail.com",f'''
+YOUR LOGIN DETAILS ARE
+UserName: {username}
+password: {userpassword}                         
+                            ''')
+                
+            except Exception as e:
+                'no internet'
+                pass
+
 
 class MainApp(App):
     def build(self):
