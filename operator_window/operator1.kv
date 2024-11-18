@@ -55,11 +55,7 @@
         CustomNavigationButton:
             text: 'Home'
             on_press: root.changeToHomePage()
-        # Daily Report button
-        CustomNavigationButton:
-            text: 'Daily Report'
-            on_press: root.changeToDailyReportPage()
-                
+        
         # this box is just for layout perpose
         BoxLayout:
 
@@ -147,10 +143,6 @@
                                     color:productsTitleLablesColor
                                     bold:True
                                     font_size:'17sp'
-                                # the quantity of the product in stock lable
-                                # Label:
-                                #     text:"Qt"
-                                #     color:productsTitleLablesColor
                                 # box for layout perpose
                                 BoxLayout:
                                     size_hint_x:0.3
@@ -421,7 +413,7 @@
 # ==================================THR BILL  SECTION=====================================================
 
 
-                        # BoxLayout:
+                        
                     # right boxlayout
                     BoxLayout:
                         orientation:'vertical'
@@ -482,8 +474,6 @@
                                     Label:
                                         id: costLableId
                                         text:' Total Cost Ghc :'
-                                        # text_size:self.size
-                                        # size_hint_x:None
                                         color:(0.2,.2,.2,1)
                                         bold:True
                                     Label:

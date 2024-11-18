@@ -559,13 +559,6 @@
                     BoxLayout:
                         size_hint_y:None
                         height:'150dp'
-                        # canvas.after:
-                        #     Color:
-                        #         rgba: lineColor
-                        #     Rectangle:
-                        #         size:self.size
-                        #         pos:self.pos
-
                     BoxLayout:
                         orientation:'vertical'
                         # delete or update box section
@@ -597,9 +590,7 @@
                                 id:productIdEmptyErrorMessageId
                                 text:''
                                 color:(1,0,0,1)
-                                # text_size:self.size
-                                # halign:'right'
-                            
+                               
                         # ==========================================
                             
 
@@ -937,10 +928,7 @@
                                 text:'Quantity'
                                 color:mainColor
                                 bold:True
-                            # Label:
-                            #     text:'EDIT'
-                            #     color:mainColor
-                            #     bold:True
+                            
                     # WHERE THE PRODUCTS RECYCLE VIEW IS LOCATED
                     BoxLayout:
                         ProductRecycleView:
@@ -966,7 +954,7 @@
                             width: 1
                             rectangle: self.x, self.y, self.width, self.height 
                     AdminCustomTitleLable:
-                        text:'Products Sold'
+                        text:'Daily Report'
                     # a box that will contain the date buttons and the products sold on that day
                     BoxLayout:
                         # dates
@@ -987,8 +975,7 @@
                                 size_hint_y:None
                                 height:'40dp'
                                 font_size:'20sp'
-                            # BoxLayout:
-                            #     orientation:'vertical'
+                            
                             DateRecycleView:
                                 id:dateRecycleViewId
 
@@ -996,6 +983,7 @@
                         BoxLayout:
                             orientation:'vertical'
                             ReportTitleLabel:
+                                id:dailyReportTitleId
                                 text:''
                                 size_hint_y:None
                                 height:"40dp"
@@ -1016,10 +1004,17 @@
 
                                 
                             ReportDataView:
+                                id:dailyRecycleViewId
                     # THE TOTAL PROFIT SECTION
                     BoxLayout:
                         size_hint_y:None
                         height:'40dp'
+                        Button:
+                            size_hint:(None,None)
+                            width:'150dp'
+                            height:'30dp'
+                            text:'print day report'
+                            on_press:root.popUpNotification(self)
                         Label:
                             text:'Total Profit:   '
                             text_size:self.size
@@ -1077,6 +1072,7 @@
                         BoxLayout:
                             orientation:'vertical'
                             ReportTitleLabel:
+                                id:monthlyReportTitleId
                                 text:''
                                 size_hint_y:None
                                 height:"40dp"
@@ -1105,6 +1101,12 @@
                     BoxLayout:
                         size_hint_y:None
                         height:'40dp'
+                        Button:
+                            size_hint:(None,None)
+                            width:'150dp'
+                            height:'30dp'
+                            text:'print month report'
+                            on_press:root.popUpNotification(self)
                         Label:
                             text:'Total Profit:   '
                             text_size:self.size
@@ -1120,6 +1122,7 @@
                             valign:'center'
                             color:(0,0,0,1)
                         
+
 
                 
 
@@ -1148,21 +1151,11 @@
                     BoxLayout:
                         size_hint_y:None
                         height:'50dp'
-                        # canvas.after:
-                        #     Color:
-                        #         rgba: lineColor
-                        #     Rectangle:
-                        #         size:self.size
-                        #         pos: self.pos
+                        
                     # the USER entry section
                     BoxLayout:
                         orientation:"vertical"
-                        # canvas.before:
-                        #     Color:
-                        #         rgba: (0,1,0,1)
-                        #     Rectangle:
-                        #         size:self.size
-                        #         pos: self.pos
+                        
                         # 1. the search for user by id to delete or update section
                         BoxLayout:
                             size_hint_y:None
@@ -1222,8 +1215,7 @@
                                 id:userNameEmptyErrorMessageId
                                 text:''
                                 color:(1,0,0,1)
-                                # text_size:self.size
-                                # halign:'right'
+                                
                             # for deco
                             BoxLayout:
                                 size_hint_x:.1
@@ -1258,8 +1250,7 @@
                                 id:userEmailEmptyErrorMessageId
                                 text:''
                                 color:(1,0,0,1)
-                                # text_size:self.size
-                                # halign:'right'
+                                
                             # for deco
                             BoxLayout:
                                 size_hint_x:.1
@@ -1294,8 +1285,7 @@
                                 id:userPasswordEmptyErrorMessageId
                                 text:''
                                 color:(1,0,0,1)
-                                # text_size:self.size
-                                # halign:'right'
+                                
                             # for deco
                             BoxLayout:
                                 size_hint_x:.1
@@ -1330,8 +1320,7 @@
                                 id:userDesignationEmptyErrorMessageId
                                 text:''
                                 color:(1,0,0,1)
-                                # text_size:self.size
-                                # halign:'right'
+                                
                             # for deco
                             BoxLayout:
                                 size_hint_x:.1
@@ -1343,12 +1332,7 @@
                     # the user buttons section=======================
                     BoxLayout:
                         orientation:'vertical'
-                        # canvas.before:
-                        #     Color:
-                        #         rgba: (0,0,0,1)
-                        #     Rectangle:
-                        #         size:self.size
-                        #         pos: self.pos
+                        
                         # for spacing
                         BoxLayout:
                             size_hint_y:None
@@ -1560,117 +1544,4 @@
 
 
 
-# # left box
-                # BoxLayout:
-                #     orientation:'vertical'
-                #     size_hint_x:0.3
-                #     canvas.after:
-                #         Color:
-                #             rgba: lineColor
-                #         Line:
-                #             width: 1
-                #             rectangle: self.x, self.y, self.width, self.height
-                #     CustomTitleLable:
-                #         text:'Products Categories'
-                #     # box for the products list
-                #     BoxLayout:
-                #         orientation:'vertical'
-                #         canvas.before:
-                #             Color:
-                #                 rgba:(0.96,.96,.96,1)
-                #             Rectangle:
-                #                 pos: self.pos
-                #                 size: self.size
-
-                #         CategoryRecycleView:
-                #             id:categorylistId
-                #     # for spacing
-                #     BoxLayout:
-                #         size_hint_y:None
-                #         height:'30dp'
-                            
-                #     # where the id of the category is enterered
-                #     BoxLayout:
-                #         size_hint_y:None
-                #         height:'30dp'
-                #         # for spacing
-                #         BoxLayout:
-                #             size_hint_x:0.1
-                #         Label:
-                #             text:'Enter category No_ to update or Delete'
-                #             color:(0,0,0,1)
-                #             text_size:self.size
-                #             valign:'center'
-                #         TextInput:
-                #             id:productToDeletOrUpdate
-                #             size_hint_x:None
-                #             width:'50dp'
-                #         BoxLayout:
-                #             size_hint_x:0.2
-                            
-                #     # adding products box section
-                #     BoxLayout:
-                #         orientation:'vertical'
-                #         BoxLayout:
-                #             size_hint_y:None
-                #             height:'50dp'
-                #             # for spacinging
-                #             BoxLayout:
-                #                 size_hint_x:.3
-                #             CustomTextInputBox:
-                #                 id:categoryTextId
-                #             # for spacinging
-                #             BoxLayout:
-                #                 size_hint_x:.3
-                #         # buttons section
-                #         BoxLayout:
-                #             orientation:'vertical'
-                #             # for spacing
-                #             BoxLayout:
-                #                 size_hint_y:None
-                #                 height:'30dp'
-                #             BoxLayout:
-                #                 size_hint_y:None
-                #                 height:'30dp'
-                #                 spacing: '20dp'
-                #                 BoxLayout:
-                #                     size_hint_x:0.2
-                #                 Button:
-                #                     text:'add'
-                #                     background_normal:''
-                #                     background_color:mainColor
-                #                     color:(1,1,1,1)
-                #                     on_press:root.addCategory()
-                #                 Button:
-                #                     text:'update'
-                #                     background_normal:''
-                #                     background_color:(0,0,1,0.9)
-                #                     color:(1,1,1,1)
-                #                     on_press:root.updateCategory()
-                #                 Button:
-                #                     text:'delete'
-                #                     background_color:(1,0,0,1)
-                #                     background_normal:''
-                #                     color:(1,1,1,1)
-                #                     on_press:root.deleteCategory()
-                #                 BoxLayout:
-                #                     size_hint_x:0.2
-                #             BoxLayout:
-                #                 # LABLE for error messages
-                #                 Label:
-                #                     id:errorMessagesId
-                #                     text:''
-                #                     color:(1,0,0,1)
-                #                     text_size:self.size
-                #                     valign:'center'
-                #                     halign:'center'
-
-
-                        
-# <Background@anvas>:
-#     canvas.before:
-#         Color:
-#             rgba:(0,0,1,1)  
-#         Rectangle:
-#             pos:self.pos
-#             size:self.size     
+    

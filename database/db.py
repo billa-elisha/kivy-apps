@@ -1,156 +1,108 @@
 import mysql.connector as mydbConnector
+import sqlite3
 
-
-class CreateDb:
-    """this class is use to create the database aand all the 
-    and all the tables of the system.
-    """
-    # the database connection variables
-    user = 'root'
-    localhost= 'localhost'
-    password = '@#mysql@#'
-    database="BE_RETAIL_MANAGEMENT_DATABASE"
-
+class CreatSqlite3Database:
     def __init__(self):
+        self.mydb = sqlite3.connect('BERMS.db')
+        self.mydb
+        self.usersTable()
         self.productsTable()
-        # self.categoriesTable()
         self.companyDetailsTable()
         self.salesTable()
-        self.isDatabaseAreadyCreated = self.isDatabasePresent()
-        if self.isDatabaseAreadyCreated == "dataBaseIsPresent":
-            pass
-        else:
-            # create database
-            self.createDatabase()
-            # create the user table
-            self.usersTable()
-            # creating products table
-            self.productsTable()
+        self.deletingFoldersDates()
+        self.dele()
 
-    # database connectivity
-    def dbConnection(self):
-        '''this is used to check if there is connection to the database or not
-        it returns
-        1. mydb => database connection object
-        2. DbConnectionPresent => content to determine connection
-        '''
-        try:
-            mydb = mydbConnector.connect(user=self.user, password=self.password,
-                                    host=self.localhost,
-                                    database=self.database
-                                    )
-            return [mydb,"DbConnectionPresent"]
-        except:
-            return "DbConnectionUpsent"
-
-    # checking to see if the database is already present or not
-    def isDatabasePresent(self):
-        '''this function is use to check if there is a database or not'''
-        mydb = self.dbConnection()
-        # print(mydb[0])
-        if mydb[1] =="DbConnectionPresent":
-            return "dataBaseIsPresent"
-        else:
-            return "dataBaseIsNotPresent"
-
-    # creating user database t
-    def createDatabase(self):
-        '''this function is use to create the databae'''
-        try:
-            mydb = mydbConnector.connect(user=self.user, password=self.password,
-                                host=self.localhost,
-                                )
-            mycursor = mydb.cursor()
-            mycursor.execute(f"CREATE DATABASE {self.database};")
-        except Exception as e:
-            print(e)
-        finally:
-            mydb.close()
-
-    # creating the users table
     def usersTable(self):
         """This function is use to create the users table
         and it is called in the init method
         """
-        connection =self.dbConnection()
-        mydb =connection[0]
+        mydb = sqlite3.connect('BERMS.db')
         mycursor = mydb.cursor()
         quary = ('''CREATE TABLE IF NOT EXISTS users(
-                 user_id INT AUTO_INCREMENT PRIMARY KEY, 
-                 name VARCHAR (200) NOT NULL, 
-                 email VARCHAR (200), 
-                 password VARCHAR (200) NOT NULL,
-                 designation VARCHAR (200) NOT NULL);''')
+                 user_id INTEGER PRIMARY KEY, 
+                 name text NOT NULL, 
+                 email text, 
+                 password text NOT NULL,
+                 designation text NOT NULL);''')
         mycursor.execute(quary)
         mydb.close()
-    # creating the products table
+
     def productsTable(self):
         """This function is use to create the users table
         and it is called in the init method
         """
-        connection =self.dbConnection()
-        mydb =connection[0]
+        mydb = sqlite3.connect('BERMS.db')
         mycursor = mydb.cursor()
         quary = ('''CREATE TABLE IF NOT EXISTS products(
-                 product_id INT AUTO_INCREMENT PRIMARY KEY, 
-                 product_bar_code VARCHAR (200), 
-                 product_name VARCHAR (200) NOT NULL, 
-                 product_cost_price FLOAT NOT NULL,
-                 product_selling_price FLOAT NOT NULL,
-                 product_quantity INT NOT NULL
+                 product_id INTEGER PRIMARY KEY, 
+                 product_bar_code text, 
+                 product_name text NOT NULL, 
+                 product_cost_price real NOT NULL,
+                 product_selling_price real NOT NULL,
+                 product_quantity INTEGER NOT NULL
                 );''')
         mycursor.execute(quary)
         mydb.close()
-
-    # creating the categories table
-    # def categoriesTable(self):
-    #     """This function is use to create the categories table
-    #     and it is called in the init method
-    #     """
-    #     connection =self.dbConnection()
-    #     mydb =connection[0]
-    #     mycursor = mydb.cursor()
-    #     quary = ('''CREATE TABLE IF NOT EXISTS categories(
-    #              cat_id INT AUTO_INCREMENT PRIMARY KEY, 
-    #              category_name VARCHAR (200));''')
-    #     mycursor.execute(quary)
-    #     mydb.close()
-
     def companyDetailsTable(self):
         """This function is use to create the company details table
         and it is called in the init method
         """
-        connection =self.dbConnection()
-        mydb =connection[0]
+        mydb = sqlite3.connect('BERMS.db')
         mycursor = mydb.cursor()
         quary = ('''CREATE TABLE IF NOT EXISTS company(
-                 company_id INT AUTO_INCREMENT PRIMARY KEY, 
-                 company_name VARCHAR (200),
-                 company_tell VARCHAR (200),
-                 company_location VARCHAR (200));''')
-        company = 'insert into company values(company_id,"Enter Company Name","9999999","Enter Company Location")'
+                 company_id INTEGER PRIMARY KEY, 
+                 company_name text,
+                 company_tell text,
+                 company_location text);''')
         mycursor.execute(quary)
+        mydb.commit()
+        mydb =self.mydb
+        company = 'insert into company (company_name,company_tell,company_location) values("Enter Company Name","9999999","Enter Company Location")'
         mycursor.execute(company)
         mydb.commit()
         mydb.close()
-
-    # creating the products sales table
     def salesTable(self):
         """This function is use to create the sales table
         and it is called in the init method
         """
-        connection =self.dbConnection()
-        mydb =connection[0]
+        
+        mydb = sqlite3.connect('BERMS.db')
         mycursor = mydb.cursor()
         quary = ('''CREATE TABLE IF NOT EXISTS sales(
-                 sales_id INT AUTO_INCREMENT PRIMARY KEY, 
-                 product_name VARCHAR (200) NOT NULL, 
-                 quantity_sold INT NOT NULL,
-                 profit_made FLOAT NOT NULL,
-                 date VARCHAR (200) NOT NULL,
-                 month VARCHAR (200) NOT NULL
+                 sales_id INTEGER PRIMARY KEY, 
+                 product_name text NOT NULL, 
+                 quantity_sold INTEGER NOT NULL,
+                 profit_made REAL NOT NULL,
+                 date TEXT NOT NULL,
+                 month TEXT NOT NULL
                 );''')
         mycursor.execute(quary)
         mydb.close()
+    def deletingFoldersDates(self):
+        """This function is use to create the date table
+        and it is called in the init method
+        """
+        
+        mydb = sqlite3.connect('BERMS.db')
+        mycursor = mydb.cursor()
+        quary = ('''CREATE TABLE IF NOT EXISTS recordFilesDeletedDays(
+                 date_id INTEGER PRIMARY KEY, 
+                 date TEXT NOT NULL
+                );''')
+        mycursor.execute(quary)
+        mydb.close()
+    def dele(self):
+        """This function is use to create the date table
+        and it is called in the init method
+        """
+        
+        mydb = sqlite3.connect('BERMS.db')
+        mycursor = mydb.cursor()
+        quary = ('DELETE from recordFilesDeletedDays where date_id=1;')
+        mycursor.execute(quary)
+        mydb.commit()
+        mydb.close()
 
-CreateDb()
+CreatSqlite3Database()
+
+

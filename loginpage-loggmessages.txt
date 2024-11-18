@@ -34,3 +34,39 @@ invalid literal for int() with base 10: 'dfi'
 [LOGIN APP]: 2024-11-13 13:26:55.767229
 invalid literal for int() with base 10: 'dfi'
 
+[LOGIN APP]: 2024-11-14 18:55:57.036209
+no such column: billa
+
+[LOGIN APP]: 2024-11-14 18:57:07.332595
+no such column: billa
+
+[LOGIN APP]: 2024-11-14 18:58:46.146192
+no such column: billa
+
+[LOGIN APP]: 2024-11-14 18:58:47.514090
+no such column: billa
+
+[LOGIN APP]: 2024-11-14 18:58:48.072699
+no such column: billa
+
+[LOGIN APP]: 2024-11-14 18:58:48.280246
+no such column: billa
+
+[LOGIN APP]: 2024-11-14 19:00:11.127867
+incomplete input
+
+[LOGIN APP]: 2024-11-14 19:02:10.392983
+no such column: billa
+
+[LOGIN APP]: 2024-11-14 19:02:14.627505
+no such column: billa
+
+[LOGIN APP]: 2024-11-14 19:02:15.294266
+no such column: billa
+
+[LOGIN APP]: 2024-11-14 19:02:15.464834
+no such column: billa
+
+[LOGIN APP]: 2024-11-14 19:02:15.660234
+no such column: billa
+

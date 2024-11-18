@@ -1,16 +1,10 @@
 from kivy.app import App 
-from kivy.logger import Logger
-from kivy.logger import LoggerHistory
-
 from kivy.uix.boxlayout import BoxLayout
 from kivy.properties import  ObjectProperty
-# imports for creating a fixed login window which is not resizeable
-from kivy.config import Config
-import mysql.connector as DbConnector
 from datetime import datetime
-# from kivy.core.window import Window
 from kivy.lang import Builder
 import os
+import sqlite3
 
 
 
@@ -30,14 +24,6 @@ class LogInWindow(BoxLayout):
     userNameErrorMessage = ObjectProperty(None)
     userPasswordErrorMessage = ObjectProperty(None)
 
-    
-
-    # database connection variables
-    user ='root'
-    dbpassword = '@#mysql@#'
-    host ='localhost'
-    database = "BE_RETAIL_MANAGEMENT_DATABASE"
-
     # fetching user data from the database
     def fetchUserData(self):
         '''this is used to fetch user data from the database using name of the user.
@@ -46,12 +32,9 @@ class LogInWindow(BoxLayout):
         '''
         name =((self.userName.text).strip()).lower()
         try:
-            mydb = DbConnector.connect(user=self.user, password=self.dbpassword,
-                                        host=self.host,
-                                        database=self.database
-                                        )
+            mydb=sqlite3.connect('BERMS.db')
             
-            fetchOneUserData = f"SELECT name,password,designation FROM users WHERE name='{name}'"
+            fetchOneUserData = f"SELECT name,password,designation FROM users WHERE name='{name}';"
             cursor = mydb.cursor()
             cursor.execute(fetchOneUserData)
             userData = cursor.fetchone()
@@ -79,6 +62,7 @@ class LogInWindow(BoxLayout):
         fetchUserData = self.fetchUserData() # This is a tuple containing (name,password,designation) or None
         
         if fetchUserData==None:
+            
             self.userNameErrorMessage.text ="User name is not found!"
         # validating the password and checking designation status
         else:

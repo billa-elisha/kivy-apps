@@ -1,9 +1,0 @@
- 
-	GRB Enterprice
-	tell:0857684958494
-	location: navrongo
-	
-	Product		Price		Qt             
-	-----------------------------------
-	HP LAPTOP		8.0		1
-	DELL		8.0		1

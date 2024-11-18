@@ -28,3 +28,96 @@ invalid literal for int() with base 10: ''
 [administration_window APP]: 2024-11-11 15:51:41.207972 
 'super' object has no attribute '__getattr__'
 
+[administration_window APP]: 2024-11-16 14:53:15.290238 
+near "%": syntax error
+
+[administration_window APP]: 2024-11-16 14:53:33.684745 
+near "%": syntax error
+
+[administration_window APP]: 2024-11-16 14:56:29.101467 
+invalid literal for int() with base 10: ''
+
+[administration_window APP]: 2024-11-16 14:56:29.999713 
+invalid literal for int() with base 10: ''
+
+[administration_window APP]: 2024-11-16 14:56:33.824072 
+near "%": syntax error
+
+[administration_window APP]: 2024-11-16 14:58:24.358100 
+invalid literal for int() with base 10: ''
+
+[administration_window APP]: 2024-11-16 14:58:30.942058 
+invalid literal for int() with base 10: 'tr'
+
+[administration_window APP]: 2024-11-16 14:58:41.502867 
+invalid literal for int() with base 10: '67.90'
+
+[administration_window APP]: 2024-11-16 14:58:47.894424 
+could not convert string to float: ''
+
+[administration_window APP]: 2024-11-16 14:58:55.705240 
+could not convert string to float: '78j'
+
+[administration_window APP]: 2024-11-16 14:59:02.535679 
+could not convert string to float: ''
+
+[administration_window APP]: 2024-11-16 14:59:08.791881 
+near "%": syntax error
+
+[administration_window APP]: 2024-11-16 14:59:12.932545 
+near "%": syntax error
+
+[administration_window APP]: 2024-11-16 14:59:27.826028 
+near "%": syntax error
+
+[administration_window APP]: 2024-11-16 15:05:20.735252 
+table products has no column named product_cost_priceproduct_selling_price
+
+[administration_window APP]: 2024-11-16 15:06:57.908547 
+no such column: tm
+
+[administration_window APP]: 2024-11-16 15:10:20.099518 
+no such column: tm
+
+[administration_window APP]: 2024-11-16 15:18:36.136256 
+no such column: tn
+
+[administration_window APP]: 2024-11-16 20:09:13.514637 
+near ",": syntax error
+
+[administration_window APP]: 2024-11-16 20:11:10.255157 
+unrecognized token: "123ey"
+
+[administration_window APP]: 2024-11-16 20:37:16.260014 
+unrecognized token: "123e54r"
+
+[administration_window APP]: 2024-11-16 20:38:45.244174 
+table products has 6 columns but 5 values were supplied
+
+[administration_window APP]: 2024-11-16 20:45:18.296145 
+near "%": syntax error
+
+[administration_window APP]: 2024-11-16 20:45:28.347139 
+near "%": syntax error
+
+[administration_window APP]: 2024-11-16 20:45:34.596553 
+near "%": syntax error
+
+[administration_window APP]: 2024-11-16 20:47:26.233948 
+near "%": syntax error
+
+[administration_window APP]: 2024-11-16 20:49:59.485906 
+invalid literal for int() with base 10: ''
+
+[administration_window APP]: 2024-11-16 20:50:54.827839 
+near "%": syntax error
+
+[administration_window APP]: 2024-11-16 20:58:02.918747 
+near "%": syntax error
+
+[administration_window APP]: 2024-11-16 21:00:48.805375 
+near "%": syntax error
+
+[administration_window APP]: 2024-11-16 21:43:56.231207 
+invalid literal for int() with base 10: ''
+

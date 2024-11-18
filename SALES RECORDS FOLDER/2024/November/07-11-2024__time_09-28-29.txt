@@ -1,9 +1,0 @@
- 
-	timz computers
-	tell:0247403219
-	location: abavana street
-	
-	Product		Price		Qt             
-	-----------------------------------		
-
-	 Total Cost Ghc : 0.00

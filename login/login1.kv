@@ -19,16 +19,14 @@
     cursor_color:(0.2, 0.2, 0.2, 1)
     cursor_width:"2sp"
 
-<CustomErrorMessageLable@Label>:
-    color:errorMessageColor
-    text_size:self.size
-    size_hint:(0.7,0.06)
+
 
 
 # the main window
 <LogInWindow>:
     # initialized variables
-    #:set mainBackgroundColor (244/255,244/255,251/255)#(1,1,1,.95) 
+    #:set mainColor (.06,.45,.45,1)
+    #:set mainBackgroundColor (244/255,244/255,251/255)#(1,1,1,.95) 244,244,251
     #:set primaryColor (.06,.45,.45,1) 
     #:set errorMessageColor (1,0,0,1) 
     #:set buttonColor (1/255,15/255,205/255)#(0/255,10/255,131/255) 
@@ -50,6 +48,16 @@
             pos:self.pos
             size: self.size
 
+    # TOP bar
+    BoxLayout:
+        canvas.before:
+            Color:
+                rgba:mainColor
+            Rectangle:
+                pos:self.pos
+                size: self.size
+        size_hint_y:None
+        height:"30dp"
     # The sign in layout
     BoxLayout:
         size_hint_y:None
@@ -120,6 +128,10 @@
                 Label:
                     text:'Admin'
                     color:(0,0,0,1)
+                # for deco
+                Label:
+                Label:
+                Label:
                 Label:
                 Label:
 
@@ -139,70 +151,20 @@
                     on_press: root.validateLogin(admin.active)
 
             BoxLayout:
-
-
-
         BoxLayout:
 
+    # bottom status bar
+    BoxLayout:
+        canvas.before:
+            Color:
+                rgba:mainColor
+            Rectangle:
+                pos:self.pos
+                size: self.size
+        size_hint_y:None
+        height:"30dp"
         
             
 
 
-    # the input fields layout
-    # FloatLayout:
-        # # Error to be displayed if the user is not an admin but tries to get access
-        # Label:
-        #     id:notAdminErrorMessage
-        #     text:''
-        #     color:errorMessageColor
-        #     pos:('90dp','490dp')
-        #     size_hint:(0.7,0.06)
-
-        # # Username textinput box
-        # LoginCustomTextInputBox: 
-        #     id:userName
-        #     hint_text:"Username"
-        #     pos:('100dp','440dp')
-        # # wrong username error text
-        # CustomErrorMessageLable:
-        #     id:userNameErrorMessage
-        #     text:''
-        #     pos:('100dp','417dp')
-
-        # # password textinput box
-        # LoginCustomTextInputBox: 
-        #     id:password
-        #     hint_text:"password"
-        #     pos:('100dp','370dp')
-        #     password:True
-        # # wrong username error text
-        # CustomErrorMessageLable:
-        #     id:userPasswordErrorMessage
-        #     text:''
-        #     pos:('100dp','347dp')
-        
-        # # admin checkbox and lable
-        # CheckBox:
-        #     id:admin
-        #     color:0, 0, 0,1
-        #     size_hint:(0.45,0.08)
-        #     pos:('10dp','318dp')
-        # Label:
-        #     text:'Admin'
-        #     color:0,0,0,1
-        #     size_hint:(0.6,0.08)
-        #     pos:('10dp','318dp')
-
-        # # submission button
-        # Button:
-        #     text: 'Login'
-	    #     background_normal: ''  
-        #     background_color: primaryColor
-        #     color: buttonTextColor#(0.2, 0.2, 0.2, 1)
-        #     size_hint:(0.6,0.08)
-        #     pos:('100dp','270dp')
-        #     bold:True
-        #     on_press: root.validateLogin(admin.active)
-
-
-
+    

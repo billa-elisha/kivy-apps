@@ -2,24 +2,27 @@ from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.screenmanager import ScreenManager,Screen
 from kivy.properties import ObjectProperty,BooleanProperty
-import mysql.connector as DbConnector
-from kivy.uix.recycleview import RecycleView
+# import mysql.connector as DbConnector
 from kivy.uix.recycleboxlayout import RecycleBoxLayout
 from kivy.uix.recycleview.views import RecycleDataViewBehavior
 from kivy.uix.label import Label
 from kivy.uix.behaviors import FocusBehavior
 from kivy.uix.recycleview.layout import LayoutSelectionBehavior
-from kivy.uix.textinput import TextInput
 from kivy.uix.button import Button
 from kivy.uix.popup import Popup
 from datetime import date,datetime
-import win32api,win32print
+import win32api
 import time
-
+import sqlite3
+from contextlib import closing
 import os
 from kivy.lang import Builder
 
 
+# sqlite3 connection
+
+def get_db_connection():
+    return sqlite3.connect('BERMS.db')
 
 
         
@@ -52,6 +55,10 @@ class SelectableLabel(RecycleDataViewBehavior,Label):
     index = None
     selected = BooleanProperty(False)
     selectable= BooleanProperty(True)
+
+    def get_db_connection(self):
+        return sqlite3.connect('BERMS.db')
+
 
     def refresh_view_attrs(self, rv, index, data):
         """catch and handle the view changes"""
@@ -87,7 +94,6 @@ class SelectableLabel(RecycleDataViewBehavior,Label):
 
                 nameToInsert.text=f"{productDetailsToInsert[0]}"
                 priceToInsert.text=f"{productDetailsToInsert[1]}"
-                # print(quantityToInsert.text)
             except AttributeError as e:
                 date = datetime.now()
                 ms = (f'''[operation_window APP]: {date}
@@ -102,34 +108,27 @@ class SelectableLabel(RecycleDataViewBehavior,Label):
         return super().apply_selection(rv, index, is_selected)
     
     def getSelectedProduct(self,id):
-        
-        user ='root'
-        dbpassword = '@#mysql@#'
-        host ='localhost'
-        database = "BE_RETAIL_MANAGEMENT_DATABASE"
-    
+       
         '''this function is used to fetch all the products from the database and 
         insert them into the product window,
         which either based on search or all the products
         '''
         try:
-            mydb = DbConnector.connect(user=user, password=dbpassword,
-                                        host=host,
-                                        database=database
-                                        )
-            
-            selectProduct = "SELECT product_name,product_selling_price,product_quantity from products WHERE product_id =%s"
-            cursor = mydb.cursor()
-            cursor.execute(selectProduct,(id,))
-            product = cursor.fetchone()
+           
+            with closing(get_db_connection()) as mydb:
+                "peform transactions"
+                selectProduct = f"SELECT product_name,product_selling_price,product_quantity from products WHERE product_id ={id}"
+                cursor = mydb.cursor()
+                cursor.execute(selectProduct)
+                product = cursor.fetchone()
+                mydb.close()
 
-            product[0] #this is use to throw an exception if the there is no name with the product searched
-            prodQuantity=product[2]
-            if int(prodQuantity)<=0:
-                product=('[color=#ff0000]Out of stock[/color]', 00.00,)
-            # print(prodQuantity)
-            # print(selectProduct)
-            return product
+                product[0] #this is use to throw an exception if the there is no name with the product searched
+                prodQuantity=product[2]
+                if int(prodQuantity)<=0:
+                    product=('[color=#ff0000]Out of stock[/color]', 00.00,)
+            
+                return product
         except Exception as e:
             date = datetime.now()
             ms = (f'''[operation_window APP]: {date}
@@ -150,40 +149,14 @@ class SelectableLabel(RecycleDataViewBehavior,Label):
 
 
 class OperationWindow(BoxLayout):
-    '''THIS IS THE MAIN PAGE OF THE APP'''
-    user ='root'
-    dbpassword = '@#mysql@#'
-    host ='localhost'
-    database = "BE_RETAIL_MANAGEMENT_DATABASE"
-    
-
     def __init__(self, **kwargs):
         super(OperationWindow,self).__init__(**kwargs)
         self.companyName=str(self.fetchCompanyDetails()[1])
         self.companyTell=str(self.fetchCompanyDetails()[2])
         self.companyLocation=str(self.fetchCompanyDetails()[3])
 
-        # # ====popup=====
-        # self.mainlayout =BoxLayout(orientation='vertical')
-        # self.popup= Popup(
-        #     title='Test popup',
-        #     content=self.mainlayout,
-        #     size_hint=(None, None), size=(300, 200),
-        #     auto_dismiss=False
-        # )
-        # self.mainlayout.add_widget(Label(text='hello world'))
-
-        # self.buttonLayout=BoxLayout(
-        #     size_hint_y=None,
-        #     height='40dp',
-        #     spacing='50dp')
         
-        # self.buttonLayout.add_widget(Button(text='OK',on_press=self.clearButton))
-
-        # self.concelBtn=Button(text='Concel',on_press=self.popup.dismiss)
-        # self.buttonLayout.add_widget(self.concelBtn)
-        # self.mainlayout.add_widget(self.buttonLayout)
-        # # ======end popup=======
+        
 
         
         # print(self.getProductRuningOutOfStock())
@@ -194,6 +167,10 @@ class OperationWindow(BoxLayout):
         self.ids.switchId.active=True
    
         self.searchProductsButtonFunction()
+
+    def get_db_connection(self):
+        return sqlite3.connect('BERMS.db')
+    
     def searchProductsButtonFunction(self,*args, **kwargs):
         productName= (self.ids.searchTextId.text).strip()
         listOfproducts=self.fetchAllProducts(productName=productName)
@@ -271,43 +248,38 @@ class OperationWindow(BoxLayout):
     
     
     def fetchAllProducts(self,productName):
-        # user ='root'
-        # dbpassword = '@#mysql@#'
-        # host ='localhost'
-        # database = "BE_RETAIL_MANAGEMENT_DATABASE"
-    
         self.productName=productName
         '''this function is used to fetch all the products from the database and 
         insert them into the product window,
         which either based on search or all the products
         '''
         try:
-            mydb = DbConnector.connect(user=self.user, password=self.dbpassword,
-                                        host=self.host,
-                                        database=self.database
-                                        )
-            # print(self.ids.searchTextId.text,'text from inputxt')
+            with closing(get_db_connection()) as mydb:
+                "peform transactions"
             
-            if self.productName=='':
-                selectAllProducts = "SELECT * from products"
-                cursor = mydb.cursor()
-                cursor.execute(selectAllProducts)
-                listOfAllProducts = cursor.fetchall()
-                # print("this products is coming because the search box is empty")
-                return listOfAllProducts
-            else:
-                productToSearchName=str(self.productName+'%')
-                selectAllProducts = f" SELECT * FROM products WHERE product_name LIKE '{productToSearchName}';"
-                cursor = mydb.cursor()
-                cursor.execute(selectAllProducts)
-                listOfAllProducts = cursor.fetchall()
-                
-                listOfAllProducts[0] #this is use to throw an exception if the there is no name with the product searched
-                return listOfAllProducts
+                if self.productName=='':
+                    selectAllProducts = "SELECT * from products;"
+                    cursor = mydb.cursor()
+                    cursor.execute(selectAllProducts)
+                    listOfAllProducts1 = cursor.fetchall()
+                    return listOfAllProducts1
+                else:
+                    productToSearchName=str(self.productName+'%')
+                    selectAllProducts = f" SELECT * FROM products WHERE product_name LIKE '{productToSearchName}';"
+                    cursor = mydb.cursor()
+                    cursor.execute(selectAllProducts)
+                    listOfAllProducts1 = cursor.fetchall()
+                    
+                    listOfAllProducts1[0] #this is use to throw an exception if the there is no name with the product searched
+                    mydb.close()
+                    return listOfAllProducts1
         except Exception as e:
-            listOfAllProducts=[(0, '2345', 'No product with that name', 5.0, 6.0, 56, 'vegetables'),]
+            
+            listOfAllProducts1=[(0, '2345', 'No product with that name', 5.0, 6.0, 56, 'vegetables'),]
             self.loggingMessage('operation_window',e)
-            return listOfAllProducts
+            return listOfAllProducts1
+        finally:
+            mydb.close()
             
 
     def addToCart(self):
@@ -417,37 +389,32 @@ class OperationWindow(BoxLayout):
 
         self.ids.totalProductOfStock.text=f'{outOfStockNumber}'
         self.ids.totalProductRuningOutOfStock.text=f'{runingOutOfStockNumber}'
-        # print(dataToPutIntoView)
-
-
+        
     
     def getProductRuningOutOfStock(self):
-        # user ='root'
-        # dbpassword = '@#mysql@#'
-        # host ='localhost'
-        # database = "BE_RETAIL_MANAGEMENT_DATABASE"
-    
+       
         '''this function is used to fetch all the products from the database and 
         insert them into the product window,
         which either based on search or all the products
         '''
-        try:
-            mydb = DbConnector.connect(user=self.user, password=self.dbpassword,
-                                        host=self.host,
-                                        database=self.database
-                                        )
+        try:                          
+            mydb=sqlite3.connect("BERMS.db")
             
-            selectAllProducts = "SELECT product_name,product_quantity from products WHERE product_quantity < 5"
-            cursor = mydb.cursor()
-            cursor.execute(selectAllProducts)
-            listOfAllProducts = cursor.fetchall()
-            listOfAllProducts[0] #this is use to throw an exception if the there is no name with the product searched
-            
-            return listOfAllProducts
+            with closing(get_db_connection()) as mydb:
+                "peform transactions"
+                selectAllProducts = "SELECT product_name,product_quantity from products WHERE product_quantity < 5"
+                cursor = mydb.cursor()
+                cursor.execute(selectAllProducts)
+                listOfAllProductsRuningOut = cursor.fetchall()
+                listOfAllProductsRuningOut[0] #this is use to throw an exception if the there is no name with the product searched
+                mydb.close()
+                return listOfAllProductsRuningOut
         except Exception as e:
-            # self.loggingMessage('operation_window',e)
-            # listOfAllProducts=[(404, '2345', 'No product with that name', 5.0, 6.0, 56, 'vegetables'),]
-            return listOfAllProducts
+            # listOfAllProductsRuningOut=[(404, '2345', 'No product with that name', 5.0, 6.0, 56, 'vegetables'),]
+            listOfAllProductsRuningOut=[]
+            return listOfAllProductsRuningOut
+        finally:
+            mydb.close()
 
 
             
@@ -469,7 +436,7 @@ class OperationWindow(BoxLayout):
             
         else:
             priviewsTotalCost=float((self.ids.productTotalPriceId.text).strip())
-            newAddedCost =int(float(pAmount))* int(pQuantity)
+            newAddedCost =float(float(pAmount))* int(pQuantity)
             productsTotalPrice =f'{priviewsTotalCost+newAddedCost}'
 
             bill=self.ids.billTextId.text + f'\n\t{pName}\t\t{pAmount}\t\t{pQuantity}' 
@@ -477,12 +444,10 @@ class OperationWindow(BoxLayout):
 
         self.ids.productTotalPriceId.text=productsTotalPrice
         self.ids.billTextId.text=bill
-        # print(self.ids.billTextId.text)
-
+        
     def finalizeButton(self):
         self.ids.folderCreationError.text=''
         isGenerateBill= self.ids.switchId.active
-        
         # create a folder that contain todays date and save a .doc file contianing the sales of that day
         try:
             # making the main directory for the sales
@@ -490,7 +455,6 @@ class OperationWindow(BoxLayout):
 
         except FileExistsError:
 
-            # print("The SALES RECORD FOLDER is already present, os am trying to creat the year folder")
             # making a sub directory for each year
             try:
                 today= date.today()
@@ -499,13 +463,12 @@ class OperationWindow(BoxLayout):
                 print("the year folder is creates successfully")
                 
             except FileExistsError:
-                # print(f"Directory {year} already exists so am creating a directory for the month")
                 # if the year directory exist the create a directory for each month
                 try:
                     todaysMonth= date.today()
                     month = todaysMonth.strftime("%B")
                     os.mkdir(f"SALES RECORDS FOLDER/{year}/{month}")
-                    print(f'this year exist')
+                    
                 except FileExistsError:
                     # if month folder exist then save the file in it
                     try:
@@ -589,21 +552,23 @@ class OperationWindow(BoxLayout):
             productName= details[0]
             productPrice=details[1]
             productQuantity=details[2]
+                
+
 
             try:
-                mydb = DbConnector.connect(user=self.user, password=self.dbpassword,
-                                        host=self.host,
-                                        database=self.database
-                                        )
+                mydb=sqlite3.connect("BERMS.db",timeout=90.0)
                 "getting the initial quantity of each product bought"
                 getInitialProductQuantity= f"SELECT product_quantity,product_cost_price,product_selling_price from products where product_name='{productName}';"
                 cursor = mydb.cursor()
                 cursor.execute(getInitialProductQuantity)
                 initialQuantity=cursor.fetchone()
+                    
+                  
 
-
+                
                 'updating the quantity of the product bought'
                 updatedQuantity= int(initialQuantity[0])-int(productQuantity)
+                
                 udpateProduct = f"update products SET product_quantity={updatedQuantity} where product_name='{productName}';"
                 cursor.execute(udpateProduct)
                 mydb.commit()
@@ -613,15 +578,16 @@ class OperationWindow(BoxLayout):
                 soldDate =datetime.now()
                 day = soldDate.strftime('%d %b %Y')
                 month = soldDate.strftime('%b %Y')
+                soldQuery = f"insert into sales (product_name,quantity_sold,profit_made,date,month) values('{productName}',{int(productQuantity)},{profitMade},'{day}','{month}');"
                 
-                soldQuery = f"insert into sales values(sales_id,'{productName}',{int(productQuantity)},{profitMade},'{day}','{month}');"
                 cursor.execute(soldQuery)
                 mydb.commit()
-                mydb.close()
+            
+                
                 
             except Exception as e:
                 self.loggingMessage('operation_window',e)
-                pass
+                
             
         'reupdating the bill area'
         self.ids.billTextId.text=billupdate
@@ -631,39 +597,11 @@ class OperationWindow(BoxLayout):
         self.populateProductOutOfStockView()
 
 
-        # # saving the sold product to the sales table
-        # productName=(self.ids.productToPurchaseName.text).strip()
-        # productPrice=(self.ids.productToPurchasePrice.text).strip()
-        # productQuantity=(self.ids.productToPurchaseQuantity.text).strip()
-        # try:
-        #     mydb = DbConnector.connect(user=self.user, password=self.dbpassword,
-        #                                 host=self.host,
-        #                                 database=self.database
-        #                                 )
-            
-        #     selectAllProducts = "SELECT product_name,product_quantity from products WHERE product_quantity < 5"
-        #     cursor = mydb.cursor()
-        #     cursor.execute(selectAllProducts)
-        #     listOfAllProducts = cursor.fetchall()
-        #     listOfAllProducts[0] #
-        # except:
-        #     pass
-
-    
     def fetchCompanyDetails(self):
-            # user ='root'
-            # dbpassword = '@#mysql@#'
-            # host ='localhost'
-            # database = "BE_RETAIL_MANAGEMENT_DATABASE"
-        
-            
             '''this function is used to update a categories give its id,
             '''
             try:
-                mydb = DbConnector.connect(user=self.user, password=self.dbpassword,
-                                            host=self.host,
-                                            database=self.database
-                                        )
+                mydb= sqlite3.connect('BERMS.db')
                 query = "select * from company;"
                 cursor = mydb.cursor()
                 cursor.execute(query)
@@ -694,97 +632,6 @@ if __name__ =="__main__":
 
 
 
-# # print(self.parent.parent.parent.parent.parent.parent.children[1].children[3].children[3].text)#=======================================>
-#             #=====================================================================>is the boxlayout for the whole Homescreen
-#                                                                                                 #the boxlayout containing products to insert lables
-#             nameToInsert=(self.parent.parent.parent.parent.parent.parent.parent.children[0].children[1].children[7].children[4])
-#             priceToInsert=(self.parent.parent.parent.parent.parent.parent.parent.children[0].children[1].children[7].children[3])
-#             quantityToInsert=(self.parent.parent.parent.parent.parent.parent.parent.children[0].children[1].children[7].children[1])
-#                                                                                    #===========>is the second boxlayout(middle Boxlayout)
-
-
-
-
-
-
-
-
-
-# class RecycleViewDataSuply:
-#     user ='root'
-#     dbpassword = '@#mysql@#'
-#     host ='localhost'
-#     database = "BE_RETAIL_MANAGEMENT_DATABASE"
-#     def __init__(self,productName):
-#         self.productName=productName
-    
-#     def fetchAllProducts(self):
-#         '''this function is used to fetch all the products from the database and 
-#         insert them into the product window,
-#         which either based on search or all the products
-#         '''
-#         try:
-#             mydb = DbConnector.connect(user=self.user, password=self.dbpassword,
-#                                         host=self.host,
-#                                         database=self.database
-#                                         )
-#             # print(self.ids.searchTextId.text,'text from inputxt')
-            
-#             if self.productName=='':
-#                 selectAllProducts = "SELECT * from products"
-#                 cursor = mydb.cursor()
-#                 cursor.execute(selectAllProducts)
-#                 listOfAllProducts = cursor.fetchall()
-#                 print("this products is coming because the search box is empty")
-#                 return listOfAllProducts
-#             else:
-#                 productToSearchName=str(self.productName+'%')
-#                 selectAllProducts = f" SELECT * FROM products WHERE product_name LIKE '{productToSearchName}';"
-#                 cursor = mydb.cursor()
-#                 print(selectAllProducts)
-#                 cursor.execute(selectAllProducts)
-#                 listOfAllProducts = cursor.fetchall()
-#                 print("this products is coming because the search box is  not empty")
-#                 print(listOfAllProducts)
-#                 return listOfAllProducts
-#         except Exception as e:
-#             print("This exception is coming from the fetchallproducts function",e)#==
-
-# class CustomTextInputBox(TextInput):
-#     def __init__(self, **kwargs):
-#         super().__init__(**kwargs)
-        
-#     def keyboard_on_key_up(self, window, keycode):
-#         if self.text=='':
-#             '''
-#             The listOfProducts will contain all the products in the system
-
-#             '''
-#             listOfproducts =CustomTextInputBox().keyboard_on_key_up(window=None, keycode=None)
-#             self.data =[{'text':str(f"{x[0] }      {x[2] } ")} for x in listOfproducts]
-            
-
-            # listOfproducts =RecycleViewDataSuply(productName='').fetchAllProducts()
-            
-#         else:
-#             '''
-#             The listOfProducts will contain all the products your search for in the system
-#             '''
-#             listOfproducts=RecycleViewDataSuply(productName=self.text).fetchAllProducts()
-            
-#         return listOfproducts
-    
-# class ProductsOutOfStockRecycleView(RecycleView):
-#     '''the recycle view class to contain the products data'''
-#     def __init__(self,**kwargs):
-#         super(ProductsOutOfStockRecycleView,self).__init__(**kwargs)
-    
-#         # self.data =[{'text':str(f"{x[0] }      {x[2] } ")} for x in listOfproducts]
-#         self.data=[{'text':'billa'},{'text':'billa2'},{'text':'billa3'}]
-        
-    
-    
-     
 
 
 
@@ -796,44 +643,3 @@ if __name__ =="__main__":
 
 
 
-# class CustomTextInputBox(TextInput):
-    #     def __init__(self, **kwargs):
-    #         super().__init__(**kwargs)
-    #         print(OperationWindow.d)
-    #     def keyboard_on_key_up(self,window,keycode):
-    #         productName=self.text
-            
-    #         print(productName)
-    #         if productName=='':
-    #             allProducts=self.fetchAllProducts()
-    #             # self.ids.recycle_view_id.data =[{'text':str(f"{x[0] }      {x[2] } ")} for x in allProducts]
-    #             # self.ids.recycle_view_id.refresh_from_data()
-
-    #     def fetchAllProducts(self):
-            
-    #         '''this function is used to fetch all the products from the database and 
-    #         insert them into the product window,
-    #         which either based on search or all the products
-    #         '''
-    #         user ='root'
-    #         dbpassword = '@#mysql@#'
-    #         host ='localhost'
-    #         database = "BE_RETAIL_MANAGEMENT_DATABASE"
-    #         try:
-    #             mydb = DbConnector.connect(user=user, password=dbpassword,
-    #                                         host=host,
-    #                                         database=database
-    #                                         )
-    #             # print(self.ids.searchTextId.text,'text from inputxt')
-                
-                
-    #             selectAllProducts = "SELECT * from products"
-    #             cursor = mydb.cursor()
-    #             cursor.execute(selectAllProducts)
-    #             listOfAllProducts = cursor.fetchall()
-    #             print("this products is coming because the search box is empty")
-    #             return listOfAllProducts
-    #             # print('empty textbox')
-    #             # .searchProductsButtonFunction(self)
-    #         except Exception as e:
-    #             print(e)
