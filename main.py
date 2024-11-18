@@ -29,8 +29,8 @@ class MainWindow(BoxLayout):
     def generateOneTimeDefaultPassWord(self):
         mydb=sqlite3.connect(self.databaseName)
         cursor = mydb.cursor()
-        username =''.join(random.choices(string.ascii_letters,k=7))
-        userpassword =''.join(random.choices(string.ascii_letters,k=7))
+        username =(''.join(random.choices(string.ascii_letters,k=7))).lower()
+        userpassword = random.randint(3000,100000)
         desig='admin'
         email ="default@gmail.com"
         # generating the user details if the user table is empty
@@ -38,13 +38,6 @@ class MainWindow(BoxLayout):
         isUsertableEmpty=len(cursor.fetchall())
         mydb.close()
         if isUsertableEmpty==0:
-            mydb=sqlite3.connect(self.databaseName)
-            cursor = mydb.cursor()
-            cursor.execute(f'insert into users (name,email,password,designation) values("{username}","{email}","{userpassword}","{desig}");')
-            mydb.commit()
-            mydb.close()
-
-
             # sending email for your login
             try:
                 port=465
@@ -57,6 +50,12 @@ YOUR LOGIN DETAILS ARE
 UserName: {username}
 password: {userpassword}                         
                             ''')
+                mydb=sqlite3.connect(self.databaseName)
+                cursor = mydb.cursor()
+                cursor.execute(f'insert into users (name,email,password,designation) values("{username}","{email}","{userpassword}","{desig}");')
+                mydb.commit()
+                mydb.close()
+
                 
             except Exception as e:
                 'no internet'

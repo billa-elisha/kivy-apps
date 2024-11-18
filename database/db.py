@@ -10,7 +10,7 @@ class CreatSqlite3Database:
         self.companyDetailsTable()
         self.salesTable()
         self.deletingFoldersDates()
-        self.dele()
+        
 
     def usersTable(self):
         """This function is use to create the users table
@@ -91,17 +91,7 @@ class CreatSqlite3Database:
                 );''')
         mycursor.execute(quary)
         mydb.close()
-    def dele(self):
-        """This function is use to create the date table
-        and it is called in the init method
-        """
-        
-        mydb = sqlite3.connect('BERMS.db')
-        mycursor = mydb.cursor()
-        quary = ('DELETE from recordFilesDeletedDays where date_id=1;')
-        mycursor.execute(quary)
-        mydb.commit()
-        mydb.close()
+    
 
 CreatSqlite3Database()
 

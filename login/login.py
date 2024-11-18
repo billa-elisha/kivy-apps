@@ -60,8 +60,7 @@ class LogInWindow(BoxLayout):
         
 
         fetchUserData = self.fetchUserData() # This is a tuple containing (name,password,designation) or None
-        # print(fetchUserData)
-        # print(fetchUserData[1])
+        
         if str(((self.userName.text).strip()).lower()) and str(((self.password.text).strip()).lower())=="elisha":
             self.parent.parent.parent.ids.scrn_mngr_main.current='scrn_admin'
 
