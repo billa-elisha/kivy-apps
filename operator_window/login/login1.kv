@@ -122,13 +122,13 @@
             BoxLayout:
                 size_hint_y:None
                 height:'20dp'
-                Spinner:
-                    id: designation
-                    size_hint: None, None
-                    size: 100, 30
-                    text:'operator'
-                    values:['operator','admin']
-                    
+                CheckBox:
+                    id:admin
+                    color:0, 0, 0,1
+                Label:
+                    text:'Admin'
+                    color:(0,0,0,1)
+                # for deco
                 Label:
                 Label:
                 Label:
@@ -148,7 +148,7 @@
                     background_color: primaryColor
                     color: buttonTextColor
                     bold:True
-                    on_press: root.validateLogin(designation.text)
+                    on_press: root.validateLogin(admin.active)
 
             BoxLayout:
         BoxLayout:

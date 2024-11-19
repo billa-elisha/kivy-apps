@@ -48,7 +48,7 @@ class LogInWindow(BoxLayout):
             f.write(ms)
         
     # login validation function
-    def validateLogin(self, designation, *args, **kwargs):
+    def validateLogin(self, isAdmin, *args, **kwargs):
         '''
         this function is used to varify and validate the login details
         of the user
@@ -76,7 +76,7 @@ class LogInWindow(BoxLayout):
             # for valid password
             else:
                 # check of disignation wherther admin or operator
-                if (str(designation) == "operator") and (fetchUserData[2]=='operator'):
+                if (str(isAdmin) == "False") and (fetchUserData[2]=='operator'):
                     # LOG IN THE OPERATING WINDOW
                     self.parent.parent.parent.ids.scrn_mngr_main.current='scrn_op'
 
@@ -86,12 +86,12 @@ class LogInWindow(BoxLayout):
                     
 
                 # Not an admin error message
-                elif (str(designation)== "admin") and (fetchUserData[2]=='operator'):
+                elif (str(isAdmin)== "True") and (fetchUserData[2]=='operator'):
                     self.notAdminErrorMessage.text ="Please your are not an admin"
-                    
+                    self.ids.admin.active=False
 
                 # admin but loging into the operating window
-                elif (str(designation)== "operator") and (fetchUserData[2]=='admin'):
+                elif (str(isAdmin)== "False") and (fetchUserData[2]=='admin'):
                     self.parent.parent.parent.ids.scrn_mngr_main.current='scrn_op'
 
                     # clearing the input text after validation is done
@@ -99,7 +99,12 @@ class LogInWindow(BoxLayout):
                     self.password.text = ''
 
                 # an admin loging into the admin window
+                
+
+
+                
                 else:
+                    self.ids.admin.active=False
                     self.parent.parent.parent.ids.scrn_mngr_main.current='scrn_admin'
 
                     # clearing the input text after validation is done

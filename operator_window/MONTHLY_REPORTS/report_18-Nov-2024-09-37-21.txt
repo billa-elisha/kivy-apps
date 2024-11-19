@@ -1,0 +1,7 @@
+Nov 2024 Report
+ Item		 No sold		 Profit		
+ ------------------------------------------ 
+iphone		 1		 112.08		 
+monitor		 3		 336.24		 
+tomato		 58		 336.24		 
+laptop		 1		 112.08		
