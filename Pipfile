@@ -6,6 +6,10 @@ name = "pypi"
 [packages]
 mysql-connector-python = "*"
 kivy = {extras = ["full"], version = "*"}
+prettytable = "*"
+texttable = "*"
+pydub = "*"
+pyzbar = "*"
 
 [dev-packages]
 

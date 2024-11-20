@@ -5,5 +5,6 @@
 	
 	Product		Price		Qt             
 	-----------------------------------		
+	laptop		334.42		1
 
-	 Total Cost Ghc : 0.00
+	 Total Cost Ghc : 334.42

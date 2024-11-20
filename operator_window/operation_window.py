@@ -10,6 +10,7 @@ from kivy.uix.behaviors import FocusBehavior
 from kivy.uix.recycleview.layout import LayoutSelectionBehavior
 from kivy.uix.button import Button
 from kivy.uix.popup import Popup
+from kivy.uix.label import Label
 from datetime import date,datetime
 import win32api
 import time
@@ -17,6 +18,11 @@ import sqlite3
 from contextlib import closing
 import os
 from kivy.lang import Builder
+from tabulate import tabulate
+from texttable import Texttable
+from prettytable import PrettyTable 
+
+
 
 
 # sqlite3 connection
@@ -25,9 +31,12 @@ def get_db_connection():
     return sqlite3.connect('BERMS.db')
 
 
+
         
 path = os.getcwd()
 Builder.load_file(path +'/operator_window/operator1.kv')
+
+
         
 class HomeScreen(Screen):
     '''This is the home screen and we can navigate to'''
@@ -148,12 +157,15 @@ class SelectableLabel(RecycleDataViewBehavior,Label):
         
 
 
-class OperationWindow(BoxLayout):
+class OperationWindow(BoxLayout,):
     def __init__(self, **kwargs):
         super(OperationWindow,self).__init__(**kwargs)
         self.companyName=str(self.fetchCompanyDetails()[1])
         self.companyTell=str(self.fetchCompanyDetails()[2])
         self.companyLocation=str(self.fetchCompanyDetails()[3])
+
+        self.luser='nnn'
+        self.ids.whoLogIn.text=self.luser
 
         
         
@@ -466,6 +478,8 @@ class OperationWindow(BoxLayout):
             filepath =f"{pathToSaveFile}/{nameOfFile}.txt"
             file = open(filepath,'w+')
             file.write(f'{self.ids.billTextId.text}\n\n\t{self.ids.costLableId.text} {self.ids.productTotalPriceId.text}')
+            
+            file.write()
             file.close()
 
             #this is where the printing of the document is done
@@ -624,9 +638,90 @@ class OperationWindow(BoxLayout):
                 return details #(1,name,tell)
             except Exception as e:
                 self.loggingMessage('operation_window',e)
-                pass
+                
     
+    
+    def isChangePassword(self,btn):
+        changePasswordPopup=btn.parent.parent.parent.parent.parent.parent.children[1]
+        self.confirmPopu.dismiss()
+        self.changePassword(changePasswordPopup)
+    def changePasswordPopu(self,changePasswordPopup):
+        layout=BoxLayout(orientation='vertical')
+        layout.add_widget(Label(text='Do you want to change?'))
+        btnLayout=BoxLayout(spacing=50,
+                            size_hint_y=None,
+                            height=40)
+        YesBtn=Button(text='Yes')
+        Nobtn=Button(text='No')
+        btnLayout.add_widget(YesBtn)
+        btnLayout.add_widget(Nobtn)
+        layout.add_widget(btnLayout)
+        self.confirmPopu=Popup(
+            size_hint=(None,None),
+            size=(200,150),
+            content=layout,
+        )
+        self.confirmPopu.open()
+        Nobtn.bind(on_press=self.confirmPopu.dismiss)
+        YesBtn.bind(on_press=self.isChangePassword)
+    def changePassword(self,changePasswordPopup):
+        changePasswordPopup.ids.passwordChangingError.text=''
 
+        nameToChangePassword=str(changePasswordPopup.ids.name.text).strip()
+        oldpassword= str(changePasswordPopup.ids.oldpss.text).strip()
+        newPassword=str(changePasswordPopup.ids.newpss.text).strip()
+        try:
+            "Confirming where the user name is in the database or not"
+            db= sqlite3.connect('BERMS.db')
+            cur = db.cursor()
+            cur.execute(f"select user_id,name,password from users where name='{nameToChangePassword}';")
+            data =cur.fetchall()
+            db.close()
+            "checking to see if the no user is found"
+            length = len(data)
+            if length==0:
+                'user not fount error message'
+                changePasswordPopup.ids.passwordChangingError.text='User name not found'
+                return
+            else:
+                for d in data:
+                    if nameToChangePassword and oldpassword in d:# the names in the system:
+                        
+                        if newPassword=='':
+                            changePasswordPopup.ids.passwordChangingError.text='Enter new password'
+                            return
+                        else:
+                            try:
+                                id = int(d[0])
+                                oldpassword= str(d[2])
+                                "updating the user password"
+                                db= sqlite3.connect('BERMS.db')
+                                cur = db.cursor()
+                                cur.execute(f"update users SET password='{newPassword}' where user_id={id};")
+                                db.commit()
+                                db.close()
+                                "clearinging the fields"
+                                changePasswordPopup.ids.oldpss.text=''
+                                changePasswordPopup.ids.newpss.text=''
+                                changePasswordPopup.ids.name.text=''
+                                changePasswordPopup.ids.passwordChangingError.text='[color=#16942b]Password Change Successfully[/color]'
+                                
+                            except Exception as e:
+                                self.loggingMessage('operation_window',e)
+                                changePasswordPopup.ids.passwordChangingError.text='Waite a while password not changed'
+                                
+                    else:
+                        changePasswordPopup.ids.passwordChangingError.text='Wrong old password'
+                        return
+                       
+        except Exception as e:
+            self.loggingMessage('operation_window',e)
+            
+
+    
+        
+
+      
 # INSTANCE OF THE MAIN APP
 class OperatorApp(App):
     def build(self):

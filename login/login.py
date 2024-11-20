@@ -92,6 +92,7 @@ class LogInWindow(BoxLayout):
 
                 # admin but loging into the operating window
                 elif (str(designation)== "operator") and (fetchUserData[2]=='admin'):
+                    
                     self.parent.parent.parent.ids.scrn_mngr_main.current='scrn_op'
 
                     # clearing the input text after validation is done

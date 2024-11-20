@@ -1,0 +1,6 @@
+[operation_window APP]: 2024-11-19 18:06:05.933392
+TextIOWrapper.write() takes exactly one argument (0 given)
+
+[operation_window APP]: 2024-11-20 08:41:31.210189
+list index out of range
+

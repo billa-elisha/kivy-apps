@@ -1,5 +1,72 @@
 
+#:import Factory kivy.factory.Factory
+<ChangePasswordPopup@Popup>:
+    id:changepasswordpopupId
+    auto_dismiss: False
+    size_hint:None,None
+    size:400,300
+    title:'Change your password'
+    BoxLayout:
+        canvas.before:
+            Color:
+                rgba:(1,1,1,1)
+            Rectangle:
+                pos:self.pos
+                size:self.size
+        padding: ('30dp', '0dp', '30dp', '10dp')
+        orientation:'vertical'
+        Label:
+            id:passwordChangingError
+            text:''
+            size_hint_y:None
+            height:"25dp"
+            markup:True
+            color:(1,0,0,1)
+            bold:True
+        BoxLayout:
+            spacing: '15dp'
+            orientation:'vertical'
+            size_hint_y:.8
+            TextInput:
+                id:name
+                hint_text:'Enter userName'
+                font_size:'18sp'
+                multiline:False
+                
+            TextInput:
+                id:oldpss
+                hint_text:'Old password'
+                font_size:'18sp'
+                multiline:False
+            TextInput:
+                id:newpss
+                hint_text:'new password'
+                font_size:'18sp'
+                multiline:False
+                focus:True
+        Label:
+            size_hint_y:None
+            height:"30dp"
+        BoxLayout:
+            size_hint_y:.2
+            spacing: '120dp'
+            Button:
+                background_normal:''
+                background_color:(0,0,1,1)
+                text:'Save'
+                on_release:
+                    app.root.changePasswordPopu(root)
+                    
+            Button:
+                background_normal:''
+                background_color:(1,0,0,1)
+                text:'Cancel'
+                on_release: root.dismiss()
 
+        # Button:
+        #     text: 'Close me!'
+        #     
+        # BoxLayout:
 
 
 <OperationWindow>:
@@ -38,6 +105,10 @@
         height:"35dp"
         Label:
             text:"BE.RMS"
+        Label:
+            id:whoLogIn
+            size_hint_x:0.1
+            text:'Billa'
     #the navigation bar
     BoxLayout:
         orientation:'horizontal'
@@ -55,6 +126,10 @@
         CustomNavigationButton:
             text: 'Home'
             on_press: root.changeToHomePage()
+        # home lable
+        CustomNavigationButton:
+            text: 'change password'
+            on_press: Factory.ChangePasswordPopup().open()
         
         # this box is just for layout perpose
         BoxLayout:
