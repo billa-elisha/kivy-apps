@@ -1,6 +1,9 @@
 #: import Window kivy.core.window.Window
 
+
 <MainWindow>:
+    #:set mainColor (.06,.45,.45,1)
+    orientation:'vertical'
     id: main_win
     canvas.before:
         Color:
@@ -8,9 +11,11 @@
         Rectangle:
             pos:self.pos
             size:self.size
+    
 
     ScreenManager:
         id: scrn_mngr_main
+        
         Screen:
             id :scrn_si
             name:"scrn_si"
@@ -20,3 +25,23 @@
         Screen:
             id:scrn_op
             name:"scrn_op"
+            BoxLayout:
+                size_hint_y:None
+                height:'30dp'
+                BoxLayout:
+                    size_hint_x:.7
+                
+                Button:
+                    size_hint_x:None
+                    width:'140dp'
+                    text: 'change password'
+                    color:mainColor
+                    background_color:(1,1,1,1)
+                    background_normal:''
+                    on_press: Factory.ChangePasswordPopup().open()
+                Label:
+                    size_hint_x:None
+                    width:self.width
+                    text:'billa'
+                    color:(0,0,0,1)
+            

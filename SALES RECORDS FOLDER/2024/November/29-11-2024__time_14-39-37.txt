@@ -1,0 +1,12 @@
+ 
+billa
+tell:5654
+location: gary
+
+Item       Unit Price    Qt    amount
+-------  ------------  ----  --------
+laptop         334.42     1    334.42
+laptop         334.42     1    334.42
+INFINIX      87777.00     1  87777.00
+
+	 Total Cost Ghc : 88445.84

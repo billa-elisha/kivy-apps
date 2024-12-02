@@ -11,6 +11,7 @@ from kivy.uix.recycleview.layout import LayoutSelectionBehavior
 from kivy.uix.button import Button
 from kivy.uix.popup import Popup
 from kivy.uix.label import Label
+from kivy.clock import Clock
 from datetime import date,datetime
 import win32api
 import time
@@ -19,19 +20,19 @@ from contextlib import closing
 import os
 from kivy.lang import Builder
 from tabulate import tabulate
-from texttable import Texttable
-from prettytable import PrettyTable 
+import pathlib
+from configparser import ConfigParser
 
-
-
+pathToConfigFileToConnectDb=pathlib.Path(__file__).parent.parent.absolute().joinpath('config.ini')
+Config = ConfigParser()
+Config.read(pathToConfigFileToConnectDb)
+dbinfo = Config['database']
+dbname =dbinfo['dbname']
 
 # sqlite3 connection
 
 def get_db_connection():
-    return sqlite3.connect('BERMS.db')
-
-
-
+    return sqlite3.connect(dbname)
         
 path = os.getcwd()
 Builder.load_file(path +'/operator_window/operator1.kv')
@@ -66,7 +67,7 @@ class SelectableLabel(RecycleDataViewBehavior,Label):
     selectable= BooleanProperty(True)
 
     def get_db_connection(self):
-        return sqlite3.connect('BERMS.db')
+        return sqlite3.connect(dbname)
 
 
     def refresh_view_attrs(self, rv, index, data):
@@ -164,12 +165,6 @@ class OperationWindow(BoxLayout,):
         self.companyTell=str(self.fetchCompanyDetails()[2])
         self.companyLocation=str(self.fetchCompanyDetails()[3])
 
-        self.luser='nnn'
-        self.ids.whoLogIn.text=self.luser
-
-        
-        
-
         
         # print(self.getProductRuningOutOfStock())
         self.populateProductOutOfStockView()
@@ -179,9 +174,20 @@ class OperationWindow(BoxLayout,):
         self.ids.switchId.active=True
    
         self.searchProductsButtonFunction()
+        Clock.schedule_interval(self.getUserLogedIn, 1)
+    def getUserLogedIn(self,dt):
+        # reading the config file
+        self.pathToConfigFile=pathlib.Path(__file__).parent.parent.absolute().joinpath('config.ini')
+        self.config = ConfigParser()
+        self.config.read(self.pathToConfigFile)
+        self.logedInUserName= self.config['LogedInUser']['username']
+        self.ids.whoLogIn.text= self.logedInUserName
+
+        
+    
 
     def get_db_connection(self):
-        return sqlite3.connect('BERMS.db')
+        return sqlite3.connect(dbname)
     
     def searchProductsButtonFunction(self,*args, **kwargs):
         productName= (self.ids.searchTextId.text).strip()
@@ -244,6 +250,7 @@ class OperationWindow(BoxLayout,):
         
         
     
+
     def changeToDailyReportPage(self):
         '''
         change to the Daily report window page function
@@ -357,8 +364,8 @@ class OperationWindow(BoxLayout,):
 \ttell:{self.companyTell}
 \tlocation: {self.companyLocation}
 \t
-\tProduct\t\tPrice\t\tQt             
-\t-----------------------------------\t\t'''
+\tProduct\t\tUnit Price\t\tQt             
+\t--------------------------------------------------------------------\t\t'''
             # using indexing to get each product and edit it
             for productIndex in range(7,len(pList)):
                 # converting each string of the products into a list to be able to get access to 
@@ -387,7 +394,7 @@ class OperationWindow(BoxLayout,):
         outOfStockNumber= 0
         runingOutOfStockNumber=0
         for data in dataList:
-            if int(data[1]) == 0:
+            if int(data[1]) <= 0:
                 dataToPutIntoView.append({'text':f'[color=ff0000]{data[0]}[/color]'})
                 outOfStockNumber+=1
             else:
@@ -410,7 +417,7 @@ class OperationWindow(BoxLayout,):
         which either based on search or all the products
         '''
         try:                          
-            mydb=sqlite3.connect("BERMS.db")
+            mydb=sqlite3.connect(dbname)
             
             with closing(get_db_connection()) as mydb:
                 "peform transactions"
@@ -435,27 +442,30 @@ class OperationWindow(BoxLayout,):
         pAmount =(self.ids.productToPurchasePrice.text).strip()
         pQuantity =(self.ids.productToPurchaseQuantity.text).strip()
 
-        productsTotalPrice = '0.00'
+        productsTotalPrice = str(0.00).format('.2f')
         if (str(pName)=='') or (str(pName)=="No product"):
+            
             bill = f''' 
 \t{self.companyName}
 \ttell:{self.companyTell}
 \tlocation: {self.companyLocation}
 \t
-\tProduct\t\tPrice\t\tQt             
-\t-----------------------------------\t\t'''
+\tItem\t\tUnit Price\t\tQt \t\tamount           
+\t--------------------------------------------------------------------\t\t'''
             self.ids.productTotalPriceId.text=productsTotalPrice
             
         else:
             priviewsTotalCost=float((self.ids.productTotalPriceId.text).strip())
             newAddedCost =float(float(pAmount))* int(pQuantity)
-            productsTotalPrice =f'{priviewsTotalCost+newAddedCost}'
+            productsTotalPrice =str(f'{priviewsTotalCost+newAddedCost}').format('.2f')
+            amount_ =float(float(pAmount))* int(pQuantity)
 
-            bill=self.ids.billTextId.text + f'\n\t{pName}\t\t{pAmount}\t\t{pQuantity}' 
+            bill=self.ids.billTextId.text + f'\n\t{pName}\t\t{pAmount}\t\t{pQuantity}\t\t{amount_}' 
 
 
         self.ids.productTotalPriceId.text=productsTotalPrice
         self.ids.billTextId.text=bill
+        # self.ids.billTextId.text=str(t)
 
 
     # for the finnlise function
@@ -477,9 +487,30 @@ class OperationWindow(BoxLayout,):
 
             filepath =f"{pathToSaveFile}/{nameOfFile}.txt"
             file = open(filepath,'w+')
-            file.write(f'{self.ids.billTextId.text}\n\n\t{self.ids.costLableId.text} {self.ids.productTotalPriceId.text}')
+            # Reformating the data to store and generate billa
+            dataFromTheBillArea=(self.ids.billTextId.text)
+            dataFromTheBillAreaList=dataFromTheBillArea.split('\n')[7:]
+            listOpProducts_=[]
+            for v in dataFromTheBillAreaList:
+                lv=v.lstrip('\t')
+                llv=tuple(lv.split('\t\t'))
+                listOpProducts_.append([llv[0],llv[1],llv[2],llv[3]])
+                
+            productPurchaseTable=tabulate(listOpProducts_,headers=['Item', 'Unit Price','Qt','amount'],floatfmt=".2f")
             
-            file.write()
+
+            recieptToPrint = f''' 
+{self.companyName}
+tell:{self.companyTell}
+location: {self.companyLocation}
+
+{productPurchaseTable}'''
+
+            
+            file.write(f'{recieptToPrint}\n\n\t{self.ids.costLableId.text} {self.ids.productTotalPriceId.text}')
+            # file.write(f'{self.ids.billTextId.text}\n\n\t{self.ids.costLableId.text} {self.ids.productTotalPriceId.text}')
+            
+            # file.write()
             file.close()
 
             #this is where the printing of the document is done
@@ -487,7 +518,8 @@ class OperationWindow(BoxLayout,):
                 if isGenerateBill==True or str(isGenerateBill)== 1:
                     path =os.getcwd() # this is the path to the current location
                     # getting the file
-                    filelocation= path +f'\{filepath}'
+                    filelocation= path +f'\\{filepath}'
+                    
 
                     # start printing
                     self.ids.productTotalPriceId.text='0.00'
@@ -504,7 +536,24 @@ class OperationWindow(BoxLayout,):
             self.loggingMessage('operation_window',e)
             self.ids.folderCreationError.text=f"An error occurred in creating document file "
 
+    def totalAmountSoldToday(self):
+        todayDate =datetime.now()
+        today = todayDate.strftime('%d %b %Y')
+        mydb=sqlite3.connect(dbname,timeout=90.0)
+        sQuery = f"select amount_sold from sales where date='{today}';"
+        cursor =mydb.cursor()
+        cursor.execute(sQuery)
+        amount =cursor.fetchall()
+        listOfAmounts=[]
         
+        for a in amount:
+            listOfAmounts.append(float(a[0]))
+        total_amount=str(sum(listOfAmounts)).format('.2f')
+        self.ids.totalamountsold.text=total_amount
+        
+
+        
+                
 
         
     def finalizeButton(self):
@@ -567,13 +616,13 @@ class OperationWindow(BoxLayout,):
 \ttell:{self.companyTell}
 \tlocation: {self.companyLocation}
 \t
-\tProduct\t\tPrice\t\tQt             
+\tItem\t\tUnit Price\t\tQt \t\tamount            
 \t-----------------------------------\t\t'''
         
         # saving the sold product to the sales table
         # and updating the products sold
         soldProducts = ((self.ids.billTextId.text).split('\n'))[7:] # this is how they will look like ['\topera\t\t800.0\t\t1', '\tsoneyy\t\t7777.0\t\t1', '\tfood\t\t150.0\t\t1']
-      
+        # print(soldProducts)
         
         for prod in soldProducts:
             prod = prod.lstrip('\t') # ['soneyy\t\t7777.0\t\t1']['opera\t\t800.0\t\t1']['food\t\t150.0\t\t1']
@@ -582,34 +631,39 @@ class OperationWindow(BoxLayout,):
             productName= details[0]
             productPrice=details[1]
             productQuantity=details[2]
-                
+            
 
 
             try:
-                mydb=sqlite3.connect("BERMS.db",timeout=90.0)
+                mydb=sqlite3.connect(dbname,timeout=90.0)
                 "getting the initial quantity of each product bought"
                 getInitialProductQuantity= f"SELECT product_quantity,product_cost_price,product_selling_price from products where product_name='{productName}';"
                 cursor = mydb.cursor()
                 cursor.execute(getInitialProductQuantity)
-                initialQuantity=cursor.fetchone()
+                data_=cursor.fetchone()
+                initialQuantity=data_[0]
                     
                 
                 'updating the quantity of the product bought'
-                updatedQuantity= int(initialQuantity[0])-int(productQuantity)
+                updatedQuantity= int(initialQuantity)-int(productQuantity)
                 
                 udpateProduct = f"update products SET product_quantity={updatedQuantity} where product_name='{productName}';"
                 cursor.execute(udpateProduct)
                 mydb.commit()
 
                 'adding to the sales table the sold products'
-                profitMade =float(initialQuantity[2])-float(initialQuantity[1])
+                profitMade =float(data_[2])-float(data_[1])
+                amountSold = float(int(str(productQuantity).strip())*float(productPrice))
+                
                 soldDate =datetime.now()
                 day = soldDate.strftime('%d %b %Y')
                 month = soldDate.strftime('%b %Y')
-                soldQuery = f"insert into sales (product_name,quantity_sold,profit_made,date,month) values('{productName}',{int(productQuantity)},{profitMade},'{day}','{month}');"
+                soldQuery = f"insert into sales (product_name,quantity_sold,amount_sold,profit_made,date,month) values('{productName}',{int(productQuantity)},{amountSold},{profitMade},'{day}','{month}');"
                 
                 cursor.execute(soldQuery)
                 mydb.commit()
+                mydb.close()
+                self.totalAmountSoldToday()
             
                 
                 
@@ -629,7 +683,7 @@ class OperationWindow(BoxLayout,):
             '''this function is used to update a categories give its id,
             '''
             try:
-                mydb= sqlite3.connect('BERMS.db')
+                mydb= sqlite3.connect(dbname)
                 query = "select * from company;"
                 cursor = mydb.cursor()
                 cursor.execute(query)
@@ -638,84 +692,33 @@ class OperationWindow(BoxLayout,):
                 return details #(1,name,tell)
             except Exception as e:
                 self.loggingMessage('operation_window',e)
-                
-    
-    
-    def isChangePassword(self,btn):
-        changePasswordPopup=btn.parent.parent.parent.parent.parent.parent.children[1]
-        self.confirmPopu.dismiss()
-        self.changePassword(changePasswordPopup)
-    def changePasswordPopu(self,changePasswordPopup):
+
+
+    def changeScreenToLogIn(self,btn):
+        self.parent.parent.parent.ids.scrn_mngr_main.current='scrn_si'
+        self.lpopup.dismiss()
+
+    def logout(self): 
         layout=BoxLayout(orientation='vertical')
-        layout.add_widget(Label(text='Do you want to change?'))
+        layout.add_widget(Label(text='Do you want to logout?'))
         btnLayout=BoxLayout(spacing=50,
                             size_hint_y=None,
                             height=40)
-        YesBtn=Button(text='Yes')
-        Nobtn=Button(text='No')
-        btnLayout.add_widget(YesBtn)
-        btnLayout.add_widget(Nobtn)
+        YBtn=Button(text='Yes')
+        Nbtn=Button(text='No')
+        btnLayout.add_widget(YBtn)
+        btnLayout.add_widget(Nbtn)
         layout.add_widget(btnLayout)
-        self.confirmPopu=Popup(
+        self.lpopup=Popup(
             size_hint=(None,None),
             size=(200,150),
+            title='LogOut',
             content=layout,
         )
-        self.confirmPopu.open()
-        Nobtn.bind(on_press=self.confirmPopu.dismiss)
-        YesBtn.bind(on_press=self.isChangePassword)
-    def changePassword(self,changePasswordPopup):
-        changePasswordPopup.ids.passwordChangingError.text=''
-
-        nameToChangePassword=str(changePasswordPopup.ids.name.text).strip()
-        oldpassword= str(changePasswordPopup.ids.oldpss.text).strip()
-        newPassword=str(changePasswordPopup.ids.newpss.text).strip()
-        try:
-            "Confirming where the user name is in the database or not"
-            db= sqlite3.connect('BERMS.db')
-            cur = db.cursor()
-            cur.execute(f"select user_id,name,password from users where name='{nameToChangePassword}';")
-            data =cur.fetchall()
-            db.close()
-            "checking to see if the no user is found"
-            length = len(data)
-            if length==0:
-                'user not fount error message'
-                changePasswordPopup.ids.passwordChangingError.text='User name not found'
-                return
-            else:
-                for d in data:
-                    if nameToChangePassword and oldpassword in d:# the names in the system:
-                        
-                        if newPassword=='':
-                            changePasswordPopup.ids.passwordChangingError.text='Enter new password'
-                            return
-                        else:
-                            try:
-                                id = int(d[0])
-                                oldpassword= str(d[2])
-                                "updating the user password"
-                                db= sqlite3.connect('BERMS.db')
-                                cur = db.cursor()
-                                cur.execute(f"update users SET password='{newPassword}' where user_id={id};")
-                                db.commit()
-                                db.close()
-                                "clearinging the fields"
-                                changePasswordPopup.ids.oldpss.text=''
-                                changePasswordPopup.ids.newpss.text=''
-                                changePasswordPopup.ids.name.text=''
-                                changePasswordPopup.ids.passwordChangingError.text='[color=#16942b]Password Change Successfully[/color]'
-                                
-                            except Exception as e:
-                                self.loggingMessage('operation_window',e)
-                                changePasswordPopup.ids.passwordChangingError.text='Waite a while password not changed'
-                                
-                    else:
-                        changePasswordPopup.ids.passwordChangingError.text='Wrong old password'
-                        return
-                       
-        except Exception as e:
-            self.loggingMessage('operation_window',e)
+        self.lpopup.open()
+        Nbtn.bind(on_press=self.lpopup.dismiss)
+        YBtn.bind(on_press=self.changeScreenToLogIn)      
+    
             
 
     

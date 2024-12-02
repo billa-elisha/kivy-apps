@@ -238,6 +238,13 @@
         height:"35dp"
         Label:
             text:"BE.RMS"
+        Button:
+            size_hint_x:None
+            width:'90dp'
+            text:'logout'
+            background_color:(.06,.35,.35,1)
+            background_normal:''
+            on_press:root.logout()
     #the navigation bar
     BoxLayout:
         orientation:'horizontal'
@@ -400,6 +407,7 @@
                                 size_hint_x:.2
                             AdminCustomTextInputBox:
                                 id:companyTellId
+                                input_filter:'int'
                             # for deco
                             BoxLayout:
                                 size_hint_x:.1
@@ -681,6 +689,7 @@
                                 color:(0,0,0,1)
                             AdminCustomTextInputBox:
                                 id:productQuantityId
+                                input_filter:'int'
                             # for deco
                             BoxLayout:
                                 size_hint_x:.2
@@ -1164,6 +1173,7 @@
                             AdminCustomTextInputBox:
                                 id:userToDeleteOrUpdateId
                                 hint_text:'Enter id'
+                                input_filter:'int'
                             # search user to update or delete butthon
                             Button:
                                 size_hint_y:None
@@ -1228,11 +1238,12 @@
                             BoxLayout:
                                 size_hint_x:.2
                             Label:
-                                text:'User Email :'
+                                text:'Contact :'
                                 text_size:self.size
                                 color:(0,0,0,1)
                             AdminCustomTextInputBox:
                                 id:userEmailId
+                                input_filter:'int'
                             # for deco
                             BoxLayout:
                                 size_hint_x:.2
@@ -1301,8 +1312,15 @@
                                 text:'Designation :'
                                 text_size:self.size
                                 color:(0,0,0,1)
-                            AdminCustomTextInputBox:
+
+                            Spinner:
                                 id:userDesignationId
+                                size_hint: None, None
+                                size: 100, 30
+                                text:'operator'
+                                values:['operator','admin']
+                            # AdminCustomTextInputBox:
+                            #     id:userDesignationId
                             # for deco
                             BoxLayout:
                                 size_hint_x:.2
@@ -1346,7 +1364,7 @@
                                 text:""
                                 size_hint_x:0.1
                             Button:
-                                text:'clear user'
+                                text:'clear fields'
                                 on_press:root.popUpNotification(self,)#root.clearUserFields()
                                 background_normal:''
                                 background_color:clearbuttonColor
@@ -1467,7 +1485,7 @@
                                 color:mainColor
                                 bold:True
                             Label:
-                                text:'Email'
+                                text:'Contact'
                                 color:mainColor
                                 bold:True
                             Label:

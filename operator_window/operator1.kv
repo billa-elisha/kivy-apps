@@ -28,19 +28,19 @@
             orientation:'vertical'
             size_hint_y:.8
             TextInput:
-                id:name
-                hint_text:'Enter userName'
+                id:oldpass
+                hint_text:'Enter old password'
                 font_size:'18sp'
                 multiline:False
                 
             TextInput:
-                id:oldpss
-                hint_text:'Old password'
+                id:newpass
+                hint_text:'New password'
                 font_size:'18sp'
                 multiline:False
             TextInput:
-                id:newpss
-                hint_text:'new password'
+                id:confirmnewpass
+                hint_text:'Confirm password'
                 font_size:'18sp'
                 multiline:False
                 focus:True
@@ -63,10 +63,7 @@
                 text:'Cancel'
                 on_release: root.dismiss()
 
-        # Button:
-        #     text: 'Close me!'
-        #     
-        # BoxLayout:
+        
 
 
 <OperationWindow>:
@@ -108,7 +105,14 @@
         Label:
             id:whoLogIn
             size_hint_x:0.1
-            text:'Billa'
+            text:''
+        Button:
+            size_hint_x:None
+            width:'90dp'
+            text:'logout'
+            background_color:(.06,.35,.35,1)
+            background_normal:''
+            on_press:root.logout()
     #the navigation bar
     BoxLayout:
         orientation:'horizontal'
@@ -463,7 +467,7 @@
                                     size_hint_x:None
                                     width:"30dp"
                                 Label:
-                                    text:"Runing out total :"
+                                    text:" Stocks runing out total :"
                                     # bold:True
                                     color:(0,0.5,0,1)
                                     halign:'left'
@@ -510,6 +514,18 @@
                         BoxLayout:
                             size_hint_y:None
                             height:"19dp"
+                            Label:
+                                text_size:self.size
+                                halign:'right'
+                                text:'Total amount sold :  '
+                                color:mainColor
+                            Label:
+                                id:totalamountsold
+                                text_size:self.size
+                                halign:'left'
+                                text:'00.00'
+                                color:(0,0,0,1)
+                            
                         BoxLayout:
                             orientation:'vertical'
                             padding: ('10dp', '10dp', '10dp', '10dp')
@@ -600,7 +616,7 @@
                                             size_hint_x:.2
                                             # width:'50dp'
                                         Button:
-                                            text:'finalise'
+                                            text:'print receipt'
                                             size_hint_x:None
                                             on_press:root.finalizeButton()
                                             
@@ -706,12 +722,13 @@
         orientation:'vertical'
         multiselect:False
         touch_multiselect:False
+        spacing:'5dp'
     
 
 <SelectableLabel>:
     canvas.before:
         Color:
-            rgba: productSelectedBackgroundColor if self.selected else operationWindowBackgroundColor
+            rgba: (0.06,0.55,0.55,1) if self.selected else productSelectedBackgroundColor
         Rectangle:
             pos: self.pos
             size: self.size

@@ -14,6 +14,14 @@ import os
 import win32api
 import time
 import shutil
+import pathlib
+from configparser import ConfigParser
+
+pathToConfigFileToConnectDb=pathlib.Path(__file__).parent.parent.absolute().joinpath('config.ini')
+Config = ConfigParser()
+Config.read(pathToConfigFileToConnectDb)
+dbinfo = Config['database']
+dbname =dbinfo['dbname']
 
 
 
@@ -43,7 +51,7 @@ class DateRecycleView(RecycleView):
     def __init__(self, **kwargs): 
         super().__init__(**kwargs)
         # database configuration
-        self.databaseName='BERMS.db'
+        self.databaseName=dbname
         
         data =self.getAllTheSalesDate()
         self.data = [{'text': str(buttonText), 'root_widget': self} for buttonText in data]
@@ -80,7 +88,7 @@ class DateRecycleView(RecycleView):
         '''
         try:
             
-            mydb=sqlite3.connect("BERMS.db")
+            mydb=sqlite3.connect(dbname)
             query = "SELECT DISTINCT(date) FROM sales;"
             cursor = mydb.cursor()
             cursor.execute(query)
@@ -129,7 +137,7 @@ class MonthLableButton(Button):
 class MonthRecycleView(RecycleView):
     def __init__(self, **kwargs): 
         super().__init__(**kwargs)
-        self.databaseName='BERMS.db'
+        self.databaseName=dbname
         
 
         data =self.getAllTheSalesMonths()
@@ -216,7 +224,7 @@ class AdministrationPage(BoxLayout):
     
     def __init__(self, **kwargs):
         super(AdministrationPage,self).__init__(**kwargs)
-        self.databaseName='BERMS.db'
+        self.databaseName=dbname
         self.deletingAllSaveFilesEveryMonth()
         self.fetchAllProducts()
         self.fetchAllUsers()
@@ -277,7 +285,7 @@ class AdministrationPage(BoxLayout):
         if buttonClicked =="update product":
             okButton.bind(on_press=self.updateProduct)
         # the user page
-        if buttonClicked =="clear user":
+        if buttonClicked =="clear fields":
             okButton.bind(on_press=self.clearUserFields)
         if buttonClicked =="add user":
             okButton.bind(on_press=self.addUser)
@@ -515,12 +523,27 @@ class AdministrationPage(BoxLayout):
             # (1, '2345', 'tomatoe', 5.0, 6.0, 56, 'vegetables')
             listData=[]
             for result in results:
-                listData.append({'text':str(result[0])})
-                listData.append({'text':str(result[1])})
-                listData.append({'text':str(result[2])})
-                listData.append({'text':str(result[3])})
-                listData.append({'text':str(result[4])})
-                listData.append({'text':str(result[5])})
+                if int(result[5])<=0:
+                    listData.append({'text':str(result[0]),'color':(1,0,0,1)})
+                    listData.append({'text':str(result[1]),'color':(1,0,0,1)})
+                    listData.append({'text':str(result[2]),'color':(1,0,0,1)})
+                    listData.append({'text':str(result[3]),'color':(1,0,0,1)})
+                    listData.append({'text':str(result[4]),'color':(1,0,0,1)})
+                    listData.append({'text':str(result[5]),'color':(1,0,0,1)})
+                elif int(result[5])<5:
+                    listData.append({'text':str(result[0]),'color':(0,1,0,1)})
+                    listData.append({'text':str(result[1]),'color':(0,1,0,1)})
+                    listData.append({'text':str(result[2]),'color':(0,1,0,1)})
+                    listData.append({'text':str(result[3]),'color':(0,1,0,1)})
+                    listData.append({'text':str(result[4]),'color':(0,1,0,1)})
+                    listData.append({'text':str(result[5]),'color':(0,1,0,1)})
+                else:
+                    listData.append({'text':str(result[0])})
+                    listData.append({'text':str(result[1])})
+                    listData.append({'text':str(result[2])})
+                    listData.append({'text':str(result[3])})
+                    listData.append({'text':str(result[4])})
+                    listData.append({'text':str(result[5])})
 
                 self.ids.productListId.refresh_from_data()
                 self.ids.productListId.data = listData
@@ -981,7 +1004,7 @@ class AdministrationPage(BoxLayout):
         self.ids.userNameId.text=''
         self.ids.userEmailId.text=''
         self.ids.userPasswordId.text=''
-        self.ids.userDesignationId.text=''
+        # self.ids.userDesignationId.text=''
         #clearing all error messages
         self.ids.userIdEmptyErrorMessageId.text=''
         self.ids.userIdEmptyErrorMessageId.text=''
@@ -1170,7 +1193,7 @@ class AdministrationPage(BoxLayout):
                 self.ids.userNameId.text=''
                 self.ids.userEmailId.text=''
                 self.ids.userPasswordId.text=''
-                self.ids.userDesignationId.text=''
+                # self.ids.userDesignationId.text=''
                 #clearing all error messages
                 self.ids.userIdEmptyErrorMessageId.text=''
                 self.ids.userIdEmptyErrorMessageId.text=''
@@ -1193,7 +1216,7 @@ class AdministrationPage(BoxLayout):
         self.ids.userNameId.text=''
         self.ids.userEmailId.text=''
         self.ids.userPasswordId.text=''
-        self.ids.userDesignationId.text=''
+        # self.ids.userDesignationId.text=''
         #clearing all error messages
         self.ids.userIdEmptyErrorMessageId.text=''
         self.ids.userIdEmptyErrorMessageId.text=''
@@ -1256,7 +1279,7 @@ class AdministrationPage(BoxLayout):
                 self.ids.userNameId.text=''
                 self.ids.userEmailId.text=''
                 self.ids.userPasswordId.text=''
-                self.ids.userDesignationId.text=''
+                # self.ids.userDesignationId.text=''
                 #clearing all error messages
                 self.ids.userIdEmptyErrorMessageId.text=''
                 self.ids.userIdEmptyErrorMessageId.text=''
@@ -1349,7 +1372,7 @@ class AdministrationPage(BoxLayout):
             file = open(f'MONTHLY_REPORTS/{name}.txt',"+w")
             file.write(reportToPrint)
             file.close()
-            path =os.getcwd()+f'\MONTHLY_REPORTS\{name}.txt'
+            path =os.getcwd()+f'\\MONTHLY_REPORTS\\{name}.txt'
             # printing
             win32api.ShellExecute(0,'print',path,None,'.',0)
             
@@ -1357,10 +1380,10 @@ class AdministrationPage(BoxLayout):
             date = datetime.now()
             time_= date.strftime('%d-%b-%Y-%H-%M-%S')
             name=f'report_{time_}'
-            file = open(f'MONTHLY_REPORTS\{name}.txt',"+w")
+            file = open(f'MONTHLY_REPORTS\\{name}.txt',"+w")
             file.write(reportToPrint)
             file.close()
-            path =os.getcwd()+f'\MONTHLY_REPORTS\{name}.txt'
+            path =os.getcwd()+f'\\MONTHLY_REPORTS\\{name}.txt'
             # printing
             win32api.ShellExecute(0,'print',path,None,'.',0)
            
@@ -1375,14 +1398,18 @@ class AdministrationPage(BoxLayout):
             report.append(r['text'])
         title=str(self.ids.dailyReportTitleId.text).strip('[/u]')+'\n'
         reformatedReportList=[f'{title}','Item\t\t','No sold\t\t','Profit\t\t\n','------------------------------------------']
+        index_=0
         for d in report:
             try:
-                int(d[0])
+                int(d[0:])
                 reformatedReportList.append(f'{d}\t\t')
+                
             except:
                 reformatedReportList.append(f'\n{d}\t\t')
                 
+                
         reportToPrint=' '.join(reformatedReportList)
+       
 
         'write to file print and delete the report from the system'
         try:
@@ -1393,7 +1420,7 @@ class AdministrationPage(BoxLayout):
             file = open(f'DAILY_REPORTS/{name}.txt',"+w")
             file.write(reportToPrint)
             file.close()
-            path =os.getcwd()+f'\DAILY_REPORTS\{name}.txt'
+            path =os.getcwd()+f'\\DAILY_REPORTS\\{name}.txt'
             # printing
             win32api.ShellExecute(0,'print',path,None,'.',0)
             
@@ -1401,10 +1428,10 @@ class AdministrationPage(BoxLayout):
             date = datetime.now()
             time_= date.strftime('%d-%b-%Y-%H-%M-%S')
             name=f'report_{time_}'
-            file = open(f'DAILY_REPORTS\{name}.txt',"+w")
+            file = open(f'DAILY_REPORTS\\{name}.txt',"+w")
             file.write(reportToPrint)
             file.close()
-            path =os.getcwd()+f'\DAILY_REPORTS\{name}.txt'
+            path =os.getcwd()+f'\\DAILY_REPORTS\\{name}.txt'
             # printing
             win32api.ShellExecute(0,'print',path,None,'.',0)
            
@@ -1442,15 +1469,39 @@ class AdministrationPage(BoxLayout):
                         mydb.commit()
                         mydb.close()
                         foldersPath=os.getcwd()
-                        shutil.rmtree(foldersPath+"\DAILY_REPORTS")
-                        shutil.rmtree(foldersPath+"\MONTHLY_REPORTS")
-                        shutil.rmtree(foldersPath+"\SALES RECORDS FOLDER")
+                        shutil.rmtree(foldersPath+"\\DAILY_REPORTS")
+                        shutil.rmtree(foldersPath+"\\MONTHLY_REPORTS")
+                        shutil.rmtree(foldersPath+"\\SALES RECORDS FOLDER")
                     except:
                         pass
             except:
                 pass
         
 
+    def changeScreenToLogIn(self,btn):
+        self.parent.parent.parent.ids.scrn_mngr_main.current='scrn_si'
+        self.lpopup.dismiss()
+
+    def logout(self): 
+        layout=BoxLayout(orientation='vertical')
+        layout.add_widget(Label(text='Do you want to logout?'))
+        btnLayout=BoxLayout(spacing=50,
+                            size_hint_y=None,
+                            height=40)
+        YBtn=Button(text='Yes')
+        Nbtn=Button(text='No')
+        btnLayout.add_widget(YBtn)
+        btnLayout.add_widget(Nbtn)
+        layout.add_widget(btnLayout)
+        self.lpopup=Popup(
+            size_hint=(None,None),
+            size=(200,150),
+            title='LogOut',
+            content=layout,
+        )
+        self.lpopup.open()
+        Nbtn.bind(on_press=self.lpopup.dismiss)
+        YBtn.bind(on_press=self.changeScreenToLogIn)      
         
     
 class AdministrationApp(App):

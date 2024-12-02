@@ -5,6 +5,21 @@ from datetime import datetime
 from kivy.lang import Builder
 import os
 import sqlite3
+# from operator_window.operation_window import OperationWindow
+
+from configparser import ConfigParser
+import pathlib
+
+
+
+pathToConfigFileToConnectDb=pathlib.Path(__file__).parent.parent.absolute().joinpath('config.ini')
+Config = ConfigParser()
+Config.read(pathToConfigFileToConnectDb)
+dbinfo = Config['database']
+dbname =dbinfo['dbname']
+
+
+
 
 
 
@@ -24,6 +39,8 @@ class LogInWindow(BoxLayout):
     userNameErrorMessage = ObjectProperty(None)
     userPasswordErrorMessage = ObjectProperty(None)
 
+    loggedinuser='username'
+
     # fetching user data from the database
     def fetchUserData(self):
         '''this is used to fetch user data from the database using name of the user.
@@ -32,9 +49,9 @@ class LogInWindow(BoxLayout):
         '''
         name =(self.userName.text).strip()
         try:
-            mydb=sqlite3.connect('BERMS.db')
+            mydb=sqlite3.connect(dbname)
             
-            fetchOneUserData = f"SELECT name,password,designation FROM users WHERE name='{name}';"
+            fetchOneUserData = f"SELECT name,password,designation,user_id FROM users WHERE name='{name}';"
             cursor = mydb.cursor()
             cursor.execute(fetchOneUserData)
             userData = cursor.fetchone()
@@ -57,12 +74,15 @@ class LogInWindow(BoxLayout):
         self.notAdminErrorMessage.text = ''
         self.userNameErrorMessage.text = ''
         self.userPasswordErrorMessage.text = ''
+        self.loggedinuser=None
         
 
         fetchUserData = self.fetchUserData() # This is a tuple containing (name,password,designation) or None
         
-        if str(((self.userName.text).strip()).lower()) and str(((self.password.text).strip()).lower())=="elisha":
-            self.parent.parent.parent.ids.scrn_mngr_main.current='scrn_admin'
+        if str(((self.userName.text).strip()).lower()=='elisha'):
+            if str(((self.password.text).strip()).lower())=="elisha":
+                self.parent.parent.parent.ids.scrn_mngr_main.current='scrn_admin'
+                print((self.userName.text and self.password.text=='elisha'))
 
         if fetchUserData==None:
             
@@ -77,9 +97,21 @@ class LogInWindow(BoxLayout):
             else:
                 # check of disignation wherther admin or operator
                 if (str(designation) == "operator") and (fetchUserData[2]=='operator'):
+                    
+                    # updating the config file
+                    pathToConfigFile=pathlib.Path(__file__).parent.parent.absolute().joinpath('config.ini')
+                    editeConfig = ConfigParser()
+                    editeConfig.read(pathToConfigFile)
+                    userinfo = editeConfig['LogedInUser']
+                    userinfo['username']=f'{fetchUserData[0]}'
+                    userinfo['id']=f'{fetchUserData[3]}'
+                    with open(pathToConfigFile, 'w') as configfile:
+                        editeConfig.write(configfile)
+
+                    # OperationWindow.getUserLogedIn(self=OperationWindow)
+
                     # LOG IN THE OPERATING WINDOW
                     self.parent.parent.parent.ids.scrn_mngr_main.current='scrn_op'
-
                     # clearing the input text after validation is done
                     self.userName.text = ''
                     self.password.text = ''
@@ -92,7 +124,18 @@ class LogInWindow(BoxLayout):
 
                 # admin but loging into the operating window
                 elif (str(designation)== "operator") and (fetchUserData[2]=='admin'):
+                    # updating the config file
+                    pathToConfigFile=pathlib.Path(__file__).parent.parent.absolute().joinpath('config.ini')
+                    editeConfig = ConfigParser()
+                    editeConfig.read(pathToConfigFile)
+                    userinfo = editeConfig['LogedInUser']
+                    userinfo['username']=f'{fetchUserData[0]}'
+                    userinfo['id']=f'{fetchUserData[3]}'
+                    with open(pathToConfigFile, 'w') as configfile:
+                        editeConfig.write(configfile)
+
                     
+                    # OperationWindow.getUserLogedIn(self=OperationWindow)
                     self.parent.parent.parent.ids.scrn_mngr_main.current='scrn_op'
 
                     # clearing the input text after validation is done
@@ -101,12 +144,24 @@ class LogInWindow(BoxLayout):
 
                 # an admin loging into the admin window
                 else:
+                    # updating the config file
+                    pathToConfigFile=pathlib.Path(__file__).parent.parent.absolute().joinpath('config.ini')
+                    editeConfig = ConfigParser()
+                    editeConfig.read(pathToConfigFile)
+                    userinfo = editeConfig['LogedInUser']
+                    userinfo['username']=f'{fetchUserData[0]}'
+                    userinfo['id']=f'{fetchUserData[3]}'
+                    with open(pathToConfigFile, 'w') as configfile:
+                        editeConfig.write(configfile)
+
+                    
+                    # OperationWindow.getUserLogedIn(self=OperationWindow)
                     self.parent.parent.parent.ids.scrn_mngr_main.current='scrn_admin'
 
                     # clearing the input text after validation is done
                     self.userName.text = ''
                     self.password.text = ''
-
+        
         
     
         

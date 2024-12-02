@@ -1,0 +1,11 @@
+ 
+billa
+tell:5654
+location: gary
+
+Item      Unit Price    Qt    amount
+------  ------------  ----  --------
+laptop        334.42     1    334.42
+laptop        334.42    15   5016.30
+
+	 Total Cost Ghc : 5350.72

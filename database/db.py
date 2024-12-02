@@ -1,15 +1,25 @@
 import mysql.connector as mydbConnector
 import sqlite3
+import pathlib
+from configparser import ConfigParser
 
+
+pathToConfigFile=pathlib.Path(__file__).parent.parent.absolute().joinpath('config.ini')
+Config = ConfigParser()
+Config.read(pathToConfigFile)
+dbinfo = Config['database']
+dbname =dbinfo['dbname']
 class CreatSqlite3Database:
     def __init__(self):
-        self.mydb = sqlite3.connect('BERMS.db')
+        self.mydb = sqlite3.connect(dbname)
         self.mydb
         self.usersTable()
         self.productsTable()
         self.companyDetailsTable()
         self.salesTable()
         self.deletingFoldersDates()
+        self.logedInUsersTable()
+        self.creatingDefautLogedInuser()
         
 
     def usersTable(self):
@@ -26,12 +36,24 @@ class CreatSqlite3Database:
                  designation text NOT NULL);''')
         mycursor.execute(quary)
         mydb.close()
+    def logedInUsersTable(self):
+        """This function is use to create the users table
+        and it is called in the init method
+        """
+        mydb = sqlite3.connect('BERMS.db')
+        mycursor = mydb.cursor()
+        quary1 = ('''CREATE TABLE IF NOT EXISTS UserLogedIn(
+                 luser_id INTEGER PRIMARY KEY, 
+                 name text NOT NULL, 
+                 id text);''')
+        mycursor.execute(quary1)
+        mydb.close()
 
     def productsTable(self):
         """This function is use to create the users table
         and it is called in the init method
         """
-        mydb = sqlite3.connect('BERMS.db')
+        mydb = sqlite3.connect(dbname)
         mycursor = mydb.cursor()
         quary = ('''CREATE TABLE IF NOT EXISTS products(
                  product_id INTEGER PRIMARY KEY, 
@@ -47,7 +69,7 @@ class CreatSqlite3Database:
         """This function is use to create the company details table
         and it is called in the init method
         """
-        mydb = sqlite3.connect('BERMS.db')
+        mydb = sqlite3.connect(dbname)
         mycursor = mydb.cursor()
         quary = ('''CREATE TABLE IF NOT EXISTS company(
                  company_id INTEGER PRIMARY KEY, 
@@ -66,12 +88,13 @@ class CreatSqlite3Database:
         and it is called in the init method
         """
         
-        mydb = sqlite3.connect('BERMS.db')
+        mydb = sqlite3.connect(dbname)
         mycursor = mydb.cursor()
         quary = ('''CREATE TABLE IF NOT EXISTS sales(
                  sales_id INTEGER PRIMARY KEY, 
                  product_name text NOT NULL, 
                  quantity_sold INTEGER NOT NULL,
+                 amount_sold REAL NOT NULL,
                  profit_made REAL NOT NULL,
                  date TEXT NOT NULL,
                  month TEXT NOT NULL
@@ -83,7 +106,7 @@ class CreatSqlite3Database:
         and it is called in the init method
         """
         
-        mydb = sqlite3.connect('BERMS.db')
+        mydb = sqlite3.connect(dbname)
         mycursor = mydb.cursor()
         quary = ('''CREATE TABLE IF NOT EXISTS recordFilesDeletedDays(
                  date_id INTEGER PRIMARY KEY, 
@@ -91,6 +114,17 @@ class CreatSqlite3Database:
                 );''')
         mycursor.execute(quary)
         mydb.close()
+    def creatingDefautLogedInuser(self):
+        mydb = sqlite3.connect(dbname)
+        mycursor = mydb.cursor()
+        quary = ('''select * from UserLogedIn''')
+        mycursor.execute(quary)
+        count =mycursor.fetchall()
+        if len(count)==0:
+            q = ("insert into UserLogedIn(name,id) values('default','1')")
+            mycursor.execute(q)
+            mydb.commit()
+            mydb.close()
     
 
 CreatSqlite3Database()
