@@ -347,6 +347,8 @@ class OperationWindow(BoxLayout,):
 
             # spiliting the bill products into list of porducts so that we can remove the last one
             pList =billToUpdate.split("\n")
+            # pList.pop()?
+            # print(pList)
             # getting the last product to remove  price and quantity in order to update the total cost
         
             productToRemove = pList[-1]
@@ -354,7 +356,7 @@ class OperationWindow(BoxLayout,):
             pRemovePrice = float(pRemoveListObject[1])
             pRemoveQuantity = float(pRemoveListObject[2])
             pToRemoveTotalCost = float(pRemovePrice * int(pRemoveQuantity))
-            updatedTotalCost= float((self.ids.productTotalPriceId.text).strip())-pToRemoveTotalCost
+            updatedTotalCost= f'{(float(str((self.ids.productTotalPriceId.text).strip()))-pToRemoveTotalCost):.2f}'
 
             # removing the last products
             pList.remove(pList[-1])
@@ -364,24 +366,32 @@ class OperationWindow(BoxLayout,):
 \ttell:{self.companyTell}
 \tlocation: {self.companyLocation}
 \t
-\tProduct\t\tUnit Price\t\tQt             
+\tItem\t\tUnit Price\t\tQt \t\tamount               
 \t--------------------------------------------------------------------\t\t'''
             # using indexing to get each product and edit it
             for productIndex in range(7,len(pList)):
+                # print(pList[productIndex])
                 # converting each string of the products into a list to be able to get access to 
                 # their name,price and quantity
                 convertedList= pList[productIndex].split('\t')
+                # print(convertedList)
                 name_= str(convertedList[1])
                 price_=str(convertedList[3])
                 quantity_ = str(convertedList[5])
+                amount_=str(convertedList[7])
 
                 # adding the products that are not removed to the bill again
-                updatedBill = updatedBill + f'\n\t{name_}\t\t{price_}\t\t{quantity_}'
+                updatedBill = updatedBill + f'\n\t{name_}\t\t{price_}\t\t{quantity_}\t\t{amount_}'
+                # self.ids.billTextId.text + f'\n\t{pName}\t\t{pAmount}\t\t{pQuantity}\t\t{amount_}' 
+
 
             # updating the bill fied with the new bill
             self.ids.billTextId.text=updatedBill
             # updating the total cost with the new total
+            
             self.ids.productTotalPriceId.text= str(updatedTotalCost)
+            
+            
         except Exception as e:
             self.loggingMessage('operation_window',e)
             pass
@@ -442,7 +452,7 @@ class OperationWindow(BoxLayout,):
         pAmount =(self.ids.productToPurchasePrice.text).strip()
         pQuantity =(self.ids.productToPurchaseQuantity.text).strip()
 
-        productsTotalPrice = str(0.00).format('.2f')
+        productsTotalPrice = f'{0.00:.2f}'
         if (str(pName)=='') or (str(pName)=="No product"):
             
             bill = f''' 
@@ -457,7 +467,7 @@ class OperationWindow(BoxLayout,):
         else:
             priviewsTotalCost=float((self.ids.productTotalPriceId.text).strip())
             newAddedCost =float(float(pAmount))* int(pQuantity)
-            productsTotalPrice =str(f'{priviewsTotalCost+newAddedCost}').format('.2f')
+            productsTotalPrice =f'{(priviewsTotalCost+newAddedCost):.2f}'
             amount_ =float(float(pAmount))* int(pQuantity)
 
             bill=self.ids.billTextId.text + f'\n\t{pName}\t\t{pAmount}\t\t{pQuantity}\t\t{amount_}' 
@@ -548,7 +558,7 @@ location: {self.companyLocation}
         
         for a in amount:
             listOfAmounts.append(float(a[0]))
-        total_amount=str(sum(listOfAmounts)).format('.2f')
+        total_amount=f'{(sum(listOfAmounts)):.2f}'
         self.ids.totalamountsold.text=total_amount
         
 

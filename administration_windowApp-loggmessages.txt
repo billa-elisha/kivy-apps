@@ -1,1 +1,43 @@
 
+[administration_window APP]: 2024-12-02 21:27:55.808492 
+max() iterable argument is empty
+
+[administration_window APP]: 2024-12-02 21:28:57.311955 
+max() iterable argument is empty
+
+[administration_window APP]: 2024-12-02 21:30:58.929862 
+max() iterable argument is empty
+
+[administration_window APP]: 2024-12-03 05:04:20.700893 
+max() iterable argument is empty
+
+[administration_window APP]: 2024-12-03 05:06:37.088734 
+no such table: sales
+
+[administration_window APP]: 2024-12-03 05:06:55.316953 
+no such table: sales
+
+[administration_window APP]: 2024-12-03 05:08:57.688976 
+no such table: sales
+
+[administration_window APP]: 2024-12-03 05:10:18.446688 
+max() iterable argument is empty
+
+[administration_window APP]: 2024-12-03 06:38:48.635290 
+max() iterable argument is empty
+
+[administration_window APP]: 2024-12-03 11:42:47.130689 
+max() iterable argument is empty
+
+[administration_window APP]: 2024-12-04 08:54:26.404119 
+list index out of range
+
+[administration_window APP]: 2024-12-04 08:54:35.698791 
+list index out of range
+
+[administration_window APP]: 2024-12-04 08:54:37.235324 
+list index out of range
+
+[administration_window APP]: 2024-12-04 08:55:08.267843 
+list index out of range
+

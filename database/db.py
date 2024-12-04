@@ -16,17 +16,17 @@ class CreatSqlite3Database:
         self.usersTable()
         self.productsTable()
         self.companyDetailsTable()
-        self.salesTable()
         self.deletingFoldersDates()
         self.logedInUsersTable()
         self.creatingDefautLogedInuser()
+        self.salesTable()
         
 
     def usersTable(self):
         """This function is use to create the users table
         and it is called in the init method
         """
-        mydb = sqlite3.connect('BERMS.db')
+        mydb = sqlite3.connect(dbname)
         mycursor = mydb.cursor()
         quary = ('''CREATE TABLE IF NOT EXISTS users(
                  user_id INTEGER PRIMARY KEY, 
@@ -40,7 +40,7 @@ class CreatSqlite3Database:
         """This function is use to create the users table
         and it is called in the init method
         """
-        mydb = sqlite3.connect('BERMS.db')
+        mydb = sqlite3.connect(dbname)
         mycursor = mydb.cursor()
         quary1 = ('''CREATE TABLE IF NOT EXISTS UserLogedIn(
                  luser_id INTEGER PRIMARY KEY, 
@@ -78,11 +78,24 @@ class CreatSqlite3Database:
                  company_location text);''')
         mycursor.execute(quary)
         mydb.commit()
-        mydb =self.mydb
-        company = 'insert into company (company_name,company_tell,company_location) values("Enter Company Name","9999999","Enter Company Location")'
-        mycursor.execute(company)
-        mydb.commit()
         mydb.close()
+
+        mydb =self.mydb
+        cur = mydb.cursor()
+        iscompanyempty = 'select company_name from company'
+        cur.execute(iscompanyempty)
+        names=cur.fetchall()
+        length=len([i for i in names[0]])
+        mydb.close()
+        if length <=0:
+            self.creatingDefautCompanyDetails()
+
+        # mydb =self.mydb
+        # cur = mydb.cursor()
+        # company = 'insert into company (company_name,company_tell,company_location) values("Enter Company Name","9999999","Enter Company Location")'
+        # cur.execute(company)
+        # mydb.commit()
+        # mydb.close()
     def salesTable(self):
         """This function is use to create the sales table
         and it is called in the init method
@@ -125,6 +138,15 @@ class CreatSqlite3Database:
             mycursor.execute(q)
             mydb.commit()
             mydb.close()
+    def creatingDefautCompanyDetails(self):
+        mydb = sqlite3.connect(dbname)
+        mycursor = mydb.cursor()
+        company = 'insert into company (company_name,company_tell,company_location) values("Enter Company Name","9999999","Enter Company Location")'
+        mycursor.execute(company)
+        mydb.commit()
+        mydb.close()
+        
+        
     
 
 CreatSqlite3Database()

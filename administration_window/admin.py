@@ -97,7 +97,7 @@ class DateRecycleView(RecycleView):
             for date in dates:
                 listOfDates.append(str(date[0]))
             mydb.close()
-            return listOfDates
+            return list(listOfDates)
         except Exception as e:
             self.loggingMessage('administration_window',e)
             return
@@ -511,6 +511,7 @@ class AdministrationPage(BoxLayout):
     def fetchAllProducts(self):
         self.ids.productToSearchId.text=''
         
+        
         '''this function is used to update a categories give its id,
         '''
         try:
@@ -520,34 +521,23 @@ class AdministrationPage(BoxLayout):
             cursor = mydb.cursor()
             cursor.execute(query)
             results = cursor.fetchall()
+            mydb.close()
+            # print(results)
             # (1, '2345', 'tomatoe', 5.0, 6.0, 56, 'vegetables')
             listData=[]
             for result in results:
-                if int(result[5])<=0:
-                    listData.append({'text':str(result[0]),'color':(1,0,0,1)})
-                    listData.append({'text':str(result[1]),'color':(1,0,0,1)})
-                    listData.append({'text':str(result[2]),'color':(1,0,0,1)})
-                    listData.append({'text':str(result[3]),'color':(1,0,0,1)})
-                    listData.append({'text':str(result[4]),'color':(1,0,0,1)})
-                    listData.append({'text':str(result[5]),'color':(1,0,0,1)})
-                elif int(result[5])<5:
-                    listData.append({'text':str(result[0]),'color':(0,1,0,1)})
-                    listData.append({'text':str(result[1]),'color':(0,1,0,1)})
-                    listData.append({'text':str(result[2]),'color':(0,1,0,1)})
-                    listData.append({'text':str(result[3]),'color':(0,1,0,1)})
-                    listData.append({'text':str(result[4]),'color':(0,1,0,1)})
-                    listData.append({'text':str(result[5]),'color':(0,1,0,1)})
-                else:
-                    listData.append({'text':str(result[0])})
-                    listData.append({'text':str(result[1])})
-                    listData.append({'text':str(result[2])})
-                    listData.append({'text':str(result[3])})
-                    listData.append({'text':str(result[4])})
-                    listData.append({'text':str(result[5])})
+                
+                listData.append({'text':str(result[0])})
+                listData.append({'text':str(result[1])})
+                listData.append({'text':str(result[2])})
+                listData.append({'text':str(result[3])})
+                listData.append({'text':str(result[4])})
+                listData.append({'text':str(result[5])})
 
                 self.ids.productListId.refresh_from_data()
+                # print(listData)
                 self.ids.productListId.data = listData
-            mydb.close()
+            
         except Exception as e:
             self.loggingMessage('administration_window',e)
             pass
