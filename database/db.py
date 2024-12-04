@@ -90,12 +90,7 @@ class CreatSqlite3Database:
         if length <=0:
             self.creatingDefautCompanyDetails()
 
-        # mydb =self.mydb
-        # cur = mydb.cursor()
-        # company = 'insert into company (company_name,company_tell,company_location) values("Enter Company Name","9999999","Enter Company Location")'
-        # cur.execute(company)
-        # mydb.commit()
-        # mydb.close()
+       
     def salesTable(self):
         """This function is use to create the sales table
         and it is called in the init method
@@ -134,7 +129,7 @@ class CreatSqlite3Database:
         mycursor.execute(quary)
         count =mycursor.fetchall()
         if len(count)==0:
-            q = ("insert into UserLogedIn(name,id) values('default','1')")
+            q = "insert into UserLogedIn(name,id) values('default','1')"
             mycursor.execute(q)
             mydb.commit()
             mydb.close()

@@ -166,7 +166,7 @@ class OperationWindow(BoxLayout,):
         self.companyLocation=str(self.fetchCompanyDetails()[3])
 
         
-        # print(self.getProductRuningOutOfStock())
+        
         self.populateProductOutOfStockView()
         self.generateBill()
 
@@ -347,8 +347,7 @@ class OperationWindow(BoxLayout,):
 
             # spiliting the bill products into list of porducts so that we can remove the last one
             pList =billToUpdate.split("\n")
-            # pList.pop()?
-            # print(pList)
+            
             # getting the last product to remove  price and quantity in order to update the total cost
         
             productToRemove = pList[-1]
@@ -370,11 +369,9 @@ class OperationWindow(BoxLayout,):
 \t--------------------------------------------------------------------\t\t'''
             # using indexing to get each product and edit it
             for productIndex in range(7,len(pList)):
-                # print(pList[productIndex])
                 # converting each string of the products into a list to be able to get access to 
                 # their name,price and quantity
                 convertedList= pList[productIndex].split('\t')
-                # print(convertedList)
                 name_= str(convertedList[1])
                 price_=str(convertedList[3])
                 quantity_ = str(convertedList[5])

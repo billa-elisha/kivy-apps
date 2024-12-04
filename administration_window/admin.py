@@ -645,7 +645,7 @@ class AdministrationPage(BoxLayout):
                 self.summaryOfProducts_Employees()
             
         except Exception as e:
-            print(e)
+            
             self.loggingMessage('administration_window',e)
             self.ids.productsEntryErrorsId.text='The is an issue trying to connect to the database'
             
@@ -753,7 +753,7 @@ class AdministrationPage(BoxLayout):
 
                 
             except Exception as e:
-                print(e)
+              
                 self.loggingMessage('administration_window',e)
                 self.ids.productIdEmptyErrorMessageId.text='Please product id must be number in order to delete'
              
